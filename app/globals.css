@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/* ───────── Layer 1: primitives (PRD 7.2) ───────── */
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --grey-500: #808080;   /* borders, disabled, decorative. 3.9:1 on white: never body text */
+  --grey-700: #595959;   /* secondary text on white, ~7:1 */
+  --grey-950: #111111;
+  --grey-900: #262626;
+  --grey-200: #e5e5e5;
+  --grey-100: #f5f5f5;
+
+  /* motion tokens */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+
+  --radius: 8px;
+}
+
+/* ───────── Layer 2: semantic (light default) ───────── */
+:root {
+  color-scheme: light;
+  --background: var(--white);
+  --surface: var(--grey-100);
+  --border: var(--grey-200);
+  --border-strong: var(--grey-500);
+  --foreground: var(--black);
+  --muted: var(--grey-700);
+  --primary: var(--black);
+  --primary-foreground: var(--white);
+  --focus: var(--black);
+}
+
+/* Dark: follows the system unless the user picked a theme */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --background: var(--black);
+    --surface: var(--grey-950);
+    --border: var(--grey-900);
+    --border-strong: var(--grey-500);
+    --foreground: var(--white);
+    --muted: var(--grey-500); /* 5.3:1 on black */
+    --primary: var(--white);
+    --primary-foreground: var(--black);
+    --focus: var(--white);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: var(--black);
+  --surface: var(--grey-950);
+  --border: var(--grey-900);
+  --border-strong: var(--grey-500);
+  --foreground: var(--white);
+  --muted: var(--grey-500);
+  --primary: var(--white);
+  --primary-foreground: var(--black);
+  --focus: var(--white);
+}
+
+/* ───────── Layer 3: Tailwind mapping ───────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 4px);
+  --text-display: clamp(2rem, 6vw, 3.5rem);
+}
+
+@layer base {
+  html { background: var(--background); color: var(--foreground); }
+  body { font-family: var(--font-sans); font-feature-settings: "tnum" 1; -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  ::selection { background: var(--primary); color: var(--primary-foreground); }
+}
+
+/* Functional motion only: transform and opacity, reduced-motion respected */
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes shimmer { from { opacity: 0.5; } to { opacity: 1; } }
+.motion-rise { animation: rise var(--dur-slow) var(--ease-out) both; }
+.skeleton { background: var(--surface); animation: shimmer 900ms var(--ease-out) infinite alternate; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

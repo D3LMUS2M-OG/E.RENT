@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 64" fill="none">
+  <g transform="translate(0 8) scale(0.75)">
+    <path d="M32 11 10 29v24h44V29L32 11Z" stroke="#000" stroke-width="4.5" stroke-linejoin="round"/>
+    <path d="M25 27h15M25 36h12M25 45h15M25 27v18" stroke="#000" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+  <!-- NOTE: text is live Inter 700. Convert to outlines before final brand export. -->
+  <text x="58" y="45" font-family="Inter, Helvetica, Arial, sans-serif" font-size="38" font-weight="700" letter-spacing="-1" fill="#000">E.Rent</text>
+</svg>
