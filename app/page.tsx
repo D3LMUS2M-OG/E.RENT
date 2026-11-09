@@ -2,10 +2,15 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { COUNTIES } from "@/lib/counties";
+import { ListingCard, toCard } from "@/components/listings/listing-card";
+import { searchListings } from "@/lib/search";
+
+export const revalidate = 300;
 
 const POPULAR = ["nairobi", "kakamega", "kisumu", "nakuru", "mombasa", "kiambu", "uasin-gishu", "machakos"];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const newest = await searchListings({ limit: 6 });
   const popular = POPULAR.map((s) => COUNTIES.find((c) => c.slug === s)!);
   return (
     <div className="mx-auto max-w-6xl px-4">
@@ -45,7 +50,11 @@ export default function HomePage() {
 
       <section aria-labelledby="newest" className="border-t border-border py-12">
         <h2 id="newest" className="text-2xl font-semibold tracking-tight">Newest listings</h2>
-        <p className="mt-3 max-w-xl text-muted">No listings have been published yet. Landlords and caretakers can add the first houses once landlord verification opens.</p>
+        {newest.length === 0 ? (
+          <p className="mt-3 max-w-xl text-muted">No listings have been published yet. Landlords and caretakers can add the first houses from the dashboard.</p>
+        ) : (
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{newest.map((r) => <li key={r.id}><ListingCard listing={toCard(r)} /></li>)}</ul>
+        )}
       </section>
     </div>
   );

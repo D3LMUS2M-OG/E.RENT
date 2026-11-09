@@ -1,20 +1,37 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-export function LogoMark({ className }: { className?: string }) {
+// The supplied logo is black ink on transparent PNG. Using it as a CSS mask paints it with
+// currentColor, so one asset is black on light and white on dark with no extra files.
+function MaskedImage({ src, ratio, className, label }: { src: string; ratio: number; className?: string; label: string }) {
   return (
-    <svg viewBox="0 0 64 64" fill="none" className={cn("size-8", className)} aria-hidden>
-      <path d="M32 11 10 29v24h44V29L32 11Z" stroke="currentColor" strokeWidth="5" strokeLinejoin="round" />
-      <path d="M25 27h15M25 36h12M25 45h15M25 27v18" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
-    </svg>
+    <span
+      role="img"
+      aria-label={label}
+      className={cn("inline-block bg-current", className)}
+      style={{
+        aspectRatio: String(ratio),
+        WebkitMaskImage: `url(${src})`,
+        maskImage: `url(${src})`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+      }}
+    />
   );
+}
+
+export function LogoMark({ className }: { className?: string }) {
+  return <MaskedImage src="/brand/erent-mark.png" ratio={499 / 411} label="E.Rent" className={cn("h-8", className)} />;
 }
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <Link href="/" aria-label="E.Rent home" className={cn("inline-flex min-h-11 items-center gap-2", className)}>
-      <LogoMark />
-      <span className="text-xl font-semibold tracking-tight">E.Rent</span>
+    <Link href="/" aria-label="E.Rent, home" className={cn("inline-flex min-h-11 items-center", className)}>
+      <MaskedImage src="/brand/erent-wordmark.png" ratio={1200 / 428} label="E.Rent a house" className="h-10" />
     </Link>
   );
 }

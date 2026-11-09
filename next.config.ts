@@ -8,6 +8,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // The watermark PNG is read from disk by the media server action
+  outputFileTracingIncludes: { "/**": ["./public/brand/watermark.png"] },
+  serverExternalPackages: ["sharp"],
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { COUNTIES, countyBySlug } from "@/lib/counties";
+import { ListingCard, toCard } from "@/components/listings/listing-card";
+import { searchListings } from "@/lib/search";
 
 export const revalidate = 3600; // ISR: regenerated from live data (listings query lands in Step 7)
 
@@ -22,6 +24,7 @@ export default async function CountyPage({ params }: { params: Promise<{ county:
   const county = countyBySlug((await params).county);
   if (!county) notFound();
 
+  const rows = await searchListings({ county: county.slug, limit: 48 });
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -33,7 +36,11 @@ export default async function CountyPage({ params }: { params: Promise<{ county:
     <div className="mx-auto max-w-6xl px-4 py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <h1 className="text-3xl font-semibold tracking-tight">Houses for rent in {county.name}</h1>
-      <p className="mt-3 max-w-xl text-muted">No listings in {county.name} yet. Listings appear here as soon as landlords publish them.</p>
+      {rows.length === 0 ? (
+        <p className="mt-3 max-w-xl text-muted">No listings in {county.name} yet. Listings appear here as soon as landlords publish them.</p>
+      ) : (
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{rows.map((r) => <li key={r.id}><ListingCard listing={toCard(r)} /></li>)}</ul>
+      )}
     </div>
   );
 }

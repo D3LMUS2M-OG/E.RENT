@@ -1,7 +1,7 @@
 // Base service worker: caches the shell and serves /offline when the network fails.
 // Saved listings and recent chats caching arrives with their features (Steps 7 and 9).
 const VERSION = "erent-shell-v1";
-const SHELL = ["/offline", "/icons/icon.svg"];
+const SHELL = ["/offline", "/icons/icon-192.png"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)));

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: { default: "E.Rent: houses to rent in Kenya", template: "%s | E.Rent" },
   description: "Search rental houses in all 47 counties, chat privately with landlords and read honest reviews from past tenants.",
   manifest: "/manifest.webmanifest",
-  icons: { icon: "/icons/icon.svg" },
+  icons: { icon: [{ url: "/icons/favicon-48.png", sizes: "48x48" }, { url: "/icons/icon-192.png", sizes: "192x192" }], apple: "/icons/apple-touch-icon.png" },
 };
 export const viewport: Viewport = { themeColor: "#000000", width: "device-width", initialScale: 1, viewportFit: "cover" };
 
