@@ -80,7 +80,11 @@ export function ChatRoom({ o, me, initial, children }: { o: Overview; me: string
     return [...prev, m].sort((a, b) => a.created_at.localeCompare(b.created_at));
   }), []);
 
-  const markRead = useCallback(() => { if (document.visibilityState === "visible") supabase.rpc("mark_conversation_read", { p_id: o.id }); }, [supabase, o.id]);
+  // Supabase calls only run when awaited or given .then(). Without it the request is never sent.
+  const markRead = useCallback(() => {
+    if (document.visibilityState !== "visible") return;
+    supabase.rpc("mark_conversation_read", { p_id: o.id }).then(() => window.dispatchEvent(new Event("erent:unread-changed")));
+  }, [supabase, o.id]);
 
   useEffect(() => {
     let ch: RealtimeChannel | undefined; let dead = false;
