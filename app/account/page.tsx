@@ -53,6 +53,7 @@ export default async function AccountPage() {
         <h2 id="go" className="text-xl font-semibold">Go to</h2>
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="secondary"><Link href="/search">Search houses</Link></Button>
+          <Button asChild variant="secondary"><Link href="/account/requests">My requests</Link></Button>
           {a.landlordIds.length > 0 && <Button asChild variant="secondary"><Link href="/dashboard">Landlord dashboard</Link></Button>}
           {a.isStaff && <Button asChild><Link href="/admin">Admin</Link></Button>}
         </div>

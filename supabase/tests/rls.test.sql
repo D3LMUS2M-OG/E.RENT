@@ -1,6 +1,6 @@
 -- pgTAP policy tests. Run with: supabase test db
 begin;
-select plan(11);
+select plan(13);
 
 select is(
   (select count(*)::int from pg_tables t where t.schemaname = 'public' and not t.rowsecurity),
@@ -20,6 +20,9 @@ select cmp_ok((select count(*)::int from public.wards), '>=', 1400, 'visitor can
 select is((select count(*)::int from public.landlord_verifications), 0, 'visitor cannot read verifications');
 select is((select count(*)::int from public.verification_documents), 0, 'visitor cannot read verification documents');
 select lives_ok($$select * from public.landlord_profiles$$, 'visitor can read the public landlord view');
+
+select is((select count(*)::int from public.rental_requests), 0, 'visitor cannot read rental requests');
+select is((select count(*)::int from public.rentals), 0, 'visitor cannot read rentals');
 
 select * from finish();
 rollback;

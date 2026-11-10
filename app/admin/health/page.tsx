@@ -5,7 +5,7 @@ export const metadata = { title: "Setup check" };
 const TABLES: [string, number][] = [
   ["counties", 47], ["sub_counties", 300], ["wards", 1400], ["property_types", 1], ["amenities", 1], ["app_settings", 1],
   ["staff_roles", 1], ["profiles", 1], ["user_roles", 1], ["properties", 0], ["listings", 0], ["listing_media", 0],
-  ["landlord_verifications", 0], ["verification_documents", 0], ["delegations", 0], ["landlord_profiles", 0],
+  ["rental_requests", 0], ["tours", 0], ["rentals", 0], ["landlord_verifications", 0], ["verification_documents", 0], ["delegations", 0], ["landlord_profiles", 0],
 ];
 const BUCKETS = ["listing-media", "verification-docs"];
 
@@ -20,7 +20,7 @@ export default async function Health() {
     return { name: b, ok: !error, detail: error ? error.message : "found" };
   }));
   const rpcs = await Promise.all([
-    ["search_listings", { filters: {} }], ["my_landlords", {}], ["my_invitations", {}], ["nearest_ward", { p_lat: -0.28, p_lng: 34.75 }],
+    ["search_listings", { filters: {} }], ["my_landlords", {}], ["my_invitations", {}], ["nearest_ward", { p_lat: -0.28, p_lng: 34.75 }], ["incoming_requests", {}], ["my_requests", {}],
   ].map(async ([fn, args]) => {
     const { error } = await supabase.rpc(fn as string, args as object);
     return { name: `${fn}()`, ok: !error, detail: error ? error.message : "works" };
