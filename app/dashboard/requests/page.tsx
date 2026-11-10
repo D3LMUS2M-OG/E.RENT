@@ -48,7 +48,7 @@ export default async function IncomingRequests() {
           {r.rental_status === "cancelled" && <span className="text-sm">{r.cancelled_by_me ? "You cancelled" : "The tenant cancelled"} the rental{r.cancel_reason ? `: ${r.cancel_reason}` : "."}</span>}
         </div>
       )}
-      {r.status === "accepted" && contacts.get(r.id) && <ContactPanel c={contacts.get(r.id)!} />}
+      {r.status === "accepted" && contacts.get(r.id) && <ContactPanel c={contacts.get(r.id)!} id={r.id} source="request" />}
       {r.decision_note && r.status !== "pending" && <p className="text-sm text-muted">Your note: {r.decision_note}</p>}
     </li>
   );

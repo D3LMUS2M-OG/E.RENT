@@ -52,7 +52,7 @@ export default async function MyRequests() {
               </div>)}
             {r.rental_status === "cancelled" && (
               <p className="text-sm">{r.cancelled_by_me ? "You cancelled" : "The landlord cancelled"} the rental{r.cancel_reason ? `: ${r.cancel_reason}` : "."}</p>)}
-            {r.status === "accepted" && contacts.get(r.id) && <ContactPanel c={contacts.get(r.id)!} />}
+            {r.status === "accepted" && contacts.get(r.id) && <ContactPanel c={contacts.get(r.id)!} id={r.id} source="request" />}
 
             <div className="flex flex-wrap gap-2">
               {r.kind === "view" && r.status === "accepted" && !r.tour_done && (

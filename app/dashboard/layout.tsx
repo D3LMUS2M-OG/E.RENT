@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getAccess } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { addLandlordRole } from "./actions";
+import { Notices } from "@/components/account/notices";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false } };
 
@@ -26,10 +27,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <Button asChild variant="ghost"><Link href="/dashboard/listings">My listings</Link></Button>
         <Button asChild variant="ghost"><Link href="/dashboard/listings/new">Add a house</Link></Button>
         <Button asChild variant="ghost"><Link href="/dashboard/requests">Requests</Link></Button>
+        <Button asChild variant="ghost"><Link href="/chats">Chats</Link></Button>
         <Button asChild variant="ghost"><Link href="/dashboard/verification">Verification</Link></Button>
         <Button asChild variant="ghost"><Link href="/dashboard/team">Caretakers</Link></Button>
         <Button asChild variant="ghost"><Link href="/org">Organisation</Link></Button>
       </nav>
+      <Notices />
       {children}
     </div>
   );

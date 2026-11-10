@@ -24,3 +24,11 @@ export async function updateProfile(_: ActionState, formData: FormData): Promise
   revalidatePath("/account");
   return { ok: true, message: phone ? `Saved. Your number is ${phone}. It is only shown to people you approve.` : "Saved" };
 }
+
+export async function acknowledgeNotice(id: string): Promise<ActionState> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("acknowledge_sanction", { p_id: id });
+  if (error) return { error: error.message };
+  revalidatePath("/account"); revalidatePath("/dashboard", "layout");
+  return { ok: true };
+}

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
 import { createRequest } from "@/app/requests/actions";
+import { startChat } from "@/app/chats/actions";
+import { ActionButton } from "@/components/ui/action-button";
 import type { ActionState } from "@/app/dashboard/actions";
 
 type Mine = { id: string; kind: "view" | "apply"; status: string };
@@ -38,6 +40,7 @@ export function RequestPanel({ listingId, ownerId, createdBy }: { listingId: str
 
   return (
     <div className="space-y-4">
+      <ActionButton action={startChat.bind(null, listingId)} variant="secondary" size="lg" className="w-full">Message the landlord</ActionButton>
       {mine.length > 0 && (
         <ul className="space-y-1 text-sm">
           {mine.slice(0, 3).map((m) => <li key={m.id}><span className="font-medium">{KIND[m.kind]}:</span> {STATUS[m.status]}</li>)}

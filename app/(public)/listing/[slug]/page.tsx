@@ -5,6 +5,7 @@ import { Bath, BedDouble, CalendarDays, Maximize2, Layers, MapPin } from "lucide
 import { createPublicClient } from "@/lib/supabase/public";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { PinMap } from "@/components/map/pin-map";
+import { ReportListing } from "@/components/listings/report-listing";
 import { RequestPanel } from "@/components/requests/request-panel";
 import { FavouriteButton } from "@/components/listings/favourite-button";
 import { WhatsAppShare } from "@/components/listings/whatsapp-share";
@@ -138,6 +139,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
             )}
             <RequestPanel listingId={l.id} ownerId={l.owner_id} createdBy={l.created_by} />
             <FavouriteButton listingId={l.id} />
+            <ReportListing listingId={l.id} />
             <p className="border-t border-border pt-4 text-sm text-muted">Never pay before you view the house in person. E.Rent is not a party to any rental agreement.</p>
           </div>
         </aside>

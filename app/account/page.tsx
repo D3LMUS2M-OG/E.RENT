@@ -6,6 +6,7 @@ import { signOut } from "@/app/(auth)/actions";
 import { addLandlordRole } from "@/app/dashboard/actions";
 import { respondToInvitation } from "@/app/dashboard/team/actions";
 import { createClient } from "@/lib/supabase/server";
+import { Notices } from "@/components/account/notices";
 import { ProfileForm } from "@/components/account/profile-form";
 import { respondOrgInvite } from "@/app/org/actions";
 
@@ -25,6 +26,8 @@ export default async function AccountPage() {
         <h1 className="text-3xl font-semibold tracking-tight">{a.fullName || "Your account"}</h1>
         <p className="mt-1 text-muted">{a.email}</p>
       </header>
+
+      <Notices />
 
       {pending.length > 0 && (
         <section aria-labelledby="inv" className="space-y-3">
@@ -81,6 +84,7 @@ export default async function AccountPage() {
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="secondary"><Link href="/search">Search houses</Link></Button>
           <Button asChild variant="secondary"><Link href="/account/requests">My requests</Link></Button>
+          <Button asChild variant="secondary"><Link href="/chats">Chats</Link></Button>
           {a.landlordIds.length > 0 && <Button asChild variant="secondary"><Link href="/dashboard">Landlord dashboard</Link></Button>}
           {a.orgIds.length > 0 && <Button asChild variant="secondary"><Link href="/org">Organisation</Link></Button>}
           {a.isStaff && <Button asChild><Link href="/admin">Admin</Link></Button>}

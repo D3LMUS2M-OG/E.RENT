@@ -15,7 +15,7 @@ const KIND: Record<string, string> = {
 export default async function Moderation() {
   const supabase = await createClient();
   const [flags, recent, down] = await Promise.all([
-    supabase.from("listing_flags").select("id, kind, detail, created_at, listing:listings(id, slug, title, rent, status)").eq("status", "open").order("created_at", { ascending: false }),
+    supabase.from("listing_flags").select("id, kind, detail, created_at, listing:listings(id, slug, title, rent, status, owner_id)").eq("status", "open").order("created_at", { ascending: false }),
     supabase.from("listings").select("id, slug, title, rent, status, published_at").eq("status", "active").order("published_at", { ascending: false }).limit(20),
     supabase.from("listings").select("id, slug, title, takedown_reason").eq("status", "taken_down").limit(20),
   ]);
@@ -33,6 +33,7 @@ export default async function Moderation() {
           {flags.data?.map((f) => { const l = f.listing as unknown as L; return (
             <li key={f.id} className="space-y-3 rounded-lg border border-border p-4">
               <p className="font-medium">{KIND[f.kind] ?? f.kind}</p>
+              {f.kind === "report" && <p className="text-sm">{String((f.detail as { reason?: string }).reason ?? "").replace("_", " ")}{(f.detail as { details?: string }).details ? `: ${(f.detail as { details?: string }).details}` : ""}</p>}
               <p className="text-sm"><Link className="underline underline-offset-4" href={`/listing/${l.slug}`}>{l.title}</Link> · {formatKes(l.rent)} · {l.status}</p>
               <div className="flex flex-wrap items-center gap-3">
                 <TakedownForm listingId={l.id} takenDown={l.status === "taken_down"} />
