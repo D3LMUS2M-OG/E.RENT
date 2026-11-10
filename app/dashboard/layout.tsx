@@ -24,6 +24,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <Button asChild variant="ghost"><Link href="/dashboard">Overview</Link></Button>
         <Button asChild variant="ghost"><Link href="/dashboard/listings">My listings</Link></Button>
         <Button asChild variant="ghost"><Link href="/dashboard/listings/new">Add a house</Link></Button>
+        <Button asChild variant="ghost"><Link href="/dashboard/verification">Verification</Link></Button>
+        <Button asChild variant="ghost"><Link href="/dashboard/team">Caretakers</Link></Button>
       </nav>
       {children}
     </div>

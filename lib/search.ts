@@ -15,7 +15,7 @@ export const PAGE_SIZE = 24;
 export function parseFilters(p: Params) {
   const f: Record<string, unknown> = {};
   const set = (k: string, v: unknown) => { if (v !== undefined && v !== "") f[k] = v; };
-  set("county", one(p.county)); set("sub_county", one(p.sub_county)); set("estate", one(p.estate)); set("q", one(p.q));
+  set("county", one(p.county)); set("sub_county", one(p.sub_county)); set("ward", one(p.ward)); set("estate", one(p.estate)); set("q", one(p.q));
   set("min_rent", num(p.min_rent)); set("max_rent", num(p.max_rent)); set("max_deposit", num(p.max_deposit));
   const types = many(p.type); if (types.length) f.types = types;
   set("min_bedrooms", num(p.min_bedrooms)); set("max_bedrooms", num(p.max_bedrooms)); set("min_bathrooms", num(p.min_bathrooms));
@@ -24,6 +24,7 @@ export function parseFilters(p: Params) {
   const amen = many(p.amenity); if (amen.length) f.amenities = amen;
   const lat = num(p.lat), lng = num(p.lng);
   if (lat !== undefined && lng !== undefined) { f.lat = lat; f.lng = lng; set("radius_m", num(p.radius_m) ?? 5000); }
+  if (one(p.verified_only) === "on" || one(p.verified_only) === "true") f.verified_only = true;
   set("sort", one(p.sort));
   const page = Math.max(1, num(p.page) ?? 1);
   f.limit = one(p.view) === "map" ? 200 : PAGE_SIZE;

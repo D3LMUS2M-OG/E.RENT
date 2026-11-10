@@ -4,13 +4,14 @@ import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { PinMap } from "@/components/map/pin-map";
-import { COUNTIES } from "@/lib/counties";
+import { GeoSelect, type Centroid, type GeoValue } from "@/components/geo/geo-select";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import type { ActionState } from "@/app/dashboard/actions";
 
 export type ListingFormValues = {
   title?: string; description?: string; property_type_id?: number; rent?: number; deposit?: number; county_id?: number;
-  sub_county?: string; estate?: string; bedrooms?: number; bathrooms?: number; size_sqm?: number | null; floor?: number | null;
+  sub_county_id?: number | null; ward_id?: number | null; estate?: string; bedrooms?: number; bathrooms?: number; size_sqm?: number | null; floor?: number | null;
   available_from?: string; units_total?: number; lat?: number; lng?: number; watermark?: boolean; amenities?: number[]; owner_id?: string;
 };
 type Option = { id: number; name: string };
@@ -26,6 +27,22 @@ export function ListingForm({ action, values = {}, types, amenities, submitLabel
 }) {
   const [state, formAction, pending] = useActionState(action, {});
   const [pin, setPin] = useState<{ lat?: number; lng?: number }>({ lat: values.lat, lng: values.lng });
+  const [geo, setGeo] = useState<GeoValue>({
+    county: values.county_id ? String(values.county_id) : "", sub: values.sub_county_id ? String(values.sub_county_id) : "", ward: values.ward_id ? String(values.ward_id) : "",
+  });
+  const [fly, setFly] = useState<(Centroid & { n: number }) | null>(null);
+  const [suggested, setSuggested] = useState("");
+
+  // Dropping a pin suggests the nearest ward. The landlord's own county choice is respected.
+  async function onPin(lat: number, lng: number) {
+    setPin({ lat, lng });
+    const { data } = await createClient().rpc("nearest_ward", { p_lat: lat, p_lng: lng, p_county: geo.county ? Number(geo.county) : null });
+    const w = data?.[0];
+    if (w) {
+      setGeo({ county: String(w.county_id), sub: String(w.sub_county_id), ward: String(w.ward_id) });
+      setSuggested(`${w.ward_name}, ${w.sub_county_name}`);
+    }
+  }
   const fe = state.fieldErrors ?? {};
   const groups = Object.entries(Object.groupBy(amenities, (a) => a.category));
   const chosen = new Set(values.amenities ?? []);
@@ -82,19 +99,17 @@ export function ListingForm({ action, values = {}, types, amenities, submitLabel
       <section className="space-y-5" aria-labelledby="s-location">
         <h2 id="s-location" className="text-xl font-semibold">Location</h2>
         <div className="grid gap-5 sm:grid-cols-3">
-          <Field label="County" htmlFor="county_id" error={fe.county_id}>
-            <select id="county_id" name="county_id" className={select} defaultValue={values.county_id ?? ""}>
-              <option value="" disabled>Choose a county</option>
-              {COUNTIES.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
-            </select>
-          </Field>
-          <Field label="Sub-county" htmlFor="sub_county"><Input id="sub_county" name="sub_county" defaultValue={values.sub_county} /></Field>
-          <Field label="Ward or estate" htmlFor="estate"><Input id="estate" name="estate" defaultValue={values.estate} /></Field>
+          <GeoSelect mode="id" required value={geo} names={{ county: "county_id", sub: "sub_county_id", ward: "ward_id" }}
+            onChange={(v, byUser) => { setGeo(v); if (byUser) setSuggested(""); }}
+            onPick={(c) => setFly({ ...c, n: Date.now() })} />
         </div>
+        {fe.county_id && <p role="alert" className="text-sm font-medium">Error: {fe.county_id}</p>}
+        <Field label="Estate or neighbourhood (optional)" htmlFor="estate"><Input id="estate" name="estate" defaultValue={values.estate} placeholder="For example Milimani" /></Field>
         <div className="space-y-2">
           <p className="text-sm font-medium">Exact pin</p>
           <p className="text-sm text-muted">Tap the map or drag the pin to the house. Tenants see this exact spot.</p>
-          <PinMap lat={pin.lat} lng={pin.lng} onChange={(lat, lng) => setPin({ lat, lng })} />
+          <PinMap lat={pin.lat} lng={pin.lng} onChange={onPin} flyTo={fly} />
+          {suggested && <p role="status" className="text-sm">Suggested from the pin: {suggested}. Change the ward above if this is wrong.</p>}
           <input type="hidden" name="lat" value={pin.lat ?? ""} />
           <input type="hidden" name="lng" value={pin.lng ?? ""} />
           {(fe.lat || fe.lng) && <p role="alert" className="text-sm font-medium">Error: {fe.lat ?? fe.lng}</p>}

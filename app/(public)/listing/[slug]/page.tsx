@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Bath, BedDouble, CalendarDays, Maximize2, Layers, MapPin } from "lucide-react";
 import { createPublicClient } from "@/lib/supabase/public";
+import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { PinMap } from "@/components/map/pin-map";
 import { FavouriteButton } from "@/components/listings/favourite-button";
 import { WhatsAppShare } from "@/components/listings/whatsapp-share";
@@ -45,6 +46,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   const l = await load((await params).slug);
   if (!l) notFound();
 
+  const { data: landlord } = await createPublicClient().from("landlord_profiles").select("display_name, member_since, verified").eq("id", l.owner_id).maybeSingle();
   const p = l.property as unknown as { sub_county: string | null; estate: string | null; lat: number; lng: number; county: { name: string; slug: string } };
   const media = [...(l.media as Media[])].sort((a, b) => a.position - b.position);
   const photos = media.filter((m) => m.kind === "photo");
@@ -93,7 +95,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
           <header className="space-y-3">
             <h1 className="text-3xl font-semibold tracking-tight">{l.title}</h1>
             <p className="flex items-center gap-1 text-muted"><MapPin className="size-4" aria-hidden />{[p.estate, p.sub_county, p.county.name].filter(Boolean).join(", ")}</p>
-            <p className="text-sm text-muted">Posted {posted}{caretaker && " · Managed by a caretaker for the landlord"}</p>
+            <p className="text-sm text-muted">Posted {posted}{caretaker && " · Managed by a caretaker"}</p>
           </header>
 
           <ul className="flex flex-wrap gap-x-6 gap-y-3">
@@ -126,6 +128,13 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               <div className="flex justify-between"><dt className="text-muted">Deposit</dt><dd className="font-medium">{l.deposit ? formatKes(l.deposit) : "None stated"}</dd></div>
               <div className="flex justify-between"><dt className="text-muted">Units available</dt><dd className="font-medium">{l.units_available}</dd></div>
             </dl>
+            {landlord && (
+              <div className="space-y-1 border-t border-border pt-4">
+                <p className="text-sm text-muted">{caretaker ? "Listed by a caretaker for" : "Landlord"}</p>
+                <p className="flex flex-wrap items-center gap-2 font-medium">{landlord.display_name || "Landlord"}{landlord.verified && <VerifiedBadge />}</p>
+                <p className="text-sm text-muted">Member since {new Date(landlord.member_since).toLocaleDateString("en-KE", { month: "long", year: "numeric" })}</p>
+              </div>
+            )}
             <FavouriteButton listingId={l.id} />
             <p className="border-t border-border pt-4 text-sm text-muted">Never pay before you view the house in person. E.Rent is not a party to any rental agreement.</p>
           </div>

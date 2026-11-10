@@ -11,9 +11,9 @@ export default async function NewListing() {
   const [types, amenities, owners] = await Promise.all([
     supabase.from("property_types").select("id,name").eq("is_active", true).order("sort"),
     supabase.from("amenities").select("id,name,category").eq("is_active", true).order("id"),
-    supabase.from("profiles").select("id, full_name").in("id", access.landlordIds),
+    supabase.rpc("my_landlords"),
   ]);
-  const ownerOpts = access.landlordIds.map((id) => ({ id, label: id === access.userId ? "Myself" : owners.data?.find((o) => o.id === id)?.full_name || "A landlord" }));
+  const ownerOpts = access.landlordIds.map((id) => ({ id, label: id === access.userId ? "Myself" : (owners.data as { landlord_id: string; display_name: string }[] | null)?.find((o) => o.landlord_id === id)?.display_name || "A landlord" }));
 
   return (
     <div className="max-w-3xl space-y-8">

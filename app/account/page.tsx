@@ -4,17 +4,38 @@ import { getAccess } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { signOut } from "@/app/(auth)/actions";
 import { addLandlordRole } from "@/app/dashboard/actions";
+import { respondToInvitation } from "@/app/dashboard/team/actions";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Account", robots: { index: false } };
 
 export default async function AccountPage() {
   const a = await getAccess("/account");
+  const supabase = await createClient();
+  const { data: invites } = await supabase.rpc("my_invitations");
+  const pending = (invites ?? []) as { id: string; landlord_name: string; kind: string }[];
   return (
     <div className="mx-auto max-w-2xl space-y-10 px-4 py-12">
       <header>
         <h1 className="text-3xl font-semibold tracking-tight">{a.fullName || "Your account"}</h1>
         <p className="mt-1 text-muted">{a.email}</p>
       </header>
+
+      {pending.length > 0 && (
+        <section aria-labelledby="inv" className="space-y-3">
+          <h2 id="inv" className="text-xl font-semibold">Invitations</h2>
+          <ul className="divide-y divide-border rounded-lg border border-border">
+            {pending.map((i) => (
+              <li key={i.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <span><span className="font-medium">{i.landlord_name || "A landlord"}</span> invited you to post houses for them as a <span className="capitalize">{i.kind}</span>.</span>
+                <span className="flex gap-2">
+                  <form action={respondToInvitation.bind(null, i.id, true)}><Button type="submit">Accept</Button></form>
+                  <form action={respondToInvitation.bind(null, i.id, false)}><Button type="submit" variant="secondary">Decline</Button></form>
+                </span>
+              </li>))}
+          </ul>
+        </section>
+      )}
 
       <section aria-labelledby="roles" className="space-y-3">
         <h2 id="roles" className="text-xl font-semibold">Your roles</h2>

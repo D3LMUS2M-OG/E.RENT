@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ListingCard, toCard } from "@/components/listings/listing-card";
 import { ResultsMap } from "@/components/map/results-map";
 import { NearMeButton } from "@/components/search/near-me";
+import { SearchGeo } from "@/components/geo/search-geo";
 import { WhatsAppShare } from "@/components/listings/whatsapp-share";
 import { COUNTIES } from "@/lib/counties";
 import { PAGE_SIZE, parseFilters, searchListings } from "@/lib/search";
@@ -47,18 +48,18 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <input type="hidden" name="lat" defaultValue={val(sp, "lat")} />
         <input type="hidden" name="lng" defaultValue={val(sp, "lng")} />
         {view === "map" && <input type="hidden" name="view" value="map" />}
-        <div className="grid gap-3 sm:grid-cols-[2fr_1fr_1fr_auto]">
+        <div className="grid gap-3 sm:grid-cols-[2fr_1fr_auto]">
           <div><label htmlFor="q" className="sr-only">Search words or estate</label><Input id="q" name="q" defaultValue={val(sp, "q")} placeholder="Estate or words, for example Milimani" /></div>
-          <div><label htmlFor="county" className="sr-only">County</label>
-            <select id="county" name="county" defaultValue={val(sp, "county")} className={sel}><option value="">All counties</option>{COUNTIES.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}</select></div>
           <div><label htmlFor="max_rent" className="sr-only">Maximum rent</label><Input id="max_rent" name="max_rent" inputMode="numeric" defaultValue={val(sp, "max_rent")} placeholder="Max rent, KES" /></div>
           <Button type="submit">Search</Button>
         </div>
 
-        <details className="rounded-lg border border-border" open={Boolean(val(sp, "type") || val(sp, "min_bedrooms") || val(sp, "amenity"))}>
+        <details className="rounded-lg border border-border" open={Boolean(val(sp, "county") || val(sp, "type") || val(sp, "min_bedrooms") || val(sp, "amenity") || val(sp, "verified_only"))}>
           <summary className="flex min-h-11 cursor-pointer items-center gap-2 px-4 font-medium"><SlidersHorizontal className="size-4" aria-hidden />More filters</summary>
           <div className="grid gap-4 border-t border-border p-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div><label className="mb-1 block text-sm font-medium" htmlFor="sub_county">Sub-county</label><Input id="sub_county" name="sub_county" defaultValue={val(sp, "sub_county")} /></div>
+            <SearchGeo initial={{ county: val(sp, "county"), sub: val(sp, "sub_county"), ward: val(sp, "ward") }} />
+            <div><label className="mb-1 block text-sm font-medium" htmlFor="estate">Estate</label><Input id="estate" name="estate" defaultValue={val(sp, "estate")} /></div>
+            <label className="flex min-h-11 items-center gap-3 self-end rounded-md border border-border px-3"><input type="checkbox" name="verified_only" defaultChecked={val(sp, "verified_only") === "on"} className="size-4 accent-[var(--primary)]" />Verified landlords only</label>
             <div><label className="mb-1 block text-sm font-medium" htmlFor="min_rent">Minimum rent</label><Input id="min_rent" name="min_rent" inputMode="numeric" defaultValue={val(sp, "min_rent")} /></div>
             <div><label className="mb-1 block text-sm font-medium" htmlFor="max_deposit">Maximum deposit</label><Input id="max_deposit" name="max_deposit" inputMode="numeric" defaultValue={val(sp, "max_deposit")} /></div>
             <div><label className="mb-1 block text-sm font-medium" htmlFor="min_bedrooms">Bedrooms from</label><Input id="min_bedrooms" name="min_bedrooms" inputMode="numeric" defaultValue={val(sp, "min_bedrooms")} /></div>

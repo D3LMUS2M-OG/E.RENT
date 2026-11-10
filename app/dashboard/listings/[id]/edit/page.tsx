@@ -52,7 +52,7 @@ export default async function EditListing({ params, searchParams }: { params: Pr
         types={types.data ?? []} amenities={amenities.data ?? []} submitLabel="Save changes"
         values={{
           title: l.title, description: l.description, property_type_id: l.property_type_id, rent: l.rent, deposit: l.deposit,
-          county_id: l.property.county_id, sub_county: l.property.sub_county ?? "", estate: l.property.estate ?? "",
+          county_id: l.property.county_id, sub_county_id: l.property.sub_county_id, ward_id: l.property.ward_id, estate: l.property.estate ?? "",
           bedrooms: l.bedrooms, bathrooms: l.bathrooms, size_sqm: l.size_sqm, floor: l.floor, available_from: l.available_from,
           units_total: l.units_total, lat: l.property.lat, lng: l.property.lng, watermark: l.watermark,
           amenities: (l.amenities as { amenity_id: number }[]).map((a) => a.amenity_id), owner_id: l.owner_id,

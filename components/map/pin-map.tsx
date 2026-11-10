@@ -11,10 +11,12 @@ type Props = {
   lng?: number | null;
   /** Editable maps let the landlord drag the pin to the true spot (OSM coverage of estates varies). */
   onChange?: (lat: number, lng: number) => void;
+  /** Moves the view (not the pin) when a sub-county or ward is chosen. Change `n` to trigger. */
+  flyTo?: { lat: number; lng: number; zoom: number; n: number } | null;
   className?: string;
 };
 
-export function PinMap({ lat, lng, onChange, className }: Props) {
+export function PinMap({ lat, lng, onChange, flyTo, className }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const markerRef = useRef<import("maplibre-gl").Marker | null>(null);
   const mapRef = useRef<import("maplibre-gl").Map | null>(null);
@@ -56,6 +58,10 @@ export function PinMap({ lat, lng, onChange, className }: Props) {
     const map = mapRef.current as (import("maplibre-gl").Map & { _place?: (a: number, b: number) => void }) | null;
     if (map && typeof lat === "number" && typeof lng === "number") { map._place?.(lat, lng); map.easeTo({ center: [lng, lat], zoom: Math.max(map.getZoom(), 15) }); }
   }, [lat, lng]);
+
+  useEffect(() => {
+    if (flyTo) mapRef.current?.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: flyTo.zoom, duration: 800 });
+  }, [flyTo]);
 
   function locate() {
     navigator.geolocation.getCurrentPosition(

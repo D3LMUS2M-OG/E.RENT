@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { COUNTIES, countyBySlug } from "@/lib/counties";
 import { ListingCard, toCard } from "@/components/listings/listing-card";
 import { searchListings } from "@/lib/search";
+import { listSubCounties } from "@/lib/geo";
+import Link from "next/link";
 
 export const revalidate = 3600; // ISR: regenerated from live data (listings query lands in Step 7)
 
@@ -24,7 +26,7 @@ export default async function CountyPage({ params }: { params: Promise<{ county:
   const county = countyBySlug((await params).county);
   if (!county) notFound();
 
-  const rows = await searchListings({ county: county.slug, limit: 48 });
+  const [rows, subs] = await Promise.all([searchListings({ county: county.slug, limit: 48 }), listSubCounties(county.code)]);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -40,6 +42,14 @@ export default async function CountyPage({ params }: { params: Promise<{ county:
         <p className="mt-3 max-w-xl text-muted">No listings in {county.name} yet. Listings appear here as soon as landlords publish them.</p>
       ) : (
         <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{rows.map((r) => <li key={r.id}><ListingCard listing={toCard(r)} /></li>)}</ul>
+      )}
+      {subs.length > 0 && (
+        <section aria-labelledby="subs" className="mt-12 border-t border-border pt-8">
+          <h2 id="subs" className="text-xl font-semibold">Sub-counties in {county.name}</h2>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {subs.map((s) => <li key={s.id}><Link className="inline-flex min-h-11 items-center rounded-md border border-border px-3 hover:bg-surface" href={`/houses-for-rent/${county.slug}/${s.slug}`}>{s.name}</Link></li>)}
+          </ul>
+        </section>
       )}
     </div>
   );

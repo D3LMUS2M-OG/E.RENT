@@ -48,7 +48,7 @@ export function ListingCard({ listing }: { listing: ListingCardData }) {
 }
 
 export const toCard = (r: import("@/lib/types").SearchRow): ListingCardData => ({
-  slug: r.slug, title: r.title, rent: r.rent, area: r.estate ?? r.sub_county ?? "", county: r.county, bedrooms: r.bedrooms,
+  slug: r.slug, title: r.title, rent: r.rent, area: r.estate ?? r.ward ?? r.sub_county ?? "", verified: r.landlord_verified, county: r.county, bedrooms: r.bedrooms,
   coverPath: r.cover_path, managedByCaretaker: r.managed_by_caretaker, unitsAvailable: r.units_available,
   distanceKm: r.distance_m == null ? null : r.distance_m / 1000,
 });

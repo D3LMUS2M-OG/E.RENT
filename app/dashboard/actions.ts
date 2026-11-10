@@ -36,9 +36,9 @@ export async function createListing(_: ActionState, formData: FormData): Promise
 
   const { data: prop, error: pe } = await supabase.from("properties").insert({
     owner_id: owner, created_by: auth.user.id, county_id: d.county_id,
-    sub_county: d.sub_county || null, estate: d.estate || null, location: point(d.lng, d.lat),
+    sub_county_id: d.sub_county_id ?? null, ward_id: d.ward_id ?? null, estate: d.estate || null, location: point(d.lng, d.lat),
   }).select("id").single();
-  if (pe) return { error: "You are not allowed to add a house for this landlord" };
+  if (pe) return { error: pe.message.includes("sub-county") ? pe.message : "You are not allowed to add a house for this landlord" };
 
   const { data: listing, error: le } = await supabase.from("listings").insert({
     property_id: prop.id, owner_id: owner, created_by: auth.user.id, property_type_id: d.property_type_id,
@@ -66,7 +66,7 @@ export async function updateListing(id: string, _: ActionState, formData: FormDa
   if (!cur) return { error: "Listing not found" };
 
   const { error: pe } = await supabase.from("properties").update({
-    county_id: d.county_id, sub_county: d.sub_county || null, estate: d.estate || null, location: point(d.lng, d.lat),
+    county_id: d.county_id, sub_county_id: d.sub_county_id ?? null, ward_id: d.ward_id ?? null, estate: d.estate || null, location: point(d.lng, d.lat),
   }).eq("id", cur.property_id);
   if (pe) return { error: pe.message };
 
