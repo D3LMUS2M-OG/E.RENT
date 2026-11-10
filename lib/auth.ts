@@ -9,7 +9,8 @@ export type Access = {
   isStaff: boolean;
   isSuperAdmin: boolean;
   isLandlord: boolean;
-  landlordIds: string[]; // landlords this user may post for (self plus active delegations)
+  orgIds: string[];
+  landlordIds: string[]; // landlords this user may post for (self, personal delegations, and their organisations' delegations)
   fullName: string;
 };
 
@@ -20,12 +21,15 @@ export async function getAccess(next = "/account"): Promise<Access> {
   const user = data.user;
   if (!user) redirect(`/sign-in?next=${encodeURIComponent(next)}`);
 
-  const [roles, staff, deleg, profile] = await Promise.all([
+  const [roles, staff, deleg, profile, orgs] = await Promise.all([
     supabase.from("user_roles").select("role").eq("user_id", user.id),
     supabase.from("staff_roles").select("role").eq("user_id", user.id),
     supabase.from("delegations").select("landlord_id").eq("delegate_id", user.id).eq("status", "active"),
     supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
+    supabase.from("organization_members").select("organization_id").eq("user_id", user.id),
   ]);
+  const orgIds = (orgs.data ?? []).map((o) => o.organization_id as string);
+  const orgDeleg = orgIds.length ? await supabase.from("delegations").select("landlord_id").in("organization_id", orgIds).eq("status", "active") : { data: [] as { landlord_id: string }[] };
   const roleList = (roles.data ?? []).map((r) => r.role as string);
   const staffList = (staff.data ?? []).map((r) => r.role as string);
   const isLandlord = roleList.includes("landlord");
@@ -37,7 +41,8 @@ export async function getAccess(next = "/account"): Promise<Access> {
     isStaff: staffList.length > 0,
     isSuperAdmin: staffList.includes("super_admin"),
     isLandlord,
-    landlordIds: [...(isLandlord ? [user.id] : []), ...(deleg.data ?? []).map((d) => d.landlord_id as string)],
+    orgIds,
+    landlordIds: [...new Set([...(isLandlord ? [user.id] : []), ...(deleg.data ?? []).map((d) => d.landlord_id as string), ...(orgDeleg.data ?? []).map((d) => d.landlord_id as string)])],
     fullName: profile.data?.full_name ?? "",
   };
 }

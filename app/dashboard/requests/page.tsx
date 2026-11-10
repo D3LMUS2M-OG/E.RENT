@@ -2,18 +2,21 @@ import Link from "next/link";
 import { getAccess } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ActionButton } from "@/components/ui/action-button";
+import { CancelRentalForm } from "@/components/requests/cancel-rental-form";
+import { ContactPanel, type ContactState } from "@/components/requests/contact-panel";
 import { RespondForm } from "@/components/requests/respond-form";
 import { proposeRental, respondRental } from "@/app/requests/actions";
 
 export const metadata = { title: "Requests" };
 
 type Row = { id: string; listing_title: string; listing_slug: string; tenant_name: string; kind: "view" | "apply"; message: string; preferred_date: string | null;
-  occupants: number; status: string; decision_note: string | null; created_at: string; rental_id: string | null; rental_status: string | null; tour_done: boolean; is_owner: boolean };
+  occupants: number; status: string; decision_note: string | null; created_at: string; rental_id: string | null; rental_status: string | null; tour_done: boolean; is_owner: boolean; cancel_reason: string | null; cancelled_by_me: boolean | null };
 
 export default async function IncomingRequests() {
   await getAccess("/dashboard/requests");
   const supabase = await createClient();
-  const { data } = await supabase.rpc("incoming_requests");
+  const [{ data }, { data: cs }] = await Promise.all([supabase.rpc("incoming_requests"), supabase.rpc("contact_states")]);
+  const contacts = new Map(((cs ?? []) as ContactState[]).map((c) => [c.request_id, c]));
   const rows = (data ?? []) as Row[];
   const open = rows.filter((r) => r.status === "pending");
   const rest = rows.filter((r) => r.status !== "pending");
@@ -33,15 +36,19 @@ export default async function IncomingRequests() {
       {r.status === "accepted" && (
         <div className="flex flex-wrap items-center gap-3">
           {r.tour_done && <span className="text-sm text-muted">Tenant marked the viewing done</span>}
-          {!r.rental_status && r.is_owner && (
+          {(!r.rental_status || r.rental_status === "cancelled") && r.is_owner && (
             <ActionButton action={proposeRental.bind(null, r.id)} confirmText="Confirm that this tenant has rented the house? They must accept before it counts.">Confirm rented to this tenant</ActionButton>)}
-          {!r.rental_status && !r.is_owner && <span className="text-sm text-muted">Only the landlord can confirm a rental</span>}
+          {(!r.rental_status || r.rental_status === "cancelled") && !r.is_owner && <span className="text-sm text-muted">Only the landlord can confirm a rental</span>}
           {r.rental_status === "proposed" && <>
             <span className="text-sm font-medium">Waiting for the tenant to accept</span>
             {r.is_owner && <ActionButton action={respondRental.bind(null, r.rental_id!, false)} variant="ghost">Cancel</ActionButton>}</>}
-          {r.rental_status === "confirmed" && <span className="text-sm font-medium">Rental confirmed by both of you</span>}
+          {r.rental_status === "confirmed" && <>
+            <span className="text-sm font-medium">Rental confirmed by both of you</span>
+            {r.is_owner && <CancelRentalForm rentalId={r.rental_id!} />}</>}
+          {r.rental_status === "cancelled" && <span className="text-sm">{r.cancelled_by_me ? "You cancelled" : "The tenant cancelled"} the rental{r.cancel_reason ? `: ${r.cancel_reason}` : "."}</span>}
         </div>
       )}
+      {r.status === "accepted" && contacts.get(r.id) && <ContactPanel c={contacts.get(r.id)!} />}
       {r.decision_note && r.status !== "pending" && <p className="text-sm text-muted">Your note: {r.decision_note}</p>}
     </li>
   );

@@ -2,6 +2,7 @@ import { getAccess } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { InviteForm } from "@/components/team/invite-form";
+import { InviteOrgForm } from "@/components/org/org-forms";
 import { revokeDelegation } from "./actions";
 
 export const metadata = { title: "Caretakers and agents" };
@@ -12,9 +13,10 @@ export default async function TeamPage() {
   const a = await getAccess("/dashboard/team");
   const supabase = await createClient();
   const [mine, serving] = await Promise.all([
-    supabase.from("delegations").select("id, invited_email, kind, status, created_at").eq("landlord_id", a.userId).neq("status", "revoked").order("created_at", { ascending: false }),
+    supabase.rpc("landlord_team"),
     supabase.rpc("my_landlords"),
   ]);
+  const team = (mine.data ?? []) as { id: string; label: string; kind: string; status: string; is_org: boolean }[];
   const landlords = (serving.data ?? []) as { landlord_id: string; display_name: string; kind: string }[];
 
   return (
@@ -27,13 +29,14 @@ export default async function TeamPage() {
       {a.isLandlord && (
         <>
           <section aria-labelledby="inv" className="space-y-4"><h2 id="inv" className="text-xl font-semibold">Invite someone</h2><InviteForm /></section>
+          <section aria-labelledby="orginv" className="space-y-4"><h2 id="orginv" className="text-xl font-semibold">Hand your properties to an organisation</h2><p className="max-w-xl text-sm text-muted">If a property management company looks after your houses, enter the code they gave you. Their team can then post and manage houses for you. You still approve every listing.</p><InviteOrgForm /></section>
           <section aria-labelledby="list" className="space-y-3">
             <h2 id="list" className="text-xl font-semibold">Your team</h2>
-            {!mine.data?.length ? <p className="text-muted">Nobody yet.</p> : (
+            {!team.length ? <p className="text-muted">Nobody yet.</p> : (
               <ul className="divide-y divide-border rounded-lg border border-border">
-                {mine.data.map((d) => (
+                {team.map((d) => (
                   <li key={d.id} className="flex items-center justify-between gap-4 p-4">
-                    <span><span className="font-medium">{d.invited_email}</span><span className="ml-2 text-sm capitalize text-muted">{d.kind} · {STATUS[d.status]}</span></span>
+                    <span><span className="font-medium">{d.label}</span><span className="ml-2 text-sm text-muted">{d.is_org ? "Organisation" : <span className="capitalize">{d.kind}</span>} · {STATUS[d.status]}</span></span>
                     <form action={revokeDelegation.bind(null, d.id)}><Button type="submit" variant="ghost">{d.status === "invited" ? "Cancel" : "Remove access"}</Button></form>
                   </li>))}
               </ul>)}

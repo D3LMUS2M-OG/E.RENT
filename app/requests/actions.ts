@@ -74,3 +74,20 @@ export async function respondRental(rentalId: string, accept: boolean): Promise<
   if (error) return { error: friendly(error.code, error.message) };
   refresh(); revalidatePath("/", "layout"); return { ok: true };
 }
+
+export async function cancelRental(rentalId: string, _: ActionState, formData: FormData): Promise<ActionState> {
+  const reason = String(formData.get("reason") ?? "").trim().slice(0, 500);
+  if (reason.length < 10) return { error: "Give a reason of at least 10 characters. The other person will see it" };
+  const supabase = await createClient();
+  const { error } = await supabase.from("rentals").update({ status: "cancelled", cancel_reason: reason }).eq("id", rentalId);
+  if (error) return { error: friendly(error.code, error.message) };
+  refresh(); revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function setContactShare(requestId: string, action: "ask" | "share" | "approve" | "decline" | "revoke"): Promise<ActionState> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_contact_share", { p_request: requestId, p_action: action });
+  if (error) return { error: error.message };
+  refresh(); return { ok: true };
+}
