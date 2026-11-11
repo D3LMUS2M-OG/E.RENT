@@ -15,10 +15,12 @@ export default async function ChatPage({ params }: { params: Promise<{ id: strin
   ]);
   const o = (ov as Overview[] | null)?.[0];
   if (!o) notFound();
+  const ids = (latest ?? []).map((m) => m.id);
+  const { data: hides } = ids.length ? await supabase.from("message_hides").select("message_id").in("message_id", ids) : { data: [] as { message_id: string }[] };
   const state = (cs as (ContactState & { available: boolean })[] | null)?.[0];
 
   return (
-    <ChatRoom o={o} me={a.userId} initial={[...((latest ?? []) as Msg[])].reverse()}>
+    <ChatRoom o={o} me={a.userId} initial={[...((latest ?? []) as Msg[])].reverse()} hiddenIds={(hides ?? []).map((h) => h.message_id)}>
       {state?.available
         ? <ContactPanel c={state} id={id} source="chat" />
         : <p className="text-sm text-muted">Sharing phone numbers opens once the landlord side has replied. Numbers stay hidden until the other person approves.</p>}

@@ -15,12 +15,12 @@ export default async function ReviewReport({ params, searchParams }: { params: P
   const name = (uid: string) => names?.find((n) => n.id === uid)?.full_name || "Unnamed";
 
   // Reading a conversation is an audited action: the link sets ?view=1 and each open writes one log entry.
-  type Ev = { id: string; sender_id: string; kind: string; body: string | null; attachment_name: string | null; evidence_path: string | null; sent_at: string };
+  type Ev = { id: string; sender_id: string; kind: string; body: string | null; attachment_name: string | null; evidence_path: string | null; sent_at: string; was_deleted: boolean };
   let evidence: Ev[] = []; const urls: Record<string, string> = {};
   if (view === "1") {
     const { data: { user } } = await supabase.auth.getUser();
     await supabase.from("admin_audit_log").insert({ actor_id: user!.id, action: "report.conversation_opened", target_type: "report", target_id: id, metadata: {} });
-    const { data } = await supabase.from("report_evidence").select("id, sender_id, kind, body, attachment_name, evidence_path, sent_at").eq("report_id", id).order("sent_at");
+    const { data } = await supabase.from("report_evidence").select("id, sender_id, kind, body, attachment_name, evidence_path, sent_at, was_deleted").eq("report_id", id).order("sent_at");
     evidence = (data ?? []) as Ev[];
     const paths = evidence.map((e) => e.evidence_path).filter(Boolean) as string[];
     if (paths.length) {
@@ -47,7 +47,7 @@ export default async function ReviewReport({ params, searchParams }: { params: P
           <ul className="space-y-2">
             {evidence.map((e) => (
               <li key={e.id} className={`max-w-[85%] rounded-lg border border-border p-3 ${e.sender_id === r.reported_user_id ? "ml-auto bg-surface" : ""}`}>
-                <p className="text-xs text-muted">{name(e.sender_id)}{e.sender_id === r.reported_user_id ? " (reported)" : " (reporter)"} · {new Date(e.sent_at).toLocaleString("en-KE")}</p>
+                <p className="text-xs text-muted">{name(e.sender_id)}{e.sender_id === r.reported_user_id ? " (reported)" : " (reporter)"} · {new Date(e.sent_at).toLocaleString("en-KE")}{e.was_deleted && " · deleted by the sender"}</p>
                 {e.kind === "text" ? <p className="whitespace-pre-wrap">{e.body}</p>
                   : e.evidence_path && urls[e.evidence_path]
                     ? (e.kind === "image"

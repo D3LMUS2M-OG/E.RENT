@@ -20,6 +20,38 @@ export async function deleteConversation(id: string): Promise<ActionState> {
   revalidatePath("/chats"); redirect("/chats");
 }
 
+export async function hideMessage(id: string): Promise<ActionState> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("hide_message", { p_id: id });
+  if (error) return { error: error.message };
+  return { ok: true };
+}
+
+/** Sender only, within 48 hours. The text and file leave the readable message; a moderator can still see them if the chat is reported. */
+export async function deleteMessageForEveryone(id: string): Promise<ActionState> {
+  const supabase = await createClient();
+  const { data: path, error } = await supabase.rpc("delete_message_for_everyone", { p_id: id });
+  if (error) return { error: error.message };
+  if (path) {
+    // Move the file out of the chat bucket so the other person can no longer open it
+    const admin = createAdminClient();
+    if (admin) {
+      try {
+        const { data: blob } = await admin.storage.from("chat-attachments").download(path as string);
+        if (blob) {
+          const dest = `deleted/${id}-${(path as string).split("/").pop()}`;
+          const up = await admin.storage.from("report-evidence").upload(dest, blob, { contentType: blob.type, upsert: true });
+          if (!up.error) {
+            await admin.from("deleted_message_originals").update({ archived_path: dest }).eq("message_id", id);
+            await admin.storage.from("chat-attachments").remove([path as string]);
+          }
+        }
+      } catch { /* the file stays where it was and is removed by the 30-day purge */ }
+    }
+  }
+  return { ok: true };
+}
+
 export async function blockUser(userId: string): Promise<ActionState> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -56,10 +88,16 @@ export async function reportConversation(convId: string, reason: string, details
     const { data: rows } = await admin.from("report_evidence").select("id, evidence_path").eq("report_id", rid).not("evidence_path", "is", null);
     for (const r of rows ?? []) {
       try {
-        const { data: blob } = await admin.storage.from("chat-attachments").download(r.evidence_path!);
-        if (!blob) throw new Error("missing");
         const dest = `${rid}/${r.id}-${r.evidence_path!.split("/").pop()}`;
-        await admin.storage.from("report-evidence").upload(dest, blob, { contentType: blob.type, upsert: true });
+        if (r.evidence_path!.startsWith("deleted/")) {
+          // already in the evidence bucket (a message deleted for everyone): give the report its own copy
+          const cp = await admin.storage.from("report-evidence").copy(r.evidence_path!, dest);
+          if (cp.error) throw cp.error;
+        } else {
+          const { data: blob } = await admin.storage.from("chat-attachments").download(r.evidence_path!);
+          if (!blob) throw new Error("missing");
+          await admin.storage.from("report-evidence").upload(dest, blob, { contentType: blob.type, upsert: true });
+        }
         await admin.from("report_evidence").update({ evidence_path: dest }).eq("id", r.id);
       } catch { await admin.from("report_evidence").update({ evidence_path: null }).eq("id", r.id); }
     }

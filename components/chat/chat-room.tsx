@@ -2,18 +2,19 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { FileText, Mic, Paperclip, Send, ShieldAlert, Square } from "lucide-react";
+import { FileText, Mic, MoreHorizontal, Paperclip, Send, ShieldAlert, Square } from "lucide-react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/action-button";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
+import { PopoverMenu, useDismiss } from "@/components/ui/popover-menu";
 import { createClient } from "@/lib/supabase/client";
-import { blockUser, deleteConversation, reportConversation, unblockUser } from "@/app/chats/actions";
+import { blockUser, deleteConversation, deleteMessageForEveryone, hideMessage, reportConversation, unblockUser } from "@/app/chats/actions";
 
 export type Msg = {
   id: string; sender_id: string; kind: "text" | "image" | "voice" | "document"; body: string | null; attachment_path: string | null;
   attachment_name: string | null; attachment_mime: string | null; attachment_bytes: number | null; duration_s: number | null;
-  created_at: string; read_at: string | null;
+  created_at: string; read_at: string | null; deleted_for_everyone_at: string | null;
 };
 export type Overview = {
   id: string; listing_id: string; listing_title: string; listing_slug: string; listing_status: string; my_role: "tenant" | "landlord";
@@ -55,9 +56,64 @@ function Attachment({ m }: { m: Msg }) {
   return <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 underline underline-offset-4"><FileText className="size-4" aria-hidden />{m.attachment_name ?? "Document"}</a>;
 }
 
-export function ChatRoom({ o, me, initial, children }: { o: Overview; me: string; initial: Msg[]; children?: React.ReactNode }) {
+const DELETE_ALL_WINDOW_MS = 48 * 3600 * 1000;
+
+function MessageRow({ m, mine, status, onHide, onDeleted }: { m: Msg; mine: boolean; status: string; onHide: (id: string) => void; onDeleted: (id: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+  const close = useCallback(() => setOpen(false), []);
+  useDismiss(ref, open, close);
+  const deleted = Boolean(m.deleted_for_everyone_at);
+  const canDeleteAll = mine && !deleted && Date.now() - new Date(m.created_at).getTime() < DELETE_ALL_WINDOW_MS;
+
+  async function run(fn: () => Promise<{ error?: string }>, done: () => void) {
+    setBusy(true); setErr("");
+    const r = await fn();
+    setBusy(false);
+    if (r.error) { setErr(r.error); return; }
+    setOpen(false); done();
+  }
+
+  const options = (
+    <button type="button" aria-label="Message options" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen((o) => !o)}
+      className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface hover:text-foreground">
+      <MoreHorizontal className="size-4" aria-hidden />
+    </button>
+  );
+
+  return (
+    <div ref={ref} className={mine ? "flex flex-col items-end" : "flex flex-col items-start"}>
+      <div className={`flex max-w-full items-end gap-1 ${mine ? "flex-row-reverse" : ""}`}>
+        <div className={`max-w-[85%] space-y-1 rounded-lg px-3 py-2 ${deleted ? "border border-dashed border-border-strong text-muted" : mine ? "bg-primary text-primary-foreground" : "border border-border bg-background"}`}>
+          {deleted ? <p className="italic">{mine ? "You deleted this message" : "This message was deleted"}</p>
+            : m.kind === "text" ? <p className="whitespace-pre-wrap break-words">{m.body}</p> : <Attachment m={m} />}
+          <p className={`text-xs ${mine && !deleted ? "opacity-70" : "text-muted"}`}>
+            {new Date(m.created_at).toLocaleTimeString("en-KE", { hour: "2-digit", minute: "2-digit" })}{status}
+          </p>
+        </div>
+        {options}
+      </div>
+      {open && (
+        <div role="group" aria-label="Message options" className="mt-1 flex flex-wrap gap-2 rounded-lg border border-border bg-background p-2">
+          <Button type="button" variant="secondary" loading={busy} onClick={() => run(() => hideMessage(m.id), () => onHide(m.id))}>Delete for me</Button>
+          {canDeleteAll && (
+            <Button type="button" variant="secondary" loading={busy}
+              onClick={() => { if (confirm("Delete this message for everyone? The other person will see that it was deleted.")) run(() => deleteMessageForEveryone(m.id), () => onDeleted(m.id)); }}>
+              Delete for everyone
+            </Button>)}
+          <Button type="button" variant="ghost" onClick={close}>Cancel</Button>
+        </div>)}
+      {err && <p role="alert" className="mt-1 text-sm font-medium">Error: {err}</p>}
+    </div>
+  );
+}
+
+export function ChatRoom({ o, me, initial, hiddenIds = [], children }: { o: Overview; me: string; initial: Msg[]; hiddenIds?: string[]; children?: React.ReactNode }) {
   const supabase = useMemo(() => createClient(), []);
   const [messages, setMessages] = useState<Msg[]>(initial);
+  const [hidden, setHidden] = useState<Set<string>>(() => new Set(hiddenIds));
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [note, setNote] = useState("");
@@ -172,7 +228,10 @@ export function ChatRoom({ o, me, initial, children }: { o: Overview; me: string
     } catch { setError("Allow microphone access to record a voice note"); }
   }
 
-  const lastMineIdx = messages.map((m) => m.sender_id === me).lastIndexOf(true);
+  const visible = messages.filter((m) => !hidden.has(m.id));
+  const lastMineId = [...visible].reverse().find((m) => m.sender_id === me && !m.deleted_for_everyone_at)?.id;
+  const markDeleted = (id: string) => setMessages((prev) => prev.map((x) => x.id === id
+    ? { ...x, deleted_for_everyone_at: new Date().toISOString(), body: null, attachment_path: null, attachment_name: null, attachment_mime: null, attachment_bytes: null, duration_s: null } : x));
 
   return (
     <div className="flex h-[calc(100dvh-4rem)] flex-col">
@@ -183,9 +242,8 @@ export function ChatRoom({ o, me, initial, children }: { o: Overview; me: string
             <span aria-live="polite">{otherOnline ? "Online now" : "Offline"}</span> · <Link className="underline underline-offset-4" href={`/listing/${o.listing_slug}`}>{o.listing_title}</Link>
           </p>
         </div>
-        <details className="relative">
-          <summary className="inline-flex min-h-11 cursor-pointer list-none items-center rounded-md border border-border-strong px-3 text-sm font-medium">Menu</summary>
-          <div className="absolute right-0 z-10 mt-2 w-[min(22rem,90vw)] space-y-4 rounded-lg border border-border bg-background p-4">
+        <PopoverMenu label="Menu">
+          <>
             {children}
             <div className="space-y-2 border-t border-border pt-3">
               {o.i_blocked
@@ -204,27 +262,20 @@ export function ChatRoom({ o, me, initial, children }: { o: Overview; me: string
               <Button type="submit" variant="secondary">Send report</Button>
               {reported && <p role="status" className="text-sm font-medium">{reported}</p>}
             </form>
-          </div>
-        </details>
+          </>
+        </PopoverMenu>
       </header>
 
       <p className="flex items-start gap-2 border-b border-border bg-surface px-4 py-2 text-sm"><ShieldAlert className="mt-0.5 size-4 shrink-0" aria-hidden />
         Never pay a deposit or rent before you have viewed the house in person. E.Rent does not take payments, so nobody here can ask you to pay through the app.</p>
 
       <div role="log" aria-live="polite" aria-label="Messages" className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
-        {messages.length === 0 && <p className="text-center text-sm text-muted">Say hello and ask what you want to know about the house.</p>}
-        {messages.map((m, i) => {
-          const mine = m.sender_id === me;
-          return (
-            <div key={m.id} className={mine ? "flex justify-end" : "flex justify-start"}>
-              <div className={`max-w-[85%] space-y-1 rounded-lg px-3 py-2 ${mine ? "bg-primary text-primary-foreground" : "border border-border bg-background"}`}>
-                {m.kind === "text" ? <p className="whitespace-pre-wrap break-words">{m.body}</p> : <Attachment m={m} />}
-                <p className={`text-xs ${mine ? "opacity-70" : "text-muted"}`}>
-                  {new Date(m.created_at).toLocaleTimeString("en-KE", { hour: "2-digit", minute: "2-digit" })}{mine && i === lastMineIdx && (m.read_at ? " · Read" : " · Sent")}
-                </p>
-              </div>
-            </div>);
-        })}
+        {visible.length === 0 && <p className="text-center text-sm text-muted">Say hello and ask what you want to know about the house.</p>}
+        {visible.map((m) => (
+          <MessageRow key={m.id} m={m} mine={m.sender_id === me}
+            status={m.sender_id === me && m.id === lastMineId ? (m.read_at ? " · Read" : " · Sent") : ""}
+            onHide={(id) => setHidden((h) => new Set(h).add(id))} onDeleted={markDeleted} />
+        ))}
         {typing && <p className="text-sm text-muted" aria-live="polite">{o.other_name?.split(" ")[0] || "They"} is typing</p>}
         <div ref={bottom} />
       </div>
