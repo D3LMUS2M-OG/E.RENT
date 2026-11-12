@@ -14,7 +14,7 @@ export function TakedownForm({ listingId, takenDown }: { listingId: string; take
       {!takenDown && <Input name="reason" placeholder="Reason shown to the owner" aria-label="Reason" className="sm:w-72" />}
       <Button type="submit" variant={takenDown ? "secondary" : "primary"} loading={pending}>{takenDown ? "Restore as paused" : "Take down"}</Button>
       {state.error && <p role="alert" className="text-sm font-medium">Error: {state.error}</p>}
-      {state.message && <p role="status" className="text-sm font-medium">{state.message}</p>}
+      {state.message && <p role="status" className="msg-ok text-sm font-medium">{state.message}</p>}
     </form>
   );
 }

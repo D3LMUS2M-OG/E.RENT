@@ -72,7 +72,7 @@ export function PinMap({ lat, lng, onChange, flyTo, className }: Props) {
 
   return (
     <div className="space-y-2">
-      <div ref={el} className={className ?? "h-72 w-full overflow-hidden rounded-lg border border-border"} role="application" aria-label={editable ? "Map. Tap or drag the pin to the house" : "Map showing the house location"} />
+      <div ref={el} className={className ?? "h-72 w-full overflow-hidden rounded-[20px] border border-border bg-surface"} role="application" aria-label={editable ? "Map. Tap or drag the pin to the house" : "Map showing the house location"} />
       {editable && (
         <Button type="button" variant="secondary" onClick={locate}><LocateFixed className="size-4" aria-hidden />Use my current location</Button>
       )}

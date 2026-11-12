@@ -6,9 +6,9 @@ import { Field, Input } from "@/components/ui/input";
 import { createOrganization, inviteMember, inviteOrganization } from "@/app/org/actions";
 import type { ActionState } from "@/app/dashboard/actions";
 
-const sel = "min-h-11 w-full rounded-md border border-border-strong bg-background px-3 text-base";
+const sel = "min-h-11 w-full rounded-[14px] border border-border-strong bg-surface px-3 text-base";
 function Status({ s }: { s: ActionState }) {
-  return <>{s.error && <p role="alert" className="text-sm font-medium">Error: {s.error}</p>}{s.message && <p role="status" className="text-sm font-medium">{s.message}</p>}</>;
+  return <>{s.error && <p role="alert" className="text-sm font-medium">Error: {s.error}</p>}{s.message && <p role="status" className="msg-ok text-sm font-medium">{s.message}</p>}</>;
 }
 
 export function CreateOrgForm() {

@@ -38,7 +38,7 @@ export default async function OrgPage() {
       <header className="space-y-2">
         <h1 className="text-3xl font-semibold tracking-tight">{mine.org.name}</h1>
         <p className="text-muted">Your role: <span className="font-medium capitalize text-foreground">{mine.member_role}</span></p>
-        <p className="rounded-lg border border-border p-4 text-sm">Organisation code: <strong className="select-all">{mine.org.slug}</strong><br />
+        <p className="rounded-[20px] border border-border bg-surface p-4 text-sm">Organisation code: <strong className="select-all">{mine.org.slug}</strong><br />
           <span className="text-muted">A landlord enters this under Dashboard, Caretakers, to hand their properties to you.</span></p>
         {ls.some((l) => l.status === "active") && <Button asChild><Link href="/dashboard/listings/new">Add a house for a landlord</Link></Button>}
       </header>
@@ -46,7 +46,7 @@ export default async function OrgPage() {
       <section aria-labelledby="landlords" className="space-y-3">
         <h2 id="landlords" className="text-xl font-semibold">Landlords</h2>
         {ls.length === 0 ? <p className="text-muted">No landlord has handed you properties yet.</p> : (
-          <ul className="divide-y divide-border rounded-lg border border-border">
+          <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
             {ls.map((l) => (
               <li key={l.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <span><span className="font-medium">{l.landlord_name || "A landlord"}</span><span className="ml-2 text-sm text-muted">{l.status === "invited" ? "Waiting for you" : "Active"}</span></span>
@@ -62,7 +62,7 @@ export default async function OrgPage() {
 
       <section aria-labelledby="team" className="space-y-3">
         <h2 id="team" className="text-xl font-semibold">Team</h2>
-        <ul className="divide-y divide-border rounded-lg border border-border">
+        <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
           {((members.data ?? []) as Member[]).map((m) => (
             <li key={m.user_id} className="flex items-center justify-between gap-3 p-4">
               <span><span className="font-medium">{m.full_name || "Unnamed"}</span><span className="ml-2 text-sm capitalize text-muted">{m.member_role}</span></span>
@@ -73,7 +73,7 @@ export default async function OrgPage() {
         {isManager && (
           <>
             {(invites.data ?? []).length > 0 && (
-              <ul className="divide-y divide-border rounded-lg border border-border">
+              <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
                 {(invites.data ?? []).map((i) => (
                   <li key={i.id} className="flex items-center justify-between gap-3 p-4">
                     <span>{i.invited_email}<span className="ml-2 text-sm capitalize text-muted">{i.member_role} · invited</span></span>

@@ -54,7 +54,7 @@ export default async function ReviewVerification({ params, searchParams }: { par
                 {urls[d.id] && (d.mime === "application/pdf"
                   ? <a className="underline underline-offset-4" href={urls[d.id]} target="_blank" rel="noopener noreferrer">Open PDF</a>
                   // eslint-disable-next-line @next/next/no-img-element
-                  : <img src={urls[d.id]} alt={LABEL[d.kind] ?? d.kind} className="max-h-[32rem] rounded-lg border border-border" />)}
+                  : <img src={urls[d.id]} alt={LABEL[d.kind] ?? d.kind} className="max-h-[32rem] rounded-[20px] border border-border bg-surface" />)}
               </li>))}
           </ul>
         )}

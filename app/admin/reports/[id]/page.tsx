@@ -46,7 +46,7 @@ export default async function ReviewReport({ params, searchParams }: { params: P
         ) : evidence.length === 0 ? <p className="text-muted">No messages were saved with this report.</p> : (
           <ul className="space-y-2">
             {evidence.map((e) => (
-              <li key={e.id} className={`max-w-[85%] rounded-lg border border-border p-3 ${e.sender_id === r.reported_user_id ? "ml-auto bg-surface" : ""}`}>
+              <li key={e.id} className={`max-w-[85%] rounded-[20px] border border-border bg-surface p-3 ${e.sender_id === r.reported_user_id ? "ml-auto bg-surface" : ""}`}>
                 <p className="text-xs text-muted">{name(e.sender_id)}{e.sender_id === r.reported_user_id ? " (reported)" : " (reporter)"} · {new Date(e.sent_at).toLocaleString("en-KE")}{e.was_deleted && " · deleted by the sender"}</p>
                 {e.kind === "text" ? <p className="whitespace-pre-wrap">{e.body}</p>
                   : e.evidence_path && urls[e.evidence_path]

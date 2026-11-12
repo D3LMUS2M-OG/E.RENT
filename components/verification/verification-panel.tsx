@@ -43,8 +43,8 @@ export function VerificationPanel({ status, ownership, docs, rejectReason }: { s
 
   return (
     <div className="space-y-8">
-      {status === "rejected" && <p role="alert" className="rounded-lg border-2 border-border-strong p-4 text-sm font-medium">Not approved: {rejectReason}. Fix the documents below and submit again.</p>}
-      {status === "pending" && <p role="status" className="rounded-lg border border-border p-4 text-sm font-medium">Submitted and waiting for a verifier. Documents can no longer be changed.</p>}
+      {status === "rejected" && <p role="alert" className="rounded-[20px] border-2 border-border-strong p-4 text-sm font-medium">Not approved: {rejectReason}. Fix the documents below and submit again.</p>}
+      {status === "pending" && <p role="status" className="rounded-[20px] border border-border bg-surface p-4 text-sm font-medium">Submitted and waiting for a verifier. Documents can no longer be changed.</p>}
 
       <fieldset className="space-y-2" disabled={locked}>
         <legend className="text-sm font-medium">What kind of proof of ownership are you sending?</legend>
@@ -56,7 +56,7 @@ export function VerificationPanel({ status, ownership, docs, rejectReason }: { s
         </div>
       </fieldset>
 
-      <ul className="divide-y divide-border rounded-lg border border-border">
+      <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
         {SLOTS.map((s) => {
           const d = byKind.get(s.kind);
           return (

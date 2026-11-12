@@ -21,7 +21,7 @@ export default async function MyListings() {
         <Button asChild><Link href="/dashboard/listings/new">Add a house</Link></Button>
       </div>
       {!data?.length ? <p className="text-muted">No listings yet.</p> : (
-        <ul className="divide-y divide-border rounded-lg border border-border">
+        <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
           {data.map((l) => {
             const daysLeft = l.expires_at ? Math.ceil((new Date(l.expires_at).getTime() - Date.now()) / 864e5) : null;
             return (

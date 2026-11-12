@@ -17,7 +17,7 @@ export type ListingFormValues = {
 type Option = { id: number; name: string };
 type Amenity = Option & { category: string };
 
-const select = "min-h-11 w-full rounded-md border border-border-strong bg-background px-3 text-base";
+const select = "min-h-11 w-full rounded-[14px] border border-border-strong bg-surface px-3 text-base";
 const today = () => new Date().toISOString().slice(0, 10);
 
 export function ListingForm({ action, values = {}, types, amenities, submitLabel, owners }: {
@@ -64,7 +64,7 @@ export function ListingForm({ action, values = {}, types, amenities, submitLabel
         </Field>
         <Field label="Description" htmlFor="description" error={fe.description}>
           <textarea id="description" name="description" rows={5} defaultValue={values.description} aria-invalid={!!fe.description}
-            className="w-full rounded-md border border-border-strong bg-background p-3 text-base aria-[invalid=true]:border-2" />
+            className="w-full rounded-[14px] border border-border-strong bg-surface p-3 text-base aria-[invalid=true]:border-2" />
         </Field>
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Property type" htmlFor="property_type_id" error={fe.property_type_id}>

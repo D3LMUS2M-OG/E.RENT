@@ -16,9 +16,10 @@ export function useDismiss(ref: RefObject<HTMLElement | null>, open: boolean, on
   }, [ref, open, onClose]);
 }
 
-/** A button that opens a panel. Replaces <details>, which stays open until you press its button again. */
-export function PopoverMenu({ label, children, className, panelClassName }: {
-  label: string;
+/** A button that opens a panel. The panel grows out of the button's corner (180 ms ease-out). */
+export function PopoverMenu({ label, ariaLabel, children, className, panelClassName }: {
+  label: React.ReactNode;
+  ariaLabel?: string;
   children: React.ReactNode | ((close: () => void) => React.ReactNode);
   className?: string;
   panelClassName?: string;
@@ -29,7 +30,6 @@ export function PopoverMenu({ label, children, className, panelClassName }: {
   const close = useCallback(() => setOpen(false), []);
   useDismiss(root, open, close);
 
-  // Escape returns focus to the button, like any menu
   useEffect(() => {
     if (!open) return;
     const key = (e: KeyboardEvent) => { if (e.key === "Escape") button.current?.focus(); };
@@ -39,12 +39,12 @@ export function PopoverMenu({ label, children, className, panelClassName }: {
 
   return (
     <div ref={root} className="relative">
-      <button ref={button} type="button" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen((o) => !o)}
-        className={cn("inline-flex min-h-11 items-center rounded-md border border-border-strong px-3 text-sm font-medium transition-colors hover:bg-surface", className)}>
+      <button ref={button} type="button" aria-haspopup="true" aria-expanded={open} aria-label={ariaLabel} onClick={() => setOpen((o) => !o)}
+        className={cn("inline-flex min-h-11 items-center rounded-full border border-border-strong px-4 text-sm font-semibold transition-colors hover:bg-surface-2", className)}>
         {label}
       </button>
       {open && (
-        <div className={cn("absolute right-0 z-10 mt-2 max-h-[70dvh] w-[min(22rem,90vw)] space-y-4 overflow-y-auto rounded-lg border border-border bg-background p-4", panelClassName)}>
+        <div className={cn("motion-pop absolute right-0 z-50 mt-2 max-h-[70dvh] w-[min(22rem,90vw)] space-y-4 overflow-y-auto rounded-[20px] border border-border bg-surface p-4 shadow-[0_24px_60px_rgba(0,0,0,.45)]", panelClassName)}>
           {typeof children === "function" ? children(close) : children}
         </div>
       )}

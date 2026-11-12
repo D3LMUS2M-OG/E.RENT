@@ -17,7 +17,7 @@ export default async function ChatsPage() {
       {rows.length === 0 ? (
         <p className="mt-4 max-w-md text-muted">No conversations yet. Open a house and choose Message the landlord. Chats are deleted after 30 days.</p>
       ) : (
-        <ul className="mt-6 divide-y divide-border rounded-lg border border-border">
+        <ul className="mt-6 divide-y divide-border rounded-[20px] border border-border bg-surface">
           {rows.map((c) => (
             <li key={c.id}>
               <Link href={`/chats/${c.id}`} className="flex items-start justify-between gap-3 p-4 hover:bg-surface">

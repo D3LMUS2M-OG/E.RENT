@@ -15,7 +15,7 @@ import { createPublicClient } from "@/lib/supabase/public";
 export const metadata: Metadata = { title: "Search houses to rent" };
 
 type SP = Record<string, string | string[] | undefined>;
-const sel = "min-h-11 w-full rounded-md border border-border-strong bg-background px-3 text-base";
+const sel = "min-h-11 w-full rounded-[14px] border border-border-strong bg-surface px-3 text-base";
 const val = (p: SP, k: string) => { const v = p[k]; return (Array.isArray(v) ? v[0] : v) ?? ""; };
 const list = (p: SP, k: string) => { const v = p[k]; return v === undefined ? [] : Array.isArray(v) ? v : v.split(","); };
 
@@ -54,7 +54,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           <Button type="submit">Search</Button>
         </div>
 
-        <details className="rounded-lg border border-border" open={Boolean(val(sp, "county") || val(sp, "type") || val(sp, "min_bedrooms") || val(sp, "amenity") || val(sp, "verified_only"))}>
+        <details className="rounded-[20px] border border-border bg-surface" open={Boolean(val(sp, "county") || val(sp, "type") || val(sp, "min_bedrooms") || val(sp, "amenity") || val(sp, "verified_only"))}>
           <summary className="flex min-h-11 cursor-pointer items-center gap-2 px-4 font-medium"><SlidersHorizontal className="size-4" aria-hidden />More filters</summary>
           <div className="grid gap-4 border-t border-border p-4 sm:grid-cols-2 lg:grid-cols-4">
             <SearchGeo initial={{ county: val(sp, "county"), sub: val(sp, "sub_county"), ward: val(sp, "ward") }} />

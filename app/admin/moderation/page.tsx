@@ -31,7 +31,7 @@ export default async function Moderation() {
         {!flags.data?.length && <p className="text-muted">Nothing flagged.</p>}
         <ul className="space-y-3">
           {flags.data?.map((f) => { const l = f.listing as unknown as L; return (
-            <li key={f.id} className="space-y-3 rounded-lg border border-border p-4">
+            <li key={f.id} className="space-y-3 rounded-[20px] border border-border bg-surface p-4">
               <p className="font-medium">{KIND[f.kind] ?? f.kind}</p>
               {f.kind === "report" && <p className="text-sm">{String((f.detail as { reason?: string }).reason ?? "").replace("_", " ")}{(f.detail as { details?: string }).details ? `: ${(f.detail as { details?: string }).details}` : ""}</p>}
               <p className="text-sm"><Link className="underline underline-offset-4" href={`/listing/${l.slug}`}>{l.title}</Link> · {formatKes(l.rent)} · {l.status}</p>
@@ -45,7 +45,7 @@ export default async function Moderation() {
 
       <section aria-labelledby="recent" className="space-y-4">
         <h2 id="recent" className="text-xl font-semibold">Newest live listings</h2>
-        <ul className="divide-y divide-border rounded-lg border border-border">
+        <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
           {recent.data?.map((l) => (
             <li key={l.id} className="flex flex-col gap-3 p-4 lg:flex-row lg:items-center lg:justify-between">
               <span><Link className="font-medium underline-offset-4 hover:underline" href={`/listing/${l.slug}`}>{l.title}</Link><span className="ml-2 text-sm text-muted">{formatKes(l.rent)}</span></span>
@@ -58,7 +58,7 @@ export default async function Moderation() {
       {!!down.data?.length && (
         <section aria-labelledby="down" className="space-y-4">
           <h2 id="down" className="text-xl font-semibold">Taken down</h2>
-          <ul className="divide-y divide-border rounded-lg border border-border">
+          <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
             {down.data.map((l) => (
               <li key={l.id} className="flex flex-col gap-3 p-4 lg:flex-row lg:items-center lg:justify-between">
                 <span><span className="font-medium">{l.title}</span><span className="block text-sm text-muted">{l.takedown_reason}</span></span>

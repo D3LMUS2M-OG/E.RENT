@@ -32,7 +32,7 @@ export default async function AccountPage() {
       {pending.length > 0 && (
         <section aria-labelledby="inv" className="space-y-3">
           <h2 id="inv" className="text-xl font-semibold">Invitations</h2>
-          <ul className="divide-y divide-border rounded-lg border border-border">
+          <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
             {pending.map((i) => (
               <li key={i.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <span><span className="font-medium">{i.landlord_name || "A landlord"}</span> invited you to post houses for them as a <span className="capitalize">{i.kind}</span>.</span>
@@ -48,7 +48,7 @@ export default async function AccountPage() {
       {orgInvites.length > 0 && (
         <section aria-labelledby="orginv" className="space-y-3">
           <h2 id="orginv" className="text-xl font-semibold">Organisation invitations</h2>
-          <ul className="divide-y divide-border rounded-lg border border-border">
+          <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
             {orgInvites.map((i) => (
               <li key={i.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <span><span className="font-medium">{i.org_name}</span> invited you to join their team as a {i.member_role}.</span>

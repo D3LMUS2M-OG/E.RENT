@@ -57,5 +57,5 @@ export function ResultsMap({ rows }: { rows: SearchRow[] }) {
     return () => { dead = true; map?.remove(); };
   }, [rows, router]);
 
-  return <div ref={el} className="h-[70dvh] min-h-96 w-full overflow-hidden rounded-lg border border-border" role="application" aria-label="Map of search results" />;
+  return <div ref={el} className="h-[70dvh] min-h-96 w-full overflow-hidden rounded-[20px] border border-border bg-surface" role="application" aria-label="Map of search results" />;
 }

@@ -25,7 +25,7 @@ export async function updateSession(request: NextRequest) {
   const signedIn = Boolean(data?.claims);
   const path = request.nextUrl.pathname;
 
-  const needsAuth = ["/account", "/dashboard", "/admin", "/chats", "/org"].some((p) => path === p || path.startsWith(p + "/"));
+  const needsAuth = ["/account", "/dashboard", "/admin", "/chats", "/org", "/saved"].some((p) => path === p || path.startsWith(p + "/"));
   if (needsAuth && !signedIn) {
     const url = request.nextUrl.clone();
     url.pathname = "/sign-in";

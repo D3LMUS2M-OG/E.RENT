@@ -37,7 +37,7 @@ export default function DesignPage() {
         <h2 className="text-xl font-semibold">Listing card and loading state</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <ListingCard listing={sample} />
-          <div className="space-y-3 rounded-lg border border-border p-4"><Skeleton className="aspect-[4/3]" /><Skeleton className="h-5 w-1/2" /><Skeleton className="h-4 w-3/4" /></div>
+          <div className="space-y-3 rounded-[20px] border border-border bg-surface p-4"><Skeleton className="aspect-[4/3]" /><Skeleton className="h-5 w-1/2" /><Skeleton className="h-4 w-3/4" /></div>
         </div>
       </section>
     </div>

@@ -3,6 +3,7 @@ export type SearchRow = {
   property_type: string; county: string; county_slug: string; sub_county: string | null; ward: string | null; estate: string | null;
   lat: number; lng: number; cover_path: string | null; units_available: number; published_at: string;
   managed_by_caretaker: boolean; landlord_verified: boolean; distance_m: number | null; total_count: number;
+  photos?: string[];
 };
 
 export type ListingStatus =

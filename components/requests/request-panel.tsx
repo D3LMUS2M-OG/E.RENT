@@ -60,10 +60,10 @@ export function RequestPanel({ listingId, ownerId, createdBy }: { listingId: str
           <Field label="Preferred viewing date (optional)" htmlFor="preferred_date"><Input id="preferred_date" name="preferred_date" type="date" min={today} /></Field>
           <Field label="Number of people who will live here" htmlFor="occupants"><Input id="occupants" name="occupants" inputMode="numeric" defaultValue={1} /></Field>
           <Field label="Message (optional)" htmlFor="message">
-            <textarea id="message" name="message" rows={3} maxLength={1000} placeholder="Introduce yourself and ask what you need to know" className="w-full rounded-md border border-border-strong bg-background p-3 text-base" />
+            <textarea id="message" name="message" rows={3} maxLength={1000} placeholder="Introduce yourself and ask what you need to know" className="w-full rounded-[14px] border border-border-strong bg-surface p-3 text-base" />
           </Field>
           {state.error && <p role="alert" className="text-sm font-medium">Error: {state.error}</p>}
-          {state.message && <p role="status" className="text-sm font-medium">{state.message}</p>}
+          {state.message && <p role="status" className="msg-ok text-sm font-medium">{state.message}</p>}
           <Button type="submit" size="lg" className="w-full" loading={pending}>Send request</Button>
           <p className="text-sm text-muted">Do not put your phone number in the message.</p>
         </form>

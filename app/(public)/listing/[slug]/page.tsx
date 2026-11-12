@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Bath, BedDouble, CalendarDays, Maximize2, Layers, MapPin } from "lucide-react";
 import { createPublicClient } from "@/lib/supabase/public";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
+import { PhotoGallery } from "@/components/listings/photo-gallery";
 import { PinMap } from "@/components/map/pin-map";
 import { ReportListing } from "@/components/listings/report-listing";
 import { RequestPanel } from "@/components/requests/request-panel";
@@ -81,16 +82,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
         <Link href={`/houses-for-rent/${p.county.slug}`} className="underline-offset-4 hover:underline">{p.county.name}</Link>
       </nav>
 
-      <ul className="flex snap-x snap-mandatory gap-2 overflow-x-auto rounded-lg" aria-label="Photos">
-        {photos.map((m, i) => (
-          <li key={m.id} className="aspect-[4/3] w-[88%] shrink-0 snap-center overflow-hidden bg-surface bg-cover sm:w-[56%] lg:w-[40%]"
-            style={m.blur_data_url ? { backgroundImage: `url(${m.blur_data_url})` } : undefined}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={mediaUrl(variant(m.path_960!, 960))} srcSet={photoSrcSet(m.path_960!)} sizes="(min-width:1024px) 40vw, 88vw"
-              alt={`${l.title}, photo ${i + 1} of ${photos.length}`} loading={i === 0 ? "eager" : "lazy"} fetchPriority={i === 0 ? "high" : "auto"} className="size-full object-cover" />
-          </li>
-        ))}
-      </ul>
+      <PhotoGallery title={l.title} photos={photos.map((m) => ({ path: m.path_960!, blur: m.blur_data_url }))} />
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_320px]">
         <div className="space-y-10">
@@ -124,8 +116,8 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
         </div>
 
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="space-y-4 rounded-lg border border-border p-5">
-            <p className="text-3xl font-semibold">{formatKes(l.rent)}<span className="text-base font-normal text-muted"> / month</span></p>
+          <div className="space-y-4 rounded-[20px] border border-border bg-surface p-5">
+            <p className="text-3xl font-semibold text-accent">{formatKes(l.rent)}<span className="text-base font-normal text-muted"> / month</span></p>
             <dl className="space-y-1 text-sm">
               <div className="flex justify-between"><dt className="text-muted">Deposit</dt><dd className="font-medium">{l.deposit ? formatKes(l.deposit) : "None stated"}</dd></div>
               <div className="flex justify-between"><dt className="text-muted">Units available</dt><dd className="font-medium">{l.units_available}</dd></div>

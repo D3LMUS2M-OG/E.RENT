@@ -5,15 +5,15 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const button = cva(
-  "inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition-[transform,opacity,background-color] duration-[var(--dur-fast)] ease-[var(--ease-out)] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40",
+  "inline-flex min-h-11 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 text-[15px] font-semibold transition-[transform,background-color,border-color,opacity] duration-150 ease-[var(--ease-out)] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40",
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-foreground hover:opacity-85",
-        secondary: "border border-border-strong bg-background text-foreground hover:bg-surface",
-        ghost: "text-foreground hover:bg-surface",
+        primary: "bg-primary text-primary-foreground hover:brightness-110",
+        secondary: "border border-border-strong bg-transparent text-foreground hover:bg-surface-2",
+        ghost: "text-foreground hover:bg-surface-2",
       },
-      size: { default: "", lg: "min-h-12 px-6 text-base", icon: "w-11 px-0" },
+      size: { default: "", lg: "min-h-12 px-7 text-base", icon: "w-11 px-0" },
     },
     defaultVariants: { variant: "primary", size: "default" },
   },

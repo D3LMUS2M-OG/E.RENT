@@ -26,7 +26,7 @@ export default async function MyRequests() {
       {rows.length === 0 && <p className="text-muted">You have not sent any requests. Open a house and choose Request to view.</p>}
       <ul className="space-y-4">
         {rows.map((r) => (
-          <li key={r.id} className="space-y-3 rounded-lg border border-border p-4">
+          <li key={r.id} className="space-y-3 rounded-[20px] border border-border bg-surface p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <Link className="font-medium underline-offset-4 hover:underline" href={`/listing/${r.listing_slug}`}>{r.listing_title}</Link>

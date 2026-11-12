@@ -19,8 +19,8 @@ export default async function Reports() {
     <div className="space-y-10">
       <h1 className="text-3xl font-semibold tracking-tight">Reported conversations</h1>
       <section aria-labelledby="o" className="space-y-3"><h2 id="o" className="text-xl font-semibold">Open ({open.length})</h2>
-        {open.length === 0 ? <p className="text-muted">Nothing open.</p> : <ul className="divide-y divide-border rounded-lg border border-border">{open.map(row)}</ul>}</section>
-      {done.length > 0 && <section aria-labelledby="d" className="space-y-3"><h2 id="d" className="text-xl font-semibold">Closed</h2><ul className="divide-y divide-border rounded-lg border border-border">{done.map(row)}</ul></section>}
+        {open.length === 0 ? <p className="text-muted">Nothing open.</p> : <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">{open.map(row)}</ul>}</section>
+      {done.length > 0 && <section aria-labelledby="d" className="space-y-3"><h2 id="d" className="text-xl font-semibold">Closed</h2><ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">{done.map(row)}</ul></section>}
     </div>
   );
 }

@@ -44,7 +44,7 @@ export function AuthForm({ action, mode, next }: Props) {
         </fieldset>
       )}
       {state.error && <p role="alert" className="text-sm font-medium">Error: {state.error}</p>}
-      {state.message && <p role="status" className="text-sm font-medium">{state.message}</p>}
+      {state.message && <p role="status" className="msg-ok text-sm font-medium">{state.message}</p>}
       <Button type="submit" size="lg" className="w-full" loading={pending}>{up ? "Create account" : "Sign in"}</Button>
       <p className="text-center text-sm text-muted">
         {up ? "Already have an account? " : "New to E.Rent? "}

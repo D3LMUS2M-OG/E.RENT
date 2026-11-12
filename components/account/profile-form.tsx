@@ -14,7 +14,7 @@ export function ProfileForm({ fullName, phone }: { fullName: string; phone: stri
       <Field label="Phone number (optional)" htmlFor="phone"><Input id="phone" name="phone" type="tel" autoComplete="tel" inputMode="tel" placeholder="0712 345 678" defaultValue={phone ?? ""} /></Field>
       <p className="text-sm text-muted">Your number stays hidden. It is shown to one person only after you approve sharing it.</p>
       {s.error && <p role="alert" className="text-sm font-medium">Error: {s.error}</p>}
-      {s.message && <p role="status" className="text-sm font-medium">{s.message}</p>}
+      {s.message && <p role="status" className="msg-ok text-sm font-medium">{s.message}</p>}
       <Button type="submit" loading={pending}>Save</Button>
     </form>
   );

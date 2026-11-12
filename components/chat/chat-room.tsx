@@ -86,7 +86,7 @@ function MessageRow({ m, mine, status, onHide, onDeleted }: { m: Msg; mine: bool
   return (
     <div ref={ref} className={mine ? "flex flex-col items-end" : "flex flex-col items-start"}>
       <div className={`flex max-w-full items-end gap-1 ${mine ? "flex-row-reverse" : ""}`}>
-        <div className={`max-w-[85%] space-y-1 rounded-lg px-3 py-2 ${deleted ? "border border-dashed border-border-strong text-muted" : mine ? "bg-primary text-primary-foreground" : "border border-border bg-background"}`}>
+        <div className={`max-w-[85%] space-y-1 rounded-[18px] px-3.5 py-2 ${deleted ? "border border-dashed border-border-strong text-muted" : mine ? "bg-primary text-primary-foreground" : "bg-surface-2"}`}>
           {deleted ? <p className="italic">{mine ? "You deleted this message" : "This message was deleted"}</p>
             : m.kind === "text" ? <p className="whitespace-pre-wrap break-words">{m.body}</p> : <Attachment m={m} />}
           <p className={`text-xs ${mine && !deleted ? "opacity-70" : "text-muted"}`}>
@@ -96,7 +96,7 @@ function MessageRow({ m, mine, status, onHide, onDeleted }: { m: Msg; mine: bool
         {options}
       </div>
       {open && (
-        <div role="group" aria-label="Message options" className="mt-1 flex flex-wrap gap-2 rounded-lg border border-border bg-background p-2">
+        <div role="group" aria-label="Message options" className="mt-1 flex flex-wrap gap-2 rounded-[20px] border border-border bg-surface p-2">
           <Button type="button" variant="secondary" loading={busy} onClick={() => run(() => hideMessage(m.id), () => onHide(m.id))}>Delete for me</Button>
           {canDeleteAll && (
             <Button type="button" variant="secondary" loading={busy}
@@ -257,8 +257,8 @@ export function ChatRoom({ o, me, initial, hiddenIds = [], children }: { o: Over
               setReported(r.error ? `Error: ${r.error}` : r.message ?? "Reported");
             }}>
               <p className="text-sm font-medium">Report this conversation</p>
-              <select name="reason" aria-label="Reason" className="min-h-11 w-full rounded-md border border-border-strong bg-background px-3 text-base">{REASONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
-              <textarea name="details" rows={2} maxLength={1000} aria-label="What happened" placeholder="What happened? (optional)" className="w-full rounded-md border border-border-strong bg-background p-2 text-base" />
+              <select name="reason" aria-label="Reason" className="min-h-11 w-full rounded-[14px] border border-border-strong bg-surface px-3 text-base">{REASONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
+              <textarea name="details" rows={2} maxLength={1000} aria-label="What happened" placeholder="What happened? (optional)" className="w-full rounded-[14px] border border-border-strong bg-surface p-2 text-base" />
               <Button type="submit" variant="secondary">Send report</Button>
               {reported && <p role="status" className="text-sm font-medium">{reported}</p>}
             </form>
@@ -298,7 +298,7 @@ export function ChatRoom({ o, me, initial, hiddenIds = [], children }: { o: Over
             <label htmlFor="chat-text" className="sr-only">Message</label>
             <textarea id="chat-text" value={text} onChange={(e) => onType(e.target.value)} rows={1} maxLength={2000} placeholder={recording !== null ? `Recording ${recording}s` : "Write a message"}
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && window.matchMedia("(pointer: fine)").matches) { e.preventDefault(); e.currentTarget.form?.requestSubmit(); } }}
-              className="max-h-32 min-h-11 flex-1 resize-none rounded-md border border-border-strong bg-background px-3 py-2 text-base" />
+              className="max-h-32 min-h-11 flex-1 resize-none rounded-[14px] border border-border-strong bg-surface px-3 py-2 text-base" />
             <Button type="submit" size="icon" aria-label="Send message" loading={sending} disabled={!text.trim()}><Send className="size-4" aria-hidden /></Button>
           </div>
         </form>

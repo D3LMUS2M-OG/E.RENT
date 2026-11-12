@@ -19,7 +19,7 @@ export default async function VerificationPage() {
         <p className="max-w-xl text-muted">Verified landlords get a badge on their profile and every listing. Tenants trust and answer them more. You can publish listings without it.</p>
       </header>
       {verr ? (
-        <p role="alert" className="rounded-lg border-2 border-border-strong p-4 text-sm font-medium">
+        <p role="alert" className="rounded-[20px] border-2 border-border-strong p-4 text-sm font-medium">
           Verification is not available yet: the database is missing its verification tables. Run supabase/migrations/20261110000300_verification_geo.sql, then reload. ({verr.message})
         </p>
       ) : !a.isLandlord ? (

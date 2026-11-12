@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getAccess } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { addLandlordRole } from "./actions";
+import { AreaShell, type AreaItem } from "@/components/layout/area-shell";
 import { Notices } from "@/components/account/notices";
+import { addLandlordRole } from "./actions";
 
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false } };
 
@@ -13,27 +15,26 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (access.landlordIds.length === 0 && access.orgIds.length === 0) {
     return (
       <div className="mx-auto max-w-xl px-4 py-16">
-        <h1 className="text-3xl font-semibold tracking-tight">List a house on E.Rent</h1>
+        <h1 className="text-4xl">List a house on E.Rent</h1>
         <p className="mt-3 text-muted">Add the landlord role to your account to post houses. You can still search and chat as a tenant.</p>
         <form action={addLandlordRole} className="mt-6"><Button size="lg" type="submit">Add landlord role</Button></form>
-        <p className="mt-6 text-sm text-muted">Run a property management company? <Link className="underline underline-offset-4" href="/org">Set up an organisation</Link>.</p>
+        <p className="mt-6 text-sm text-muted">Run a property management company? <Link className="text-link underline underline-offset-4" href="/org">Set up an organisation</Link>.</p>
       </div>
     );
   }
-  return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      <nav aria-label="Dashboard" className="mb-8 flex gap-1 border-b border-border">
-        <Button asChild variant="ghost"><Link href="/dashboard">Overview</Link></Button>
-        <Button asChild variant="ghost"><Link href="/dashboard/listings">My listings</Link></Button>
-        <Button asChild variant="ghost"><Link href="/dashboard/listings/new">Add a house</Link></Button>
-        <Button asChild variant="ghost"><Link href="/dashboard/requests">Requests</Link></Button>
-        <Button asChild variant="ghost"><Link href="/chats">Chats</Link></Button>
-        <Button asChild variant="ghost"><Link href="/dashboard/verification">Verification</Link></Button>
-        <Button asChild variant="ghost"><Link href="/dashboard/team">Caretakers</Link></Button>
-        <Button asChild variant="ghost"><Link href="/org">Organisation</Link></Button>
-      </nav>
-      <Notices />
-      {children}
-    </div>
-  );
+
+  const supabase = await createClient();
+  const { data: inc } = await supabase.rpc("incoming_requests");
+  const waiting = ((inc ?? []) as { status: string }[]).filter((r) => r.status === "pending").length;
+  const items: AreaItem[] = [
+    { href: "/dashboard", label: "Overview", icon: "overview", exact: true },
+    { href: "/dashboard/listings", label: "My listings", icon: "listings", exact: true },
+    { href: "/dashboard/listings/new", label: "Add a house", icon: "add" },
+    { href: "/dashboard/requests", label: "Requests", icon: "requests", badge: waiting },
+    { href: "/chats", label: "Chats", icon: "chats", chatsBadge: true },
+    { href: "/dashboard/verification", label: "Verification", icon: "verify" },
+    { href: "/dashboard/team", label: "Caretakers", icon: "team" },
+    { href: "/org", label: "Organisation", icon: "org" },
+  ];
+  return <AreaShell items={items}><Notices />{children}</AreaShell>;
 }

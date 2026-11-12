@@ -1,18 +1,14 @@
-import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
-import { Button } from "@/components/ui/button";
-import { AuthNav } from "./auth-nav";
+import { DesktopNav } from "./desktop-nav";
+import { HeaderActions } from "./header-actions";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-20 border-b border-border bg-background">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+    <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-xl">
+      <div className="relative mx-auto flex h-16 max-w-6xl items-center px-4">
         <Logo />
-        <nav aria-label="Main" className="flex items-center gap-1">
-          <Button asChild variant="ghost"><Link href="/search">Search</Link></Button>
-          <Button asChild variant="ghost" className="hidden sm:inline-flex"><Link href="/counties">Counties</Link></Button>
-          <AuthNav />
-        </nav>
+        <DesktopNav />
+        <HeaderActions />
       </div>
     </header>
   );

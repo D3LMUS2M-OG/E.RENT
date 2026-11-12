@@ -17,8 +17,8 @@ export function ReportListing({ listingId }: { listingId: string }) {
         const r = await reportListing(listingId, String(f.get("reason")), String(f.get("details") ?? ""));
         setPending(false); setMsg(r.error ? `Error: ${r.error}` : r.message ?? "Reported");
       }}>
-        <select name="reason" aria-label="Reason" className="min-h-11 w-full rounded-md border border-border-strong bg-background px-3 text-base">{REASONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
-        <textarea name="details" rows={2} maxLength={1000} aria-label="Details" placeholder="Tell us more (optional)" className="w-full rounded-md border border-border-strong bg-background p-2 text-base" />
+        <select name="reason" aria-label="Reason" className="min-h-11 w-full rounded-[14px] border border-border-strong bg-surface px-3 text-base">{REASONS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
+        <textarea name="details" rows={2} maxLength={1000} aria-label="Details" placeholder="Tell us more (optional)" className="w-full rounded-[14px] border border-border-strong bg-surface p-2 text-base" />
         <Button type="submit" variant="secondary" loading={pending}>Send report</Button>
         {msg && <p role="status" className="font-medium">{msg}</p>}
       </form>

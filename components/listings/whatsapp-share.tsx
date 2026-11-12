@@ -12,7 +12,7 @@ export function WhatsAppShare({ title }: { title?: string }) {
     <a
       href={`https://wa.me/?text=${encodeURIComponent(text)}`}
       target="_blank" rel="noopener noreferrer"
-      className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-30 inline-flex min-h-12 items-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-transform duration-[var(--dur-fast)] ease-[var(--ease-out)] active:scale-95"
+      className="fixed bottom-[calc(6.25rem+env(safe-area-inset-bottom))] right-4 md:bottom-6 z-30 inline-flex min-h-12 items-center gap-2 rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-transform duration-[var(--dur-fast)] ease-[var(--ease-out)] active:scale-95"
     >
       <Share2 className="size-4" aria-hidden />Share on WhatsApp
     </a>

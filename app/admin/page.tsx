@@ -23,7 +23,7 @@ export default async function AdminHome() {
       </header>
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.map(([label, n, href]) => (
-          <div key={label} className="rounded-lg border border-border p-4">
+          <div key={label} className="rounded-[20px] border border-border bg-surface p-4">
             <dt className="text-sm text-muted">{href ? <Link className="underline-offset-4 hover:underline" href={href}>{label}</Link> : label}</dt>
             <dd className="mt-1 text-3xl font-semibold">{n}</dd>
           </div>

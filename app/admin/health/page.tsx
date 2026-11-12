@@ -31,7 +31,7 @@ export default async function Health() {
     <div className="max-w-3xl space-y-6">
       <h1 className="text-3xl font-semibold tracking-tight">Setup check</h1>
       <p className="text-muted">Anything marked Missing means a migration or seed file has not run in this Supabase project.</p>
-      <ul className="divide-y divide-border rounded-lg border border-border">
+      <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
         {rows.map((r) => (
           <li key={r.name} className="flex items-start justify-between gap-4 p-3">
             <span className="font-medium">{r.name}</span>

@@ -9,7 +9,7 @@ type Sub = { id: number; name: string; slug: string; lat: number | null; lng: nu
 type Ward = Sub;
 export type Centroid = { lat: number; lng: number; zoom: number };
 
-const sel = "min-h-11 w-full rounded-md border border-border-strong bg-background px-3 text-base disabled:opacity-40";
+const sel = "min-h-11 w-full rounded-[14px] border border-border-strong bg-surface px-3 text-base disabled:opacity-40";
 
 /** County, then sub-county, then ward, loaded on demand so weak connections never download all 1,450 wards.
  *  mode "id" posts database ids (listing form). mode "slug" posts slugs (search and SEO URLs). */

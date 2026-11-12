@@ -22,8 +22,8 @@ export default async function Users() {
       <h1 className="text-3xl font-semibold tracking-tight">Warnings and sanctions</h1>
       <p className="text-sm text-muted">Issue these from a report or a listing. Suspensions and bans also block sign-in.</p>
       <section aria-labelledby="a" className="space-y-3"><h2 id="a" className="text-xl font-semibold">Active ({active.length})</h2>
-        {active.length === 0 ? <p className="text-muted">None.</p> : <ul className="divide-y divide-border rounded-lg border border-border">{active.map((s) => row(s, true))}</ul>}</section>
-      {rest.length > 0 && <section aria-labelledby="h" className="space-y-3"><h2 id="h" className="text-xl font-semibold">History</h2><ul className="divide-y divide-border rounded-lg border border-border">{rest.map((s) => row(s, false))}</ul></section>}
+        {active.length === 0 ? <p className="text-muted">None.</p> : <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">{active.map((s) => row(s, true))}</ul>}</section>
+      {rest.length > 0 && <section aria-labelledby="h" className="space-y-3"><h2 id="h" className="text-xl font-semibold">History</h2><ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">{rest.map((s) => row(s, false))}</ul></section>}
     </div>
   );
 }

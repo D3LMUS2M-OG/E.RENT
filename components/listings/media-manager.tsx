@@ -83,7 +83,7 @@ export function MediaManager({ listingId, media }: { listingId: string; media: M
 
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {photos.map((m, i) => (
-          <li key={m.id} className="overflow-hidden rounded-lg border border-border">
+          <li key={m.id} className="overflow-hidden rounded-[20px] border border-border bg-surface">
             <div className="aspect-[4/3] bg-surface bg-cover" style={m.blur_data_url ? { backgroundImage: `url(${m.blur_data_url})` } : undefined}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={mediaUrl(m.path_480!)} alt={`Photo ${i + 1}`} loading="lazy" className="size-full object-cover" />
@@ -98,7 +98,7 @@ export function MediaManager({ listingId, media }: { listingId: string; media: M
       </ul>
 
       {video && (
-        <div className="flex items-center justify-between rounded-lg border border-border p-3">
+        <div className="flex items-center justify-between rounded-[20px] border border-border bg-surface p-3">
           <span className="flex items-center gap-2 text-sm"><Video className="size-4" aria-hidden />Walkthrough video added</span>
           <Button type="button" variant="ghost" size="icon" aria-label="Delete video" onClick={() => act(() => deleteMedia(listingId, video.id))}><Trash2 className="size-4" aria-hidden /></Button>
         </div>

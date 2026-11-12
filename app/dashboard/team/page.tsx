@@ -33,7 +33,7 @@ export default async function TeamPage() {
           <section aria-labelledby="list" className="space-y-3">
             <h2 id="list" className="text-xl font-semibold">Your team</h2>
             {!team.length ? <p className="text-muted">Nobody yet.</p> : (
-              <ul className="divide-y divide-border rounded-lg border border-border">
+              <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
                 {team.map((d) => (
                   <li key={d.id} className="flex items-center justify-between gap-4 p-4">
                     <span><span className="font-medium">{d.label}</span><span className="ml-2 text-sm text-muted">{d.is_org ? "Organisation" : <span className="capitalize">{d.kind}</span>} · {STATUS[d.status]}</span></span>
@@ -47,7 +47,7 @@ export default async function TeamPage() {
       {landlords.length > 0 && (
         <section aria-labelledby="serve" className="space-y-3">
           <h2 id="serve" className="text-xl font-semibold">You post for</h2>
-          <ul className="divide-y divide-border rounded-lg border border-border">
+          <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
             {landlords.map((l) => <li key={l.landlord_id} className="p-4"><span className="font-medium">{l.display_name || "A landlord"}</span><span className="ml-2 text-sm capitalize text-muted">{l.kind}</span></li>)}
           </ul>
         </section>

@@ -19,7 +19,7 @@ export default async function Verifications() {
       <section aria-labelledby="q" className="space-y-3">
         <h2 id="q" className="text-xl font-semibold">Waiting ({pending.data?.length ?? 0})</h2>
         {!pending.data?.length && <p className="text-muted">Nothing waiting.</p>}
-        <ul className="divide-y divide-border rounded-lg border border-border">
+        <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
           {pending.data?.map((v) => (
             <li key={v.id}><Link href={`/admin/verifications/${v.id}`} className="flex items-center justify-between p-4 hover:bg-surface">
               <span className="font-medium">{name(v.user_id)}</span>
@@ -29,7 +29,7 @@ export default async function Verifications() {
       </section>
       <section aria-labelledby="d" className="space-y-3">
         <h2 id="d" className="text-xl font-semibold">Recent decisions</h2>
-        <ul className="divide-y divide-border rounded-lg border border-border">
+        <ul className="divide-y divide-border rounded-[20px] border border-border bg-surface">
           {done.data?.map((v) => (
             <li key={v.id}><Link href={`/admin/verifications/${v.id}`} className="flex items-center justify-between p-4 hover:bg-surface">
               <span>{name(v.user_id)}</span><span className="text-sm font-medium capitalize">{v.status}</span></Link></li>))}

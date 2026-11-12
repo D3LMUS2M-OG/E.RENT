@@ -15,7 +15,7 @@ export async function Notices() {
   return (
     <section aria-label="Notices" className="mb-8 space-y-3">
       {notices.map((n) => (
-        <div key={n.id} role="alert" className="space-y-2 rounded-lg border-2 border-border-strong p-4">
+        <div key={n.id} role="alert" className="space-y-2 rounded-[20px] border-2 border-border-strong p-4">
           <p className="flex items-center gap-2 font-semibold"><TriangleAlert className="size-5" aria-hidden />{TITLE[n.kind]}</p>
           <p className="text-sm">{n.reason}</p>
           {n.ends_at && <p className="text-sm text-muted">Until {new Date(n.ends_at).toLocaleDateString("en-KE", { day: "numeric", month: "long", year: "numeric" })}</p>}

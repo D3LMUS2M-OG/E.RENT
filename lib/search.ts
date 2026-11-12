@@ -36,5 +36,11 @@ export async function searchListings(filters: Record<string, unknown>): Promise<
   const supabase = createPublicClient();
   const { data, error } = await supabase.rpc("search_listings", { filters });
   if (error) { console.error("search_listings", error.message); return []; }
-  return (data ?? []) as SearchRow[];
+  const rows = (data ?? []) as SearchRow[];
+  if (rows.length) {
+    const { data: ph } = await supabase.rpc("listing_photos", { p_ids: rows.map((r) => r.id), p_n: 3 });
+    const byId = new Map(((ph ?? []) as { listing_id: string; paths: string[] }[]).map((x) => [x.listing_id, x.paths]));
+    for (const r of rows) r.photos = byId.get(r.id) ?? (r.cover_path ? [r.cover_path] : []);
+  }
+  return rows;
 }

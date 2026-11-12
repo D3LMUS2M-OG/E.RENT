@@ -22,7 +22,7 @@ export default async function IncomingRequests() {
   const rest = rows.filter((r) => r.status !== "pending");
 
   const card = (r: Row) => (
-    <li key={r.id} className="space-y-3 rounded-lg border border-border p-4">
+    <li key={r.id} className="space-y-3 rounded-[20px] border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="font-medium">{r.tenant_name || "A tenant"} <span className="font-normal text-muted">· {r.kind === "view" ? "wants to view" : "applies to rent"}</span></p>
