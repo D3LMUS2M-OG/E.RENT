@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 export type GalleryPhoto = { path: string; blur: string | null };
 
 /** Rounded photo collage. Tap any photo to open it full screen; swipe between photos, pull down to close. */
-export function PhotoGallery({ photos, title }: { photos: GalleryPhoto[]; title: string }) {
+export function PhotoGallery({ photos, title, actions }: { photos: GalleryPhoto[]; title: string; actions?: React.ReactNode }) {
   const [open, setOpen] = useState<number | null>(null);
   const shown = photos.slice(0, 4);
   const gridAreas = shown.length >= 4 ? "'a b' 'a d' 'c d'" : shown.length === 3 ? "'a b' 'a b' 'a d'" : undefined;
@@ -18,16 +18,19 @@ export function PhotoGallery({ photos, title }: { photos: GalleryPhoto[]; title:
   if (!photos.length) return null;
   return (
     <>
+      <div className="relative">
       <div className={cn("grid h-[320px] gap-2 sm:h-[440px]", shown.length === 1 ? "grid-cols-1" : "grid-cols-2", gridAreas && "grid-rows-3")} style={gridAreas ? { gridTemplateAreas: gridAreas } : undefined}>
         {shown.map((p, i) => (
           <button key={p.path} type="button" onClick={() => setOpen(i)} aria-label={`Open photo ${i + 1} of ${photos.length} full screen`} style={areas[i] ? { gridArea: areas[i] } : undefined}
-            className="group relative overflow-hidden rounded-[22px] bg-surface-2 bg-cover" >
+            className="relative overflow-hidden rounded-[22px] bg-surface-2 bg-cover transition-opacity duration-150 active:opacity-90">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={mediaUrl(variant(p.path, 960))} srcSet={photoSrcSet(p.path)} sizes="(min-width:1024px) 40vw, 50vw" alt={i === 0 ? title : `${title}, photo ${i + 1}`}
-              loading={i === 0 ? "eager" : "lazy"} fetchPriority={i === 0 ? "high" : "auto"} className="size-full object-cover transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-[1.03]" />
+              loading={i === 0 ? "eager" : "lazy"} fetchPriority={i === 0 ? "high" : "auto"} className="size-full object-cover" />
           </button>))}
       </div>
-      <button type="button" onClick={() => setOpen(0)} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-border-strong px-4 text-sm font-semibold transition-colors hover:bg-surface-2">
+      {actions && <div className="absolute right-3 top-3 z-10 flex gap-2">{actions}</div>}
+      </div>
+      <button type="button" onClick={() => setOpen(0)} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-border-strong bg-surface-2 px-4 text-sm font-semibold shadow-[var(--shadow-btn)] transition-[transform,background-color] duration-150 hover:bg-surface active:translate-y-px active:shadow-none">
         <Expand className="size-4" aria-hidden />View {photos.length > 1 ? `all ${photos.length} photos` : "photo"}
       </button>
       {open !== null && <Lightbox photos={photos} title={title} start={open} onClose={() => setOpen(null)} />}

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ListingCard, toCard } from "@/components/listings/listing-card";
+import { toCard } from "@/components/listings/listing-card";
+import { ListingResults } from "@/components/listings/listing-results";
 import { ResultsMap } from "@/components/map/results-map";
 import { NearMeButton } from "@/components/search/near-me";
 import { SearchGeo } from "@/components/geo/search-geo";
@@ -28,7 +29,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     supabase.from("property_types").select("slug,name").eq("is_active", true).order("sort"),
     supabase.from("amenities").select("slug,name").eq("is_active", true).order("id"),
   ]);
-  const view = val(sp, "view") === "map" ? "map" : "list";
+  const view = val(sp, "view") === "map" ? "map" : "grid";
   const total = rows[0]?.total_count ?? 0;
   const pages = Math.max(1, Math.ceil(Number(total) / PAGE_SIZE));
   const countyName = COUNTIES.find((c) => c.slug === val(sp, "county"))?.name;
@@ -86,22 +87,23 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <div className="flex flex-wrap items-center gap-3">
           <NearMeButton />
           <Button asChild variant="ghost"><Link href="/search">Clear all</Link></Button>
-          <div className="ml-auto flex gap-1" role="group" aria-label="Results view">
-            <Button asChild variant={view === "list" ? "primary" : "secondary"}><Link href={qs({ view: "list", page: "1" })} aria-current={view === "list"}>List</Link></Button>
-            <Button asChild variant={view === "map" ? "primary" : "secondary"}><Link href={qs({ view: "map" })} aria-current={view === "map"}>Map</Link></Button>
-          </div>
         </div>
       </form>
 
       <p className="mt-8 text-sm text-muted" role="status">{rows.length === 0 ? "No houses match these filters" : `${Number(total).toLocaleString("en-KE")} ${Number(total) === 1 ? "house" : "houses"} found`}</p>
 
       <div className="mt-4">
-        {view === "map" ? <ResultsMap rows={rows} /> : (
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{rows.map((r) => <li key={r.id}><ListingCard listing={toCard(r)} /></li>)}</ul>
+        {view === "map" ? (
+          <>
+            <div className="mb-4 flex justify-end"><Button asChild variant="secondary"><Link href={qs({ view: "grid", page: "1" })}>Back to houses</Link></Button></div>
+            <ResultsMap rows={rows} />
+          </>
+        ) : (
+          <ListingResults listings={rows.map(toCard)} mapHref={qs({ view: "map" })} />
         )}
       </div>
 
-      {view === "list" && pages > 1 && (
+      {view === "grid" && pages > 1 && (
         <nav aria-label="Pages" className="mt-8 flex items-center justify-between">
           <Button asChild variant="secondary" className={page <= 1 ? "pointer-events-none opacity-40" : ""}><Link href={qs({ page: String(page - 1) })} aria-disabled={page <= 1}>Previous</Link></Button>
           <span className="text-sm text-muted">Page {page} of {pages}</span>

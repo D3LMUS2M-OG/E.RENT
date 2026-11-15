@@ -6,7 +6,7 @@ import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
-export function FavouriteButton({ listingId }: { listingId: string }) {
+export function FavouriteButton({ listingId, iconOnly = false }: { listingId: string; iconOnly?: boolean }) {
   const [saved, setSaved] = useState(false);
   const [uid, setUid] = useState<string | null>(null);
   const router = useRouter();
@@ -32,6 +32,14 @@ export function FavouriteButton({ listingId }: { listingId: string }) {
     if (error) setSaved(!next);
   }
 
+  if (iconOnly) {
+    return (
+      <button type="button" onClick={toggle} aria-pressed={saved} aria-label={saved ? "Remove from saved houses" : "Save this house"}
+        className="inline-flex size-11 items-center justify-center rounded-full border border-border-strong bg-background/85 text-foreground shadow-[var(--shadow-btn)] backdrop-blur transition-[transform,background-color] duration-150 hover:bg-surface-2 active:translate-y-px active:scale-95">
+        <Heart className={saved ? "size-5 fill-primary text-primary" : "size-5"} aria-hidden />
+      </button>
+    );
+  }
   return (
     <Button type="button" variant="secondary" onClick={toggle} aria-pressed={saved}>
       <Heart className={saved ? "size-4 fill-current" : "size-4"} aria-hidden />

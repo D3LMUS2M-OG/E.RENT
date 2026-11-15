@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ListingCard, toCard } from "@/components/listings/listing-card";
+import { toCard } from "@/components/listings/listing-card";
+import { ListingResults } from "@/components/listings/listing-results";
 import { getSubCounty, listWards } from "@/lib/geo";
 import { searchListings } from "@/lib/search";
 
@@ -37,7 +38,7 @@ export default async function SubCountyPage({ params }: P) {
       <h1 className="text-3xl font-semibold tracking-tight">Houses for rent in {g.sub.name}</h1>
       {rows.length === 0
         ? <p className="mt-3 max-w-xl text-muted">No listings in {g.sub.name} yet. Listings appear here as soon as landlords publish them.</p>
-        : <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{rows.map((r) => <li key={r.id}><ListingCard listing={toCard(r)} /></li>)}</ul>}
+        : <ListingResults className="mt-6" listings={rows.map(toCard)} />}
       {wards.length > 0 && (
         <section aria-labelledby="wards" className="mt-12 border-t border-border pt-8">
           <h2 id="wards" className="text-xl font-semibold">Wards in {g.sub.name}</h2>

@@ -7,7 +7,7 @@ const legal = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-border">
+    <footer className="site-footer mt-24 border-t border-border">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm text-muted sm:flex-row sm:justify-between">
         <p>E.Rent is not a party to any rental agreement. Never pay before you view in person.</p>
         <ul className="flex flex-wrap gap-x-4">

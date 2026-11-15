@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { COUNTIES, countyBySlug } from "@/lib/counties";
-import { ListingCard, toCard } from "@/components/listings/listing-card";
+import { toCard } from "@/components/listings/listing-card";
+import { ListingResults } from "@/components/listings/listing-results";
 import { searchListings } from "@/lib/search";
 import { listSubCounties } from "@/lib/geo";
 import Link from "next/link";
@@ -41,7 +42,7 @@ export default async function CountyPage({ params }: { params: Promise<{ county:
       {rows.length === 0 ? (
         <p className="mt-3 max-w-xl text-muted">No listings in {county.name} yet. Listings appear here as soon as landlords publish them.</p>
       ) : (
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{rows.map((r) => <li key={r.id}><ListingCard listing={toCard(r)} /></li>)}</ul>
+        <ListingResults className="mt-6" listings={rows.map(toCard)} />
       )}
       {subs.length > 0 && (
         <section aria-labelledby="subs" className="mt-12 border-t border-border pt-8">

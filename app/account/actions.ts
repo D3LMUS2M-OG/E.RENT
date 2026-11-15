@@ -32,3 +32,29 @@ export async function acknowledgeNotice(id: string): Promise<ActionState> {
   revalidatePath("/account"); revalidatePath("/dashboard", "layout");
   return { ok: true };
 }
+
+/** Saves the picture the browser just uploaded into the person's own folder, and removes the previous one. */
+export async function setAvatar(path: string): Promise<ActionState> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Sign in again" };
+  if (!path.startsWith(`${user.id}/`) || path.includes("..")) return { error: "Invalid picture" };
+  const { data: before } = await supabase.from("profiles").select("avatar_url").eq("id", user.id).maybeSingle();
+  const { error } = await supabase.from("profiles").update({ avatar_url: path }).eq("id", user.id);
+  if (error) return { error: error.message };
+  if (before?.avatar_url && before.avatar_url !== path) await supabase.storage.from("avatars").remove([before.avatar_url]);
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+export async function removeAvatar(): Promise<ActionState> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Sign in again" };
+  const { data: before } = await supabase.from("profiles").select("avatar_url").eq("id", user.id).maybeSingle();
+  const { error } = await supabase.from("profiles").update({ avatar_url: null }).eq("id", user.id);
+  if (error) return { error: error.message };
+  if (before?.avatar_url) await supabase.storage.from("avatars").remove([before.avatar_url]);
+  revalidatePath("/", "layout");
+  return { ok: true };
+}

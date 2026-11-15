@@ -5,13 +5,13 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const button = cva(
-  "inline-flex min-h-11 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 text-[15px] font-semibold transition-[transform,background-color,border-color,opacity] duration-150 ease-[var(--ease-out)] active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40",
+  "inline-flex min-h-11 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 text-[15px] font-semibold transition-[transform,background-color,border-color,opacity] duration-150 ease-[var(--ease-out)] active:translate-y-px active:scale-[0.97] disabled:pointer-events-none disabled:opacity-40",
   {
     variants: {
       variant: {
-        primary: "bg-primary text-primary-foreground hover:brightness-110",
-        secondary: "border border-border-strong bg-transparent text-foreground hover:bg-surface-2",
-        ghost: "text-foreground hover:bg-surface-2",
+        primary: "bg-primary text-primary-foreground shadow-[var(--shadow-primary)] hover:brightness-110 active:shadow-none",
+        secondary: "border border-border-strong bg-surface-2 text-foreground shadow-[var(--shadow-btn)] hover:bg-surface hover:border-foreground/40 active:shadow-none",
+        ghost: "text-foreground hover:bg-surface-2 underline-offset-4",
       },
       size: { default: "", lg: "min-h-12 px-7 text-base", icon: "w-11 px-0" },
     },

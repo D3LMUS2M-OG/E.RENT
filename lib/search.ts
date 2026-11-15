@@ -1,5 +1,6 @@
 import { createPublicClient } from "@/lib/supabase/public";
 import type { SearchRow } from "@/lib/types";
+import { getPhotos } from "@/lib/photos";
 
 type Params = Record<string, string | string[] | undefined>;
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;
@@ -38,8 +39,7 @@ export async function searchListings(filters: Record<string, unknown>): Promise<
   if (error) { console.error("search_listings", error.message); return []; }
   const rows = (data ?? []) as SearchRow[];
   if (rows.length) {
-    const { data: ph } = await supabase.rpc("listing_photos", { p_ids: rows.map((r) => r.id), p_n: 3 });
-    const byId = new Map(((ph ?? []) as { listing_id: string; paths: string[] }[]).map((x) => [x.listing_id, x.paths]));
+    const byId = await getPhotos(supabase, rows.map((r) => r.id), 3);
     for (const r of rows) r.photos = byId.get(r.id) ?? (r.cover_path ? [r.cover_path] : []);
   }
   return rows;

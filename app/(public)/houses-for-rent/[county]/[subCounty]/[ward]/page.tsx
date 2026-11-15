@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ListingCard, toCard } from "@/components/listings/listing-card";
+import { toCard } from "@/components/listings/listing-card";
+import { ListingResults } from "@/components/listings/listing-results";
 import { getSubCounty, getWard } from "@/lib/geo";
 import { searchListings } from "@/lib/search";
 
@@ -41,7 +42,7 @@ export default async function WardPage({ params }: P) {
       <h1 className="text-3xl font-semibold tracking-tight">Houses for rent in {g.ward.name}</h1>
       {rows.length === 0
         ? <p className="mt-3 max-w-xl text-muted">No listings in {g.ward.name} yet.</p>
-        : <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{rows.map((r) => <li key={r.id}><ListingCard listing={toCard(r)} /></li>)}</ul>}
+        : <ListingResults className="mt-6" listings={rows.map(toCard)} />}
     </div>
   );
 }
