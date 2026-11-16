@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MegaMenu } from "./mega-menu";
+import { RotatingType } from "./rotating-type";
 import { HOUSE_TYPES, QUICK_AMENITIES, regionLinks } from "@/lib/catalog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,7 +14,7 @@ export function DesktopNav() {
   const path = usePathname();
   const active = (p: string) => path === p || path.startsWith(p + "/");
   return (
-    <nav aria-label="Main" className="ml-4 hidden items-center gap-1 md:flex">
+    <nav aria-label="Main" className="ml-3 hidden items-center gap-0.5 lg:flex">
       <Link href="/search" className={cn("inline-flex min-h-11 items-center rounded-full px-4 text-[15px] transition-colors hover:bg-surface-2", active("/search") && "bg-surface-2 font-semibold")}>Search</Link>
       <MegaMenu label="Counties">
         {(close) => (
@@ -40,7 +41,8 @@ export function DesktopNav() {
               <ul className="flex flex-wrap gap-2">{QUICK_AMENITIES.map(([slug, name]) => <li key={slug}><Link onClick={close} href={`/search?amenity=${slug}`} className={chip}>{name}</Link></li>)}</ul></div>
           </div>)}
       </MegaMenu>
-      <Link href="/search?type=student-housing" className={cn("inline-flex min-h-11 items-center rounded-full px-4 text-[15px] transition-colors hover:bg-surface-2")}>Student housing</Link>
+      <RotatingType />
+      <Link href="/about" className={cn("inline-flex min-h-11 items-center rounded-full px-4 text-[15px] transition-colors hover:bg-surface-2", active("/about") && "bg-surface-2 font-semibold")}>About</Link>
     </nav>
   );
 }

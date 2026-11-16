@@ -52,7 +52,7 @@ export function InstallBanner() {
 
   if (mode === "hidden") return null;
   return (
-    <aside role="dialog" aria-label="Install E.Rent" className="motion-rise glass fixed inset-x-3 bottom-[calc(6rem+env(safe-area-inset-bottom))] z-40 rounded-[24px] p-4 shadow-[0_16px_48px_rgba(0,0,0,.45)] md:inset-x-auto md:bottom-6 md:right-6 md:w-96">
+    <aside role="dialog" aria-label="Install E.Rent" className="motion-rise glass glass-frost fixed inset-x-3 bottom-[calc(6rem+env(safe-area-inset-bottom))] z-40 rounded-[28px] p-4 md:inset-x-auto md:bottom-24 md:right-6 md:w-96">
       <button type="button" onClick={dismiss} aria-label="Not now" className="absolute right-2 top-2 inline-flex size-11 items-center justify-center rounded-full hover:bg-surface-2"><X className="size-5" aria-hidden /></button>
       <div className="flex gap-3 pr-8">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground"><Download className="size-5" aria-hidden /></span>

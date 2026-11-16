@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LocateFixed } from "lucide-react";
-import "maplibre-gl/dist/maplibre-gl.css";
 import { Button } from "@/components/ui/button";
-import { KENYA_CENTER, mapStyle } from "./map-style";
+import { DARK_STYLE, KENYA_CENTER, MapMessage, loadGoogleMaps, useMapDark } from "./google-maps";
 
 type Props = {
   lat?: number | null;
   lng?: number | null;
-  /** Editable maps let the landlord drag the pin to the true spot (OSM coverage of estates varies). */
+  /** Editable maps let the landlord drag the pin to the true spot. */
   onChange?: (lat: number, lng: number) => void;
   /** Moves the view (not the pin) when a sub-county or ward is chosen. Change `n` to trigger. */
   flyTo?: { lat: number; lng: number; zoom: number; n: number } | null;
@@ -18,64 +17,60 @@ type Props = {
 
 export function PinMap({ lat, lng, onChange, flyTo, className }: Props) {
   const el = useRef<HTMLDivElement>(null);
-  const markerRef = useRef<import("maplibre-gl").Marker | null>(null);
-  const mapRef = useRef<import("maplibre-gl").Map | null>(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const markerRef = useRef<google.maps.Marker | null>(null);
   const editable = Boolean(onChange);
-  const onChangeRef = useRef(onChange);
-  onChangeRef.current = onChange;
+  const onChangeRef = useRef(onChange); onChangeRef.current = onChange;
+  const [failed, setFailed] = useState("");
+  const dark = useMapDark();
 
   useEffect(() => {
     let cancelled = false;
-    (async () => {
-      const maplibre = (await import("maplibre-gl")).default;
+    loadGoogleMaps().then((maps) => {
       if (cancelled || !el.current) return;
       const has = typeof lat === "number" && typeof lng === "number";
-      const map = new maplibre.Map({
-        container: el.current, style: mapStyle, center: has ? [lng!, lat!] : KENYA_CENTER, zoom: has ? 15 : 5.3,
-        attributionControl: { compact: true }, cooperativeGestures: true,
+      const map = new maps.Map(el.current, {
+        center: has ? { lat: lat!, lng: lng! } : KENYA_CENTER, zoom: has ? 16 : 6, gestureHandling: "cooperative",
+        streetViewControl: false, mapTypeControl: false, fullscreenControl: true, clickableIcons: false,
       });
       mapRef.current = map;
-      map.addControl(new maplibre.NavigationControl({ showCompass: false }), "top-right");
-
-      const place = (la: number, ln: number) => {
+      const place = (p: google.maps.LatLngLiteral) => {
         if (!markerRef.current) {
-          markerRef.current = new maplibre.Marker({ color: "#000000", draggable: editable }).setLngLat([ln, la]).addTo(map);
-          if (editable) markerRef.current.on("dragend", () => {
-            const p = markerRef.current!.getLngLat(); onChangeRef.current?.(p.lat, p.lng);
-          });
-        } else markerRef.current.setLngLat([ln, la]);
+          markerRef.current = new maps.Marker({ map, position: p, draggable: editable, animation: maps.Animation.DROP, title: editable ? "Drag to the house" : "The house" });
+          if (editable) markerRef.current.addListener("dragend", () => { const q = markerRef.current!.getPosition()!; onChangeRef.current?.(q.lat(), q.lng()); });
+        } else markerRef.current.setPosition(p);
       };
-      if (has) place(lat!, lng!);
-      if (editable) map.on("click", (e) => { place(e.lngLat.lat, e.lngLat.lng); onChangeRef.current?.(e.lngLat.lat, e.lngLat.lng); });
-      (map as unknown as { _place: typeof place })._place = place;
-    })();
-    return () => { cancelled = true; mapRef.current?.remove(); mapRef.current = null; markerRef.current = null; };
+      if (has) place({ lat: lat!, lng: lng! });
+      if (editable) map.addListener("click", (e: google.maps.MapMouseEvent) => { if (!e.latLng) return; const p = e.latLng.toJSON(); place(p); onChangeRef.current?.(p.lat, p.lng); });
+    }).catch((e: Error) => setFailed(e.message));
+    return () => { cancelled = true; markerRef.current?.setMap(null); markerRef.current = null; mapRef.current = null; };
     // The map is created once. Later pin changes are applied through the effect below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const map = mapRef.current as (import("maplibre-gl").Map & { _place?: (a: number, b: number) => void }) | null;
-    if (map && typeof lat === "number" && typeof lng === "number") { map._place?.(lat, lng); map.easeTo({ center: [lng, lat], zoom: Math.max(map.getZoom(), 15) }); }
-  }, [lat, lng]);
+  useEffect(() => { mapRef.current?.setOptions({ styles: dark ? DARK_STYLE : null }); }, [dark, failed]);
 
   useEffect(() => {
-    if (flyTo) mapRef.current?.flyTo({ center: [flyTo.lng, flyTo.lat], zoom: flyTo.zoom, duration: 800 });
-  }, [flyTo]);
+    const map = mapRef.current;
+    if (!map || typeof lat !== "number" || typeof lng !== "number") return;
+    const p = { lat, lng };
+    if (markerRef.current) markerRef.current.setPosition(p);
+    else if (typeof google !== "undefined") markerRef.current = new google.maps.Marker({ map, position: p, draggable: editable });
+    map.panTo(p); if ((map.getZoom() ?? 0) < 15) map.setZoom(16);
+  }, [lat, lng, editable]);
+
+  useEffect(() => { if (flyTo && mapRef.current) { mapRef.current.panTo({ lat: flyTo.lat, lng: flyTo.lng }); mapRef.current.setZoom(flyTo.zoom); } }, [flyTo]);
 
   function locate() {
-    navigator.geolocation.getCurrentPosition(
-      (p) => onChangeRef.current?.(p.coords.latitude, p.coords.longitude),
-      () => {}, { enableHighAccuracy: true, timeout: 10000 },
-    );
+    navigator.geolocation.getCurrentPosition((p) => onChangeRef.current?.(p.coords.latitude, p.coords.longitude), () => {}, { enableHighAccuracy: true, timeout: 10000 });
   }
 
   return (
     <div className="space-y-2">
-      <div ref={el} className={className ?? "h-72 w-full overflow-hidden rounded-[20px] border border-border bg-surface"} role="application" aria-label={editable ? "Map. Tap or drag the pin to the house" : "Map showing the house location"} />
-      {editable && (
-        <Button type="button" variant="secondary" onClick={locate}><LocateFixed className="size-4" aria-hidden />Use my current location</Button>
-      )}
+      <div className={className ?? "h-72 w-full overflow-hidden rounded-[20px] border border-border bg-surface"} role="application" aria-label={editable ? "Map. Tap or drag the pin to the house" : "Map showing the house location"}>
+        {failed ? <MapMessage>{failed === "missing-key" ? "The map is not set up yet (missing Google Maps key)." : "The map could not load. Check your connection and try again."}</MapMessage> : <div ref={el} className="size-full" />}
+      </div>
+      {editable && <Button type="button" variant="secondary" onClick={locate}><LocateFixed className="size-4" aria-hidden />Use my current location</Button>}
     </div>
   );
 }

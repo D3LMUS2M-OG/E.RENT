@@ -1,0 +1,19 @@
+# This build: theme fix, glass pills, Google and phone sign-in, Google Maps, landing page
+
+## Do this first
+1. `npm install` (maplibre-gl is removed; `@googlemaps/markerclusterer` and `@types/google.maps` are added), then `npm run typecheck`.
+2. Vercel: add `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` to **Preview** as well as Production, then redeploy.
+3. Google Cloud: the key must allow the Maps JavaScript API. Add your live address with `/*` (for example `https://e-rent-d3lmus2m-og.vercel.app/*`) and `http://localhost:3000/*` under website restrictions.
+4. Supabase, Authentication, URL Configuration: Site URL is the live address; Redirect URLs include `<live address>/auth/callback`.
+5. No new SQL migration is needed.
+
+## Sign-in
+- Google and phone buttons always show on /sign-in and /sign-up. Phone lives at /phone (sign in or sign up, 6-digit code).
+- First-time Google or phone users get a one-time "tenant or landlord" step at /onboarding.
+- If Google fails, check the Client ID and secret in Supabase and that `<supabase project url>/auth/v1/callback` is an authorised redirect URI in Google Cloud.
+- Phone codes go through your custom SMS hook. In sign-in mode unknown numbers are told to sign up.
+
+## Landing page notes
+- The Kenya map is a dot map: one dot per county at its real position (from your sub-county data). Real county outlines were not in this project, so I did not fake them.
+- Numbers (houses, verified landlords) are live from the database. Landlord star ratings appear once reviews (Step 10) exist.
+- Family photos are in /public/landing.

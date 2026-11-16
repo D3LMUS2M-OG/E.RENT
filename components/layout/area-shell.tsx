@@ -51,7 +51,7 @@ export function AreaShell({ items, children }: { items: AreaItem[]; children: Re
           </Link>); })}
       </nav>
 
-      <aside ref={aside} style={{ width: OPEN }} className="sticky top-20 hidden h-fit shrink-0 overflow-hidden rounded-[24px] border border-border bg-surface p-2.5 md:block">
+      <aside ref={aside} style={{ width: OPEN }} className="sticky top-24 hidden h-fit shrink-0 overflow-hidden rounded-[24px] border border-border bg-surface p-2.5 md:block">
         <button type="button" onClick={toggle} aria-label={collapsed ? "Expand menu" : "Collapse menu"} aria-expanded={!collapsed}
           className="mb-1 flex size-11 items-center justify-center rounded-[14px] text-muted transition-colors hover:bg-surface-2 hover:text-foreground">
           {collapsed ? <PanelLeftOpen className="size-5" aria-hidden /> : <PanelLeftClose className="size-5" aria-hidden />}

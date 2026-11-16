@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 export function ChatsShell({ children }: { children: React.ReactNode }) {
   const open = /^\/chats\/[^/]+/.test(usePathname());
   return (
-    <div data-chat-root className="mx-auto h-[calc(100dvh-4.1rem)] max-w-7xl md:grid md:grid-cols-[380px_1fr] md:border-x md:border-border">
+    <div data-chat-root className="mx-auto h-[calc(100dvh-5.5rem)] max-w-7xl md:grid md:grid-cols-[380px_1fr] md:border-x md:border-border">
       <aside aria-label="Your chats" className={cn("h-full min-h-0 border-border bg-background md:border-r", open ? "hidden md:block" : "block")}><ConversationList /></aside>
       <section aria-label="Conversation" className={cn("h-full min-h-0", open ? "block" : "hidden md:block")}>{children}</section>
     </div>

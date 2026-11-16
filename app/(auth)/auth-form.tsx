@@ -7,7 +7,7 @@ import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AuthState } from "./actions";
 
-type Props = { action: (s: AuthState, f: FormData) => Promise<AuthState>; mode: "sign-in" | "sign-up"; next?: string; children?: React.ReactNode };
+type Props = { action: (s: AuthState, f: FormData) => Promise<AuthState>; mode: "sign-in" | "sign-up"; next?: string; defaultRole?: "tenant" | "landlord"; children?: React.ReactNode };
 
 const wrap = "relative";
 const field = "min-h-12 w-full rounded-[14px] border border-border-strong bg-background/60 pl-11 pr-3.5 text-base text-foreground placeholder:text-muted aria-[invalid=true]:border-2 aria-[invalid=true]:border-danger";
@@ -23,7 +23,7 @@ function Row({ i, label, htmlFor, error, icon: Icon, children, trailing }: { i: 
 }
 
 /** `children` is the optional "or continue with" block, rendered by the page (it needs the feature flags). */
-export function AuthForm({ action, mode, next, children }: Props) {
+export function AuthForm({ action, mode, next, defaultRole = "tenant", children }: Props) {
   const [state, formAction, pending] = useActionState(action, {});
   const [show, setShow] = useState(false);
   const up = mode === "sign-up";
@@ -45,7 +45,7 @@ export function AuthForm({ action, mode, next, children }: Props) {
             <legend className="text-sm font-medium">I am joining as</legend>
             {[["tenant", "A tenant looking for a house"], ["landlord", "A landlord or house owner"]].map(([v, l], i) => (
               <label key={v} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-[14px] border border-border bg-background/50 px-3.5 transition-colors has-[:checked]:border-primary has-[:checked]:bg-surface-2">
-                <input type="radio" name="role" value={v} defaultChecked={i === 0} className="size-4 accent-[var(--primary)]" />{l}
+                <input type="radio" name="role" value={v} defaultChecked={v === defaultRole} className="size-4 accent-[var(--primary)]" />{l}
               </label>))}
           </fieldset>
         )}

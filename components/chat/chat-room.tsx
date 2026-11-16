@@ -9,6 +9,7 @@ import { ActionButton } from "@/components/ui/action-button";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { useConfirm } from "@/components/ui/glass-confirm";
 import { PopoverMenu, useDismiss } from "@/components/ui/popover-menu";
 import { createClient } from "@/lib/supabase/client";
 import { blockUser, deleteConversation, deleteMessageForEveryone, hideMessage, reportConversation, unblockUser } from "@/app/chats/actions";
@@ -64,6 +65,7 @@ function MessageRow({ m, mine, first, onHide, onDeleted }: { m: Msg; mine: boole
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const ask = useConfirm();
   const ref = useRef<HTMLDivElement>(null);
   const close = useCallback(() => setOpen(false), []);
   useDismiss(ref, open, close);
@@ -107,7 +109,7 @@ function MessageRow({ m, mine, first, onHide, onDeleted }: { m: Msg; mine: boole
           <Button type="button" variant="secondary" loading={busy} onClick={() => run(() => hideMessage(m.id), () => onHide(m.id))}>Delete for me</Button>
           {canDeleteAll && (
             <Button type="button" variant="secondary" loading={busy}
-              onClick={() => { if (confirm("Delete this message for everyone? The other person will see that it was deleted.")) run(() => deleteMessageForEveryone(m.id), () => onDeleted(m.id)); }}>
+              onClick={async () => { if (await ask({ title: "Delete for everyone?", message: "The other person will see that this message was deleted.", confirmLabel: "Delete message" })) run(() => deleteMessageForEveryone(m.id), () => onDeleted(m.id)); }}>
               Delete for everyone
             </Button>)}
           <Button type="button" variant="ghost" onClick={close}>Cancel</Button>

@@ -11,6 +11,7 @@ const button = cva(
       variant: {
         primary: "bg-primary text-primary-foreground shadow-[var(--shadow-primary)] hover:brightness-110 active:shadow-none",
         secondary: "border border-border-strong bg-surface-2 text-foreground shadow-[var(--shadow-btn)] hover:bg-surface hover:border-foreground/40 active:shadow-none",
+        danger: "border border-danger/70 bg-danger/10 text-danger hover:bg-danger/20 active:translate-y-px",
         ghost: "text-foreground hover:bg-surface-2 underline-offset-4",
       },
       size: { default: "", lg: "min-h-12 px-7 text-base", icon: "w-11 px-0" },

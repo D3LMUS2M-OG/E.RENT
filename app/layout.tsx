@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { RegisterServiceWorker } from "@/components/layout/register-sw";
 import { SessionProvider } from "@/components/layout/session-provider";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { ThemeSync } from "@/components/layout/theme-sync";
+import { ConfirmProvider } from "@/components/ui/glass-confirm";
 import { InstallBanner } from "@/components/pwa/install-banner";
 
 // Two families and one accent face: a warm serif for headlines, a clean sans for everything else, an italic serif for large quotes.
@@ -26,19 +28,22 @@ export const viewport: Viewport = {
 };
 
 // Applies the saved theme before first paint so there is no flash
-const themeScript = `try{var t=localStorage.getItem("erent-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
+const themeScript = `try{var t=localStorage.getItem("erent-theme"),d=document.documentElement;if(t==="light"||t==="dark")d.dataset.theme=t;var l=t==="light"||(t!=="dark"&&matchMedia("(prefers-color-scheme: light)").matches);document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.setAttribute("content",l?"#ffffff":"#111111")})}catch(e){}`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable} ${quote.variable}`} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: themeScript }} /></head>
-      <body className="min-h-dvh pb-[calc(6.5rem+env(safe-area-inset-bottom))] md:pb-0">
+      <body className="min-h-dvh pb-[calc(6.5rem+env(safe-area-inset-bottom))]">
         <SessionProvider>
+         <ConfirmProvider>
+          <ThemeSync />
           <SiteHeader />
           <main>{children}</main>
           <SiteFooter />
           <MobileNav />
           <InstallBanner />
+         </ConfirmProvider>
         </SessionProvider>
         <RegisterServiceWorker />
       </body>

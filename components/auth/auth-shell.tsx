@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { stagger } from "@/lib/utils";
+import { Home } from "lucide-react";
 import { LogoArt } from "@/components/brand/logo";
+import { ThemeMenu } from "@/components/layout/theme-menu";
 
 /** Full-screen sign-in layout. The header and footer are hidden on these pages (see globals.css). */
 export function AuthShell({ title, accent, subtitle, children }: { title: string; accent: string; subtitle: string; children: React.ReactNode }) {
@@ -16,7 +18,12 @@ export function AuthShell({ title, accent, subtitle, children }: { title: string
         </svg>
       </div>
 
-      <div className="relative z-10 w-full max-w-[420px]">
+      <div className="absolute inset-x-3 top-[calc(0.75rem+env(safe-area-inset-top))] z-20 flex items-center justify-between">
+        <Link href="/" className="glass glass-frost glass-pill inline-flex min-h-11 items-center gap-2 px-4 text-sm font-semibold transition-transform active:scale-95"><Home className="size-4" aria-hidden />Back to home</Link>
+        <span className="glass glass-frost glass-pill p-0.5"><ThemeMenu /></span>
+      </div>
+
+      <div className="relative z-10 w-full max-w-[420px] pt-10">
         <Link href="/" aria-label="E.Rent, home" className="mb-6 flex justify-center"><LogoArt className="h-12" /></Link>
         <div className="relative">
           <span aria-hidden className="corner-glass -left-3 -top-3 [clip-path:polygon(0_0,100%_0,0_100%)]" />

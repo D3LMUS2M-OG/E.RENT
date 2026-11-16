@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useConfirm } from "@/components/ui/glass-confirm";
 import { Button } from "@/components/ui/button";
 import { changeStatus, type ActionState } from "@/app/dashboard/actions";
 import type { ListingStatus } from "@/lib/types";
@@ -24,6 +25,7 @@ function buttonsFor(status: ListingStatus, isOwner: boolean, unitsAvailable: num
 }
 
 export function StatusActions({ id, status, isOwner, unitsAvailable }: { id: string; status: ListingStatus; isOwner: boolean; unitsAvailable: number }) {
+  const ask = useConfirm();
   const [state, action, pending] = useActionState(changeStatus.bind(null, id), {} as ActionState);
   const buttons = buttonsFor(status, isOwner, unitsAvailable);
   if (!buttons.length) return null;
@@ -32,7 +34,7 @@ export function StatusActions({ id, status, isOwner, unitsAvailable }: { id: str
       <div className="flex flex-wrap gap-2">
         {buttons.map((b) => (
           <Button key={b.intent} name="intent" value={b.intent} variant={b.variant ?? "primary"} loading={pending} type="submit"
-            onClick={(e) => { if (b.intent === "delete" && !confirm("Delete this listing and its photos?")) e.preventDefault(); }}>
+            onClick={(e) => { if (b.intent !== "delete") return; e.preventDefault(); const btn = e.currentTarget; ask({ title: "Delete this listing?", message: "The listing and its photos will be removed for good.", confirmLabel: "Delete listing" }).then((ok) => { if (ok) btn.form?.requestSubmit(btn); }); }}>
             {b.label}
           </Button>
         ))}
