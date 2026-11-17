@@ -10,15 +10,15 @@ const social = [
 ] as const;
 
 const cols: { title: string; links: [string, string][] }[] = [
-  { title: "Explore", links: [["Search houses", "/search"], ["House types", "/search"], ["All counties", "/counties"], ["Student housing", "/search?type=student-housing"]] },
-  { title: "Counties", links: [["Nairobi", "/houses-for-rent/nairobi"], ["Kakamega", "/houses-for-rent/kakamega"], ["Kisumu", "/houses-for-rent/kisumu"], ["Nakuru", "/houses-for-rent/nakuru"], ["Mombasa", "/houses-for-rent/mombasa"]] },
-  { title: "Landlords", links: [["For Landlords", "/for-landlords"], ["How it works", "/how-it-works"], ["About E.Rent", "/about"], ["Contact", "/contact"]] },
-  { title: "Safety and legal", links: [["Safety tips", "/safety"], ["Terms", "/legal/terms"], ["Privacy", "/legal/privacy"], ["Cookies", "/legal/cookies"], ["Community standards", "/legal/community-standards"]] },
+  { title: "Explore", links: [["Search houses", "/search"], ["All 47 counties", "/counties"], ["Student housing", "/search?type=student-housing"]] },
+  { title: "Landlords", links: [["For Landlords", "/for-landlords"], ["How it works", "/how-it-works"]] },
+  { title: "Company", links: [["About E.Rent", "/about"], ["Contact", "/contact"], ["Safety tips", "/safety"]] },
+  { title: "Legal", links: [["Terms", "/legal/terms"], ["Privacy", "/legal/privacy"], ["Cookies", "/legal/cookies"], ["Community standards", "/legal/community-standards"]] },
 ];
 
 export function SiteFooter() {
   return (
-    <footer className="site-footer mt-24 border-t border-border bg-surface/60">
+    <footer className="site-footer mt-24 shrink-0 border-t border-border bg-surface/60">
       <div className="mx-auto max-w-6xl px-4 py-14">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_2fr]">
           <div className="space-y-4">

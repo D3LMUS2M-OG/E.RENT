@@ -95,10 +95,13 @@ export function MobileNav() {
   }, [active, hiddenHere]);
 
   useEffect(() => {
+    const desk = () => matchMedia("(min-width: 768px)").matches;
     let last = window.scrollY; let hidden = false;
+    if (desk() && last < 240) { hidden = true; ySpring.current?.set(130); }
     const show = () => { if (hidden) { hidden = false; ySpring.current?.to(0); } };
     const onScroll = () => {
       const y = window.scrollY; const d = y - last;
+      if (desk() && y < 240) { if (!hidden) { hidden = true; ySpring.current?.to(130); } last = y; return; }
       if (Math.abs(d) < 8) return;
       const nearBottom = window.innerHeight + y >= document.documentElement.scrollHeight - 40;
       if (d > 0 && y > 80 && !hidden) { hidden = true; ySpring.current?.to(130); }

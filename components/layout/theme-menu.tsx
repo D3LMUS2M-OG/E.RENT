@@ -30,7 +30,7 @@ export function ThemeMenu({ className, align = "right" }: { className?: string; 
         <Icon key={shown} className="motion-pop size-5" aria-hidden />
       </button>
       {open && (
-        <div role="menu" aria-label="Theme" className={cn("glass glass-frost motion-pop absolute z-50 mt-3 w-44 space-y-1 rounded-[22px] p-1.5", align === "right" ? "right-0" : "left-0")}>
+        <div role="menu" aria-label="Theme" className={cn("glass-solid motion-pop absolute z-50 mt-3 w-44 space-y-1 rounded-[22px] p-1.5", align === "right" ? "right-0" : "left-0")}>
           {OPTIONS.map(([c, label, I]) => (
             <button key={c} type="button" role="menuitemradio" aria-checked={choice === c} onClick={() => { setThemeChoice(c); close(); }}
               className={cn("flex min-h-11 w-full items-center gap-2.5 rounded-[16px] px-3 text-[15px] font-medium transition-colors hover:bg-foreground/10", choice === c && "bg-foreground/10")}>

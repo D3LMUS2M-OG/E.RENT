@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, BadgeCheck, GraduationCap, MapPinned, MessageCircle, Search, ShieldCheck, Star, Play, Building2, KeyRound, Home as HomeIcon } from "lucide-react";
+import { ArrowRight, BadgeCheck, GraduationCap, MapPinned, MessageCircle, Search, ShieldCheck, Star, Building2, KeyRound, Home as HomeIcon, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
@@ -9,6 +9,7 @@ import { Reveal, CountUp } from "@/components/home/reveal";
 import { Carousel } from "@/components/home/carousel";
 import { CountyMap } from "@/components/home/county-map";
 import { Faq } from "@/components/home/faq";
+import { KenyaCollage } from "@/components/home/kenya-collage";
 import { LandlordCta } from "@/components/home/landlord-cta";
 import { COUNTIES } from "@/lib/counties";
 import { searchListings } from "@/lib/search";
@@ -22,14 +23,14 @@ const card = "rounded-[28px] border border-border bg-surface p-6";
 const WHY = [
   { icon: BadgeCheck, title: "Verified landlords", text: "Landlords upload their ID and proof of ownership. Verified ones carry a blue badge on every listing and chat." },
   { icon: Star, title: "Honest tenant reviews", text: "Only tenants who really rented or toured a house can review it: water, security, the landlord. They appear here as the site grows." },
-  { icon: GraduationCap, title: "Student housing", text: "Hostels and bedsitters near campuses, filed under one type so students can find them in a tap." },
+  { icon: Wallet, title: "No money through the site", text: "You agree rent with the landlord directly. E.Rent never collects deposits or rent, and it is free to browse and chat." },
   { icon: MessageCircle, title: "Chat before you travel", text: "Ask the landlord your questions in a private chat. Your phone number stays hidden until you choose to share it." },
 ];
 
 const STEPS = [
   { icon: Search, title: "Search your county", text: "Pick a county, estate or house type. Filter by rent, bedrooms, water, parking and more." },
   { icon: MessageCircle, title: "Chat with the landlord", text: "Ask about the water, the security and the neighbours. Send photos or a voice note." },
-  { icon: KeyRound, title: "View, then decide", text: "Request a viewing, visit in person and pay the landlord only after you have seen the house." },
+  { icon: KeyRound, title: "View, then decide", text: "Request a viewing and visit in person. Agree the details with the landlord once you are happy." },
 ];
 
 const FAQ = [
@@ -64,22 +65,13 @@ export default async function HomePage() {
               <input id="q" name="q" placeholder="Search a county, estate or house type" className="min-h-11 min-w-0 flex-1 bg-transparent text-base placeholder:text-muted focus:outline-none" />
               <Button type="submit" size="lg">Search</Button>
             </form>
-            <ul className="motion-rise mt-5 flex flex-wrap gap-2" style={{ animationDelay: "320ms" }}>
-              {popular.slice(0, 6).map((c) => <li key={c.slug}><Link href={`/houses-for-rent/${c.slug}`} className="inline-flex min-h-10 items-center rounded-full border border-border-strong bg-background/60 px-3.5 text-sm font-medium backdrop-blur transition-[transform,background-color] hover:-translate-y-0.5 hover:bg-surface-2">{c.name}</Link></li>)}
-              <li><Link href="/counties" className="inline-flex min-h-10 items-center gap-1 px-2 text-sm font-semibold text-link underline-offset-4 hover:underline">All 47<ArrowRight className="size-4" aria-hidden /></Link></li>
-            </ul>
           </div>
 
-          {/* Collage with rounded tiles */}
-          <div className="motion-rise relative mx-auto w-full max-w-lg" style={{ animationDelay: "200ms" }}>
-            <div className="grid aspect-[4/5] grid-cols-2 grid-rows-5 gap-3">
-              <div className="relative row-span-3 overflow-hidden rounded-[32px]"><Image src="/landing/family-1.webp" alt="A family relaxing in their new rented living room" fill priority sizes="(min-width:1024px) 22vw, 45vw" className="object-cover object-[35%_50%]" /></div>
-              <div className="relative row-span-2 overflow-hidden rounded-[32px]"><Image src="/landing/family-2.webp" alt="A family on the balcony holding the keys to their new home" fill priority sizes="(min-width:1024px) 22vw, 45vw" className="object-cover object-[40%_30%]" /></div>
-              <div className="relative row-span-2 overflow-hidden rounded-[32px]"><Image src="/landing/family-2.webp" alt="" fill sizes="(min-width:1024px) 22vw, 45vw" className="object-cover object-[92%_40%]" /></div>
-              <div className="relative row-span-3 overflow-hidden rounded-[32px]"><Image src="/landing/family-3.webp" alt="A family outside their apartment building" fill sizes="(min-width:1024px) 22vw, 45vw" className="object-cover object-[45%_40%]" /></div>
-            </div>
-            <div className="float-slow glass glass-frost glass-pill absolute -left-2 top-[46%] flex items-center gap-2.5 py-2 pl-2.5 pr-4 sm:-left-8"><span className="flex size-9 items-center justify-center rounded-full bg-link/15 text-link"><BadgeCheck className="size-5" aria-hidden /></span><span className="text-sm font-semibold">Verified landlords</span></div>
-            <div className="float-slow glass glass-frost glass-pill absolute -right-1 bottom-6 flex items-center gap-2.5 py-2 pl-2.5 pr-4 sm:-right-6" style={{ animationDelay: "-3s" }}><span className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground"><MessageCircle className="size-5" aria-hidden /></span><span className="text-sm font-semibold">Chat before you travel</span></div>
+          {/* Kenya filled with a collage of rounded photo tiles */}
+          <div className="motion-rise relative mx-auto w-full max-w-md" style={{ animationDelay: "200ms" }}>
+            <KenyaCollage />
+            <div className="float-slow glass-solid absolute left-[1%] top-[44%] flex items-center gap-2.5 rounded-full py-2 pl-2.5 pr-4"><span className="flex size-9 items-center justify-center rounded-full bg-link/15 text-link"><BadgeCheck className="size-5" aria-hidden /></span><span className="text-sm font-semibold">Verified landlords</span></div>
+            <div className="float-slow glass-solid absolute right-[2%] top-[66%] flex items-center gap-2.5 rounded-full py-2 pl-2.5 pr-4" style={{ animationDelay: "-3s" }}><span className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground"><MessageCircle className="size-5" aria-hidden /></span><span className="text-sm font-semibold">Chat before you travel</span></div>
           </div>
         </div>
       </section>
@@ -107,7 +99,7 @@ export default async function HomePage() {
         <section aria-labelledby="counties" className="grid items-center gap-10 lg:grid-cols-2">
           <Reveal>
             <h2 id="counties" className="text-4xl">Browse by county</h2>
-            <p className="mt-3 max-w-md text-muted">Each dot is a county, placed where it sits on the map. Hover or tap one to see its houses.</p>
+            <p className="mt-3 max-w-md text-muted">Tap or hover a county on the map to see its houses.</p>
             <ul className="marquee-chips mt-6 flex flex-wrap gap-2">
               {popular.map((c) => <li key={c.slug}><Link href={`/houses-for-rent/${c.slug}`} className="inline-flex min-h-11 items-center rounded-full border border-border-strong px-4 text-[15px] transition-[transform,background-color] hover:-translate-y-0.5 hover:bg-surface-2">{c.name}</Link></li>)}
             </ul>
@@ -119,7 +111,7 @@ export default async function HomePage() {
         {/* ───────── Newest listings ───────── */}
         <section aria-labelledby="newest">
           <Reveal className="flex items-end justify-between gap-4"><div><h2 id="newest" className="text-4xl">Newest listings</h2><p className="mt-2 text-muted">Fresh from landlords and caretakers.</p></div>
-            {newest.length > 0 && <Link href="/search" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-link">See all<ArrowRight className="size-4" aria-hidden /></Link>}</Reveal>
+            {newest.length > 0 && <Link href="/search" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-accent">See all<ArrowRight className="size-4" aria-hidden /></Link>}</Reveal>
           {newest.length === 0 ? (
             <Reveal><div className={`${card} mt-8 flex flex-col items-center gap-4 text-center`}><HomeIcon className="size-8 text-accent" aria-hidden /><p className="max-w-md text-muted">No houses have been published yet. Landlords and caretakers can add the first ones in a few minutes.</p><LandlordCta variant="secondary">Post a House</LandlordCta></div></Reveal>
           ) : (
@@ -165,26 +157,23 @@ export default async function HomePage() {
           )}
         </section>
 
-        {/* ───────── Walkthrough videos ───────── */}
-        <section aria-labelledby="walk">
-          <Reveal><h2 id="walk" className="text-4xl">See inside before you go</h2><p className="mt-2 max-w-xl text-muted">Landlords add a short walkthrough video to their listings.</p></Reveal>
-          {home.videos.length === 0 ? (
-            <Reveal><div className={`${card} mt-8 flex items-center gap-4`}><span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground"><Play className="size-6" aria-hidden /></span><p className="text-muted">Walkthrough videos will play here as landlords add them.</p></div></Reveal>
-          ) : (
+        {/* ───────── Walkthrough videos: shown only once landlords have added some ───────── */}
+        {home.videos.length > 0 && (
+          <section aria-labelledby="walk">
+            <Reveal><h2 id="walk" className="text-4xl">See inside before you go</h2><p className="mt-2 max-w-xl text-muted">Short walkthrough videos from landlords.</p></Reveal>
             <div className="mt-8"><Carousel label="Walkthrough videos" itemClass="w-[70%] sm:w-[36%] lg:w-[24%]">
               {home.videos.map((v) => (
                 <div key={v.src} className="space-y-2"><video src={v.src} controls playsInline preload="metadata" aria-label={`Walkthrough of ${v.title}`} className="aspect-[9/14] w-full rounded-[24px] bg-surface-2 object-cover" />
                   <Link href={`/listing/${v.slug}`} className="line-clamp-1 text-sm font-semibold underline-offset-4 hover:underline">{v.title}</Link></div>))}
             </Carousel></div>
-          )}
-        </section>
+          </section>)}
 
         {/* ───────── For landlords ───────── */}
         <Reveal as="section"><div className="relative overflow-hidden rounded-[36px] bg-primary p-8 text-primary-foreground sm:p-14">
           <Building2 aria-hidden className="float-slow absolute -right-6 -top-6 size-56 text-black/10" />
           <h2 className="relative max-w-xl text-4xl text-primary-foreground">Have a house to let? Post it in minutes.</h2>
           <p className="relative mt-3 max-w-lg text-[17px] text-primary-foreground/85">Reach serious tenants in every county, answer them in chat and get a Verified badge. Free to list. Caretakers and agents are welcome too.</p>
-          <div className="relative mt-7 flex flex-wrap gap-3"><LandlordCta variant="secondary">Post a House</LandlordCta><Button asChild size="lg" variant="ghost" className="text-primary-foreground hover:bg-black/10"><Link href="/for-landlords">How it works for landlords</Link></Button></div>
+          <div className="relative mt-7 flex flex-wrap gap-3"><LandlordCta variant="secondary">Post a House</LandlordCta><Button asChild size="lg" variant="ghost" className="text-primary-foreground hover:bg-black/10"><Link href="/how-it-works">How E.Rent works</Link></Button></div>
         </div></Reveal>
 
         {/* ───────── FAQ ───────── */}

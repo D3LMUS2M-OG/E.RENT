@@ -27,7 +27,7 @@ export function MegaMenu({ label, children }: { label: string; children: (close:
         {label}<ChevronDown className={cn("size-4 transition-transform duration-200 ease-[var(--ease-out)]", open && "rotate-180")} aria-hidden />
       </button>
       {open && (
-        <div className="motion-pop absolute inset-x-0 top-[calc(100%+6px)] z-50 origin-top glass glass-frost rounded-[28px] p-5" style={{ transformOrigin: "top center" }}>
+        <div className="motion-pop absolute inset-x-0 top-[calc(100%+6px)] z-50 origin-top glass-solid rounded-[28px] p-5" style={{ transformOrigin: "top center" }}>
           {children(close)}
         </div>
       )}

@@ -17,3 +17,14 @@
 - The Kenya map is a dot map: one dot per county at its real position (from your sub-county data). Real county outlines were not in this project, so I did not fake them.
 - Numbers (houses, verified landlords) are live from the database. Landlord star ratings appear once reviews (Step 10) exist.
 - Family photos are in /public/landing.
+
+## Round 2 fixes
+- Dropdowns (Counties, House types, theme, dialogs) now use `.glass-solid`: about 96% opaque, strong blur, full-contrast text. Blur nested inside the header pill does not render in browsers, so the panels no longer depend on it.
+- Hero: Kenya outline filled with rounded photo tiles (plain SVG images, sharp). The outline is a simplified drawing, not a survey boundary. The county dot map keeps a faint outline under the dots.
+- Footer sticks to the bottom on short pages (body is a flex column, main grows).
+- Desktop bottom pill stays hidden at the top of the page and appears when you scroll up.
+- Removed repeats: hero county chips, student housing card, footer county list, duplicate footer links. Walkthrough section appears only when videos exist.
+
+## Round 3: real county map
+- `lib/kenya-geo.ts` is generated from your ke.json (47 county shapes plus the country outline, about 50 KB). The 10 MB original is not shipped.
+- The hero collage is clipped to the real Kenya outline. "Browse by county" is now the full county map: hover or tap a county, click to open its houses.

@@ -22,9 +22,9 @@ export function DesktopNav() {
             <div className="grid gap-x-6 gap-y-5 lg:grid-cols-4">
               {regionLinks.map((r) => (
                 <div key={r.name} className={r.name === "Rift Valley" ? "lg:col-span-2" : ""}>
-                  <h3 className="mb-2 text-sm font-semibold">{r.name}</h3>
+                  <h3 className="mb-2 text-sm font-bold text-accent">{r.name}</h3>
                   <ul className={cn("grid gap-0.5", r.name === "Rift Valley" && "grid-cols-2")}>
-                    {r.counties.map((c) => <li key={c.slug}><Link onClick={close} href={`/houses-for-rent/${c.slug}`} className="block rounded-[10px] px-2.5 py-1.5 text-sm text-muted hover:bg-surface-2 hover:text-foreground">{c.name}</Link></li>)}
+                    {r.counties.map((c) => <li key={c.slug}><Link onClick={close} href={`/houses-for-rent/${c.slug}`} className="block rounded-[10px] px-2.5 py-1.5 text-sm font-medium text-foreground hover:bg-surface-2">{c.name}</Link></li>)}
                   </ul>
                 </div>))}
             </div>

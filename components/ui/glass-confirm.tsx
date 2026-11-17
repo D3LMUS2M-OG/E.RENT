@@ -38,7 +38,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
       {opts && typeof document !== "undefined" && createPortal(
         <div className="fixed inset-0 z-[100] flex items-end justify-center p-4 sm:items-center">
           <button type="button" aria-label="Cancel" tabIndex={-1} onClick={() => done(false)} className="motion-fade absolute inset-0 cursor-default bg-black/45 backdrop-blur-[3px]" />
-          <div role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-msg" className="glass glass-frost motion-rise relative w-full max-w-sm space-y-4 rounded-[28px] p-6 mb-[env(safe-area-inset-bottom)]">
+          <div role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-msg" className="glass-solid motion-rise relative w-full max-w-sm space-y-4 rounded-[28px] p-6 mb-[env(safe-area-inset-bottom)]">
             <h2 id="confirm-title" className="text-xl">{opts.title ?? "Are you sure?"}</h2>
             <p id="confirm-msg" className="text-[15px] text-muted">{opts.message}</p>
             <div className="flex gap-2 pt-1">

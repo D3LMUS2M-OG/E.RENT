@@ -162,7 +162,7 @@ body:has([data-chat-root]) { padding-bottom: 0; }
 /* ═════════ Frosted glass: floating pills, popups and dialogs all share this ═════════ */
 .glass-frost {
   background:
-    linear-gradient(color-mix(in srgb, var(--surface) 70%, transparent), color-mix(in srgb, var(--surface) 70%, transparent)),
+    linear-gradient(color-mix(in srgb, var(--surface) 84%, transparent), color-mix(in srgb, var(--surface) 84%, transparent)),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
   backdrop-filter: blur(24px) saturate(1.7); -webkit-backdrop-filter: blur(24px) saturate(1.7);
   box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 20%, transparent), 0 24px 60px -18px rgba(0,0,0,.6);
@@ -197,3 +197,8 @@ body:has([data-chat-root]) main { padding-top: var(--header-space); }
 .hero-glow { background: radial-gradient(60% 60% at 70% 20%, color-mix(in srgb, var(--orange) 28%, transparent), transparent 70%); }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } .float-slow, .marquee-track { animation: none; } }
 .hero-bg { background: linear-gradient(180deg, color-mix(in srgb, var(--orange) 38%, var(--background)) 0%, color-mix(in srgb, var(--orange) 8%, var(--background)) 55%, var(--background) 100%); }
+
+/* Dropdowns and dialogs: almost solid, strong blur, full-contrast text. Readable over any photo or headline. */
+.glass-solid { background: color-mix(in srgb, var(--surface) 96%, transparent); backdrop-filter: blur(32px) saturate(1.6); -webkit-backdrop-filter: blur(32px) saturate(1.6);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 16%, transparent), 0 28px 70px -16px rgba(0,0,0,.65); color: var(--foreground); border: 1px solid var(--border-strong); }
+@keyframes dot-in { from { opacity: 0; transform: scale(.2); } to { opacity: 1; transform: none; } }
