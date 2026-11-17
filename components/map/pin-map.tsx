@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LocateFixed } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DARK_STYLE, KENYA_CENTER, MapMessage, loadGoogleMaps, useMapDark } from "./google-maps";
+import { DARK_STYLE, KENYA_CENTER, MapMessage, loadGoogleMaps, mapErrorText, useMapDark, useMapsAuthFailed } from "./google-maps";
 
 type Props = {
   lat?: number | null;
@@ -23,6 +23,7 @@ export function PinMap({ lat, lng, onChange, flyTo, className }: Props) {
   const onChangeRef = useRef(onChange); onChangeRef.current = onChange;
   const [failed, setFailed] = useState("");
   const dark = useMapDark();
+  const authFailed = useMapsAuthFailed();
 
   useEffect(() => {
     let cancelled = false;
@@ -68,7 +69,7 @@ export function PinMap({ lat, lng, onChange, flyTo, className }: Props) {
   return (
     <div className="space-y-2">
       <div className={className ?? "h-72 w-full overflow-hidden rounded-[20px] border border-border bg-surface"} role="application" aria-label={editable ? "Map. Tap or drag the pin to the house" : "Map showing the house location"}>
-        {failed ? <MapMessage>{failed === "missing-key" ? "The map is not set up yet (missing Google Maps key)." : "The map could not load. Check your connection and try again."}</MapMessage> : <div ref={el} className="size-full" />}
+        {failed || authFailed ? <MapMessage>{mapErrorText(failed, authFailed)}</MapMessage> : <div ref={el} className="size-full min-h-64" />}
       </div>
       {editable && <Button type="button" variant="secondary" onClick={locate}><LocateFixed className="size-4" aria-hidden />Use my current location</Button>}
     </div>

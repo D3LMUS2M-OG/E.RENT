@@ -95,13 +95,10 @@ export function MobileNav() {
   }, [active, hiddenHere]);
 
   useEffect(() => {
-    const desk = () => matchMedia("(min-width: 768px)").matches;
     let last = window.scrollY; let hidden = false;
-    if (desk() && last < 240) { hidden = true; ySpring.current?.set(130); }
     const show = () => { if (hidden) { hidden = false; ySpring.current?.to(0); } };
     const onScroll = () => {
       const y = window.scrollY; const d = y - last;
-      if (desk() && y < 240) { if (!hidden) { hidden = true; ySpring.current?.to(130); } last = y; return; }
       if (Math.abs(d) < 8) return;
       const nearBottom = window.innerHeight + y >= document.documentElement.scrollHeight - 40;
       if (d > 0 && y > 80 && !hidden) { hidden = true; ySpring.current?.to(130); }
@@ -119,7 +116,7 @@ export function MobileNav() {
   const n = tabs.length;
 
   return (
-    <nav ref={bar} aria-label="Main" className={cn("fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 will-change-transform md:inset-x-auto md:left-1/2 md:w-[30rem] md:-ml-[15rem]", path.startsWith("/chats") && "md:hidden")}>
+    <nav ref={bar} aria-label="Main" className={cn("fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 will-change-transform md:hidden")}>
       <div className="glass glass-frost glass-pill p-2">
         <div ref={row} className="flex h-12 w-full items-center">
           {tabs.map((t, i) => {

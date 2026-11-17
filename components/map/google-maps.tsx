@@ -15,9 +15,10 @@ export function loadGoogleMaps(): Promise<typeof google.maps> {
   if (loading) return loading;
   loading = new Promise((resolve, reject) => {
     const cb = "__erentMapsReady";
+    (window as unknown as Record<string, () => void>).gm_authFailure = () => window.dispatchEvent(new Event("erent:maps-auth"));
     (window as unknown as Record<string, () => void>)[cb] = () => resolve(google.maps);
     const s = document.createElement("script");
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(KEY)}&v=weekly&loading=async&callback=${cb}&region=KE&language=en`;
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(KEY)}&v=weekly&callback=${cb}&region=KE&language=en`;
     s.async = true; s.onerror = () => { loading = null; reject(new Error("load-failed")); };
     document.head.appendChild(s);
   });
@@ -47,6 +48,19 @@ export function useMapDark() {
     return () => window.removeEventListener("erent:theme", sync);
   }, []);
   return dark;
+}
+
+/** True when Google rejects the key for this address (the key\'s website restrictions do not include it). */
+export function useMapsAuthFailed() {
+  const [bad, setBad] = useState(false);
+  useEffect(() => { const f = () => setBad(true); window.addEventListener("erent:maps-auth", f); return () => window.removeEventListener("erent:maps-auth", f); }, []);
+  return bad;
+}
+
+export function mapErrorText(code: string, authFailed: boolean) {
+  if (authFailed) return `Google blocked the map key for ${typeof location !== "undefined" ? location.origin : "this address"}. In Google Cloud, add ${typeof location !== "undefined" ? location.origin : "your address"}/* to the key\'s website restrictions.`;
+  if (code === "missing-key") return "The map is not set up yet (missing Google Maps key).";
+  return "The map could not load. Check your connection and try again.";
 }
 
 export function MapMessage({ children }: { children: React.ReactNode }) {

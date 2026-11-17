@@ -28,3 +28,9 @@
 ## Round 3: real county map
 - `lib/kenya-geo.ts` is generated from your ke.json (47 county shapes plus the country outline, about 50 KB). The 10 MB original is not shipped.
 - The hero collage is clipped to the real Kenya outline. "Browse by county" is now the full county map: hover or tap a county, click to open its houses.
+
+## Round 4
+- Map error on desktop: the loader used Google's `loading=async` mode, which hides `google.maps.Map` until `importLibrary` is called. Fixed. If Google rejects the key for your address, the map now says so and names the address to add under the key's website restrictions (use the address you actually open, for example https://e-rent-og.vercel.app/*).
+- Bottom pill is phones only (hidden from 768px up).
+- Hero: three pre-cropped 3x tiles (public/landing/tile-*.webp) with faces centred in the part of each tile that sits inside Kenya. Floating badges removed.
+- Sign-in and sign-out now update the header and tabs straight away: the session is re-read after every page change and when the tab regains focus.

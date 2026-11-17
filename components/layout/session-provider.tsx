@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -18,6 +18,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [s, setS] = useState<Session>(initial);
   const pathname = usePathname();
   const supabase = useMemo(() => createClient(), []);
+  const resync = useRef<() => void>(() => {});
 
   // Before the first paint: trust the hint. No hint means we simply wait for the real answer (nothing is drawn meanwhile).
   useIsoLayoutEffect(() => {
@@ -62,6 +63,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     };
 
     supabase.auth.getSession().then(({ data }) => load(data.session?.user.id));
+    // Sign-in and sign-out happen in server actions, which change the cookie without the browser client noticing. Re-read it whenever the page changes or comes back into view.
+    resync.current = () => { supabase.auth.getSession().then(({ data }) => { if (data.session?.user.id !== uid) load(data.session?.user.id); }); };
+    const onShow = () => { if (document.visibilityState === "visible") resync.current(); };
+    document.addEventListener("visibilitychange", onShow); window.addEventListener("pageshow", onShow);
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => { if (session?.user.id !== uid) load(session?.user.id); });
     const onProfile = () => { if (uid) load(uid, false); };
     window.addEventListener("focus", refreshUnread);
@@ -69,12 +74,13 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     window.addEventListener("erent:profile-changed", onProfile);
     const poll = setInterval(() => { if (document.visibilityState === "visible") refreshUnread(); }, 60000); // safety net if realtime drops
     return () => {
+      document.removeEventListener("visibilitychange", onShow); window.removeEventListener("pageshow", onShow);
       clearTimeout(timer); clearInterval(poll); sub.subscription.unsubscribe();
       window.removeEventListener("focus", refreshUnread); window.removeEventListener("erent:unread-changed", refreshUnread); window.removeEventListener("erent:profile-changed", onProfile);
       if (channel) supabase.removeChannel(channel);
     };
   }, [supabase]);
 
-  useEffect(() => { window.dispatchEvent(new Event("erent:unread-changed")); }, [pathname]);
+  useEffect(() => { resync.current(); window.dispatchEvent(new Event("erent:unread-changed")); }, [pathname]);
   return <Ctx.Provider value={s}>{children}</Ctx.Provider>;
 }

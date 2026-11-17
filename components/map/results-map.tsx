@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { SearchRow } from "@/lib/types";
 import { formatKes } from "@/lib/utils";
-import { DARK_STYLE, KENYA_CENTER, MapMessage, loadGoogleMaps, useMapDark } from "./google-maps";
+import { DARK_STYLE, KENYA_CENTER, MapMessage, loadGoogleMaps, mapErrorText, useMapDark, useMapsAuthFailed } from "./google-maps";
 
 const PIN = "data:image/svg+xml;utf8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="34" height="42" viewBox="0 0 34 42"><path d="M17 1C8.7 1 2 7.5 2 15.6 2 26.4 17 41 17 41s15-14.600 15-25.400C32 7.500 25.300 1 17 1z" fill="#ff4d00" stroke="#111" stroke-width="2"/><circle cx="17" cy="15.500" r="5.500" fill="#111"/></svg>`);
 
@@ -15,6 +15,7 @@ export function ResultsMap({ rows }: { rows: SearchRow[] }) {
   const router = useRouter();
   const [failed, setFailed] = useState("");
   const dark = useMapDark();
+  const authFailed = useMapsAuthFailed();
 
   useEffect(() => {
     let cancelled = false; let clusterer: { clearMarkers: () => void } | undefined; let markers: google.maps.Marker[] = [];
@@ -51,7 +52,7 @@ export function ResultsMap({ rows }: { rows: SearchRow[] }) {
 
   return (
     <div className="h-[70dvh] min-h-96 w-full overflow-hidden rounded-[20px] border border-border bg-surface" role="application" aria-label="Map of search results">
-      {failed ? <MapMessage>{failed === "missing-key" ? "The map is not set up yet (missing Google Maps key)." : "The map could not load. Check your connection and try again."}</MapMessage> : <div ref={el} className="size-full" />}
+      {failed || authFailed ? <MapMessage>{mapErrorText(failed, authFailed)}</MapMessage> : <div ref={el} className="size-full min-h-64" />}
     </div>
   );
 }

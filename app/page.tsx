@@ -70,8 +70,6 @@ export default async function HomePage() {
           {/* Kenya filled with a collage of rounded photo tiles */}
           <div className="motion-rise relative mx-auto w-full max-w-md" style={{ animationDelay: "200ms" }}>
             <KenyaCollage />
-            <div className="float-slow glass-solid absolute left-[1%] top-[44%] flex items-center gap-2.5 rounded-full py-2 pl-2.5 pr-4"><span className="flex size-9 items-center justify-center rounded-full bg-link/15 text-link"><BadgeCheck className="size-5" aria-hidden /></span><span className="text-sm font-semibold">Verified landlords</span></div>
-            <div className="float-slow glass-solid absolute right-[2%] top-[66%] flex items-center gap-2.5 rounded-full py-2 pl-2.5 pr-4" style={{ animationDelay: "-3s" }}><span className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground"><MessageCircle className="size-5" aria-hidden /></span><span className="text-sm font-semibold">Chat before you travel</span></div>
           </div>
         </div>
       </section>
