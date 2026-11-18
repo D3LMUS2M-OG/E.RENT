@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutDashboard, LogOut, MessageCircle, ShieldCheck, UserRound, Building2, Heart, ClipboardList, ChevronRight } from "lucide-react";
+import { LayoutDashboard, LogOut, MessageCircle, ShieldCheck, UserRound, Building2, Heart, ClipboardList, ChevronRight, Sparkles, BellPlus } from "lucide-react";
 import { PopoverMenu } from "@/components/ui/popover-menu";
 import { Avatar } from "@/components/ui/avatar";
 import { Tag } from "@/components/ui/tag";
@@ -15,7 +15,7 @@ export function AccountMenu() {
   const links = [
     ...(landlordLike ? [[LayoutDashboard, "Dashboard", "/dashboard"], [ClipboardList, "Incoming requests", "/dashboard/requests"]] as const : []),
     ...(s.roles.includes("organization") || s.roles.includes("agent") ? [[Building2, "Organisation", "/org"]] as const : []),
-    [Heart, "Saved houses", "/saved"], [ClipboardList, "My requests", landlordLike ? "/dashboard/my-requests" : "/account/requests"], [MessageCircle, "Chats", "/chats"], [UserRound, "Account and settings", "/account"],
+    [Heart, "Saved houses", "/saved"], [Sparkles, "My feed", "/account/feed"], [BellPlus, "Saved searches", "/account/saved-searches"], [ClipboardList, "My requests", landlordLike ? "/dashboard/my-requests" : "/account/requests"], [MessageCircle, "Chats", "/chats"], [UserRound, "Account and settings", "/account"],
     ...(s.staff.length ? [[ShieldCheck, "Admin", "/admin"]] as const : []),
   ] as const;
 

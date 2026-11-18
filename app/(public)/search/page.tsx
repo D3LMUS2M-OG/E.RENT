@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { toCard } from "@/components/listings/listing-card";
 import { ListingResults } from "@/components/listings/listing-results";
 import { ResultsMap } from "@/components/map/results-map";
+import { Suspense } from "react";
+import { SaveSearchButton } from "@/components/search/save-search-button";
 import { NearMeButton } from "@/components/search/near-me";
 import { SearchGeo } from "@/components/geo/search-geo";
 import { WhatsAppShare } from "@/components/listings/whatsapp-share";
@@ -43,7 +45,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="text-3xl font-semibold tracking-tight">{countyName ? `Houses for rent in ${countyName}` : "Search houses to rent"}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3"><h1 className="text-3xl font-semibold tracking-tight">{countyName ? `Houses for rent in ${countyName}` : "Search houses to rent"}</h1><Suspense fallback={null}><SaveSearchButton /></Suspense></div>
 
       <form action="/search" className="mt-6 space-y-4" role="search">
         <input type="hidden" name="lat" defaultValue={val(sp, "lat")} />

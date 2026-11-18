@@ -1,3 +1,0 @@
-{
-  "crons": [{ "path": "/api/cron/purge-chat", "schedule": "0 2 * * *" }]
-}

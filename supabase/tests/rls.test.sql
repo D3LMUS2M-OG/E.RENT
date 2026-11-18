@@ -1,6 +1,6 @@
 -- pgTAP policy tests. Run with: supabase test db
 begin;
-select plan(28);
+select plan(30);
 
 select is(
   (select count(*)::int from pg_tables t where t.schemaname = 'public' and not t.rowsecurity),
@@ -44,6 +44,9 @@ select throws_ok($$select count(*) from public.notification_outbox$$, '42501', n
 select throws_ok($$select count(*) from public.listing_view_counts$$, '42501', null, 'visitor cannot read raw view counts');
 select throws_ok($$select public.platform_stats()$$, '42501', null, 'visitor cannot read platform stats');
 select throws_ok($$select public.staff_add('someone@example.com', 'moderator')$$, '42501', null, 'visitor cannot add staff');
+
+select is((select count(*)::int from public.saved_searches), 0, 'visitor cannot read saved searches');
+select is((select count(*)::int from public.feed_preferences), 0, 'visitor cannot read feed preferences');
 
 select * from finish();
 rollback;

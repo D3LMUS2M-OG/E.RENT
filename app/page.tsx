@@ -10,6 +10,7 @@ import { Carousel } from "@/components/home/carousel";
 import { CountyMap } from "@/components/home/county-map";
 import { Stars } from "@/components/reviews/stars";
 import { Faq } from "@/components/home/faq";
+import { FeedLink } from "@/components/home/feed-link";
 import { KenyaCollage } from "@/components/home/kenya-collage";
 import { LandlordCta } from "@/components/home/landlord-cta";
 import { COUNTIES } from "@/lib/counties";
@@ -66,6 +67,7 @@ export default async function HomePage() {
               <input id="q" name="q" placeholder="Search a county, estate or house type" className="min-h-11 min-w-0 flex-1 bg-transparent text-base placeholder:text-muted focus:outline-none" />
               <Button type="submit" size="lg">Search</Button>
             </form>
+            <FeedLink />
           </div>
 
           {/* Kenya filled with a collage of rounded photo tiles */}

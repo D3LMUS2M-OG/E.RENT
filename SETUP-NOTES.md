@@ -70,3 +70,10 @@ Run `supabase/migrations/20261120001500_analytics_and_staff.sql`.
 - Admin, Settings: feature flags as switches (super admin only, each change logged).
 - Admin, Staff (super admin only): add a team member by email with a role, remove roles. The last super admin cannot be removed.
 - Admin, Audit log: all staff actions, newest first, filterable.
+
+## Step 13 (part 1): saved searches, alerts and the personal feed
+Run `supabase/migrations/20261121001600_saved_searches_feed.sql`.
+- Search page: "Save this search" (visitors are sent to sign in first). Up to 20 saved searches per person.
+- Account menu, Saved searches: open, turn alerts on or off, delete. A database job checks every hour (pg_cron) and sends a notification when new houses match since the last check. It uses the notification channels from Step 12, so email and WhatsApp work once the worker is scheduled.
+- Account menu, My feed (/account/feed): choose up to 5 counties, house types, a budget and bedrooms; the page lists the newest matches. Signed-in people also see "Houses picked for you" under the home page search.
+- Left for the rest of Step 13: price insights, compare, neighbourhood and reliability info, student mode, rental agreement generator, move-in checklist.
