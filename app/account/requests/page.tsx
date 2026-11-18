@@ -16,7 +16,8 @@ const STATUS: Record<string, string> = { pending: "Waiting for a reply", accepte
 export default async function MyRequests() {
   await getAccess("/account/requests");
   const supabase = await createClient();
-  const [{ data }, { data: cs }] = await Promise.all([supabase.rpc("my_requests"), supabase.rpc("contact_states")]);
+  const [{ data }, { data: cs }, { data: rv }] = await Promise.all([supabase.rpc("my_requests"), supabase.rpc("contact_states"), supabase.rpc("my_reviewable")]);
+  const reviewable = new Map(((rv ?? []) as { request_id: string; kind: string; reviewed: boolean }[]).map((r) => [r.request_id, r]));
   const contacts = new Map(((cs ?? []) as ContactState[]).map((c) => [c.request_id, c]));
   const rows = (data ?? []) as Row[];
 
@@ -52,6 +53,9 @@ export default async function MyRequests() {
               </div>)}
             {r.rental_status === "cancelled" && (
               <p className="text-sm">{r.cancelled_by_me ? "You cancelled" : "The landlord cancelled"} the rental{r.cancel_reason ? `: ${r.cancel_reason}` : "."}</p>)}
+            {reviewable.has(r.id) && (reviewable.get(r.id)!.reviewed
+              ? <p className="text-sm text-muted">You reviewed this house. <Link className="font-medium text-link underline underline-offset-4" href={`/listing/${r.listing_slug}#reviews`}>See it</Link></p>
+              : <Link className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground" href={`/account/reviews/new?request=${r.id}`}>{reviewable.get(r.id)!.kind === "rental" ? "Review your home" : "Review your viewing"}</Link>)}
             {r.status === "accepted" && contacts.get(r.id) && <ContactPanel c={contacts.get(r.id)!} id={r.id} source="request" />}
 
             <div className="flex flex-wrap gap-2">

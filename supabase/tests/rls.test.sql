@@ -1,6 +1,6 @@
 -- pgTAP policy tests. Run with: supabase test db
 begin;
-select plan(19);
+select plan(22);
 
 select is(
   (select count(*)::int from pg_tables t where t.schemaname = 'public' and not t.rowsecurity),
@@ -31,6 +31,11 @@ select is((select count(*)::int from public.messages), 0, 'visitor cannot read m
 select is((select count(*)::int from public.conversations), 0, 'visitor cannot read conversations');
 select is((select count(*)::int from public.report_evidence), 0, 'visitor cannot read report evidence');
 select is((select count(*)::int from public.user_sanctions), 0, 'visitor cannot read sanctions');
+
+-- reviews: public to read, impossible to write directly, and the function refuses people without a rental or viewing
+select lives_ok($$select * from public.public_reviews$$, 'visitor can read public reviews');
+select throws_ok($$insert into public.reviews (listing_id, landlord_id, author_id, kind, overall, body) values (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), 'tour', 5, 'Great place, very clean')$$, '42501', null, 'visitor cannot insert a review directly');
+select throws_ok($$select public.submit_review(gen_random_uuid(), 5, null, null, null, null, null, null, 'Great place, very clean')$$, '42501', null, 'visitor cannot call submit_review');
 
 select * from finish();
 rollback;

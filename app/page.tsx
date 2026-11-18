@@ -8,6 +8,7 @@ import { ListingCard, toCard } from "@/components/listings/listing-card";
 import { Reveal, CountUp } from "@/components/home/reveal";
 import { Carousel } from "@/components/home/carousel";
 import { CountyMap } from "@/components/home/county-map";
+import { Stars } from "@/components/reviews/stars";
 import { Faq } from "@/components/home/faq";
 import { KenyaCollage } from "@/components/home/kenya-collage";
 import { LandlordCta } from "@/components/home/landlord-cta";
@@ -149,8 +150,9 @@ export default async function HomePage() {
           ) : (
             <div className="mt-8"><Carousel label="Verified landlords" itemClass="w-[62%] sm:w-[30%] lg:w-[22%]">
               {home.landlords.map((l) => (
-                <div key={l.id} className={`${card} flex flex-col items-center gap-3 text-center`}>
-                  <Avatar name={l.name} path={l.avatar} className="size-20 text-xl" /><p className="font-semibold">{l.name}</p><VerifiedBadge /><p className="text-sm text-muted">On E.Rent since {l.since}</p></div>))}
+                <Link key={l.id} href={`/landlord/${l.id}`} className={`${card} flex flex-col items-center gap-3 text-center transition-[transform,border-color] duration-500 ease-[cubic-bezier(.34,1.56,.64,1)] hover:-translate-y-1.5 hover:border-primary/60`}>
+                  <Avatar name={l.name} path={l.avatar} className="size-20 text-xl" /><p className="font-semibold">{l.name}</p><VerifiedBadge />
+                  {l.rating ? <p className="flex items-center gap-1.5 text-sm"><Stars value={l.rating} /><b>{l.rating.toFixed(1)}</b><span className="text-muted">({l.reviews})</span></p> : <p className="text-sm text-muted">On E.Rent since {l.since}</p>}</Link>))}
             </Carousel></div>
           )}
         </section>

@@ -34,3 +34,12 @@
 - Bottom pill is phones only (hidden from 768px up).
 - Hero: three pre-cropped 3x tiles (public/landing/tile-*.webp) with faces centred in the part of each tile that sits inside Kenya. Floating badges removed.
 - Sign-in and sign-out now update the header and tabs straight away: the session is re-read after every page change and when the tab regains focus.
+
+## Step 10: reviews and ratings
+1. Run `supabase/migrations/20261118001100_reviews.sql` in the Supabase SQL editor. It creates the review tables, the `review-photos` bucket, the `submit_review`, `reply_to_review` and `my_reviewable` functions, and the public views.
+2. Tenants: My requests shows "Review your home" (after the landlord confirms and you accept) or "Review your viewing" (after you mark a viewing done). One review per rental or viewing.
+3. Reviews show on the listing page (summary, category averages, photos, landlord reply) and on the new public landlord profile at /landlord/<id>.
+4. Landlords: Dashboard, Reviews. Owners and active delegates can reply publicly; replies carry a "Landlord reply" badge.
+5. Landing page landlord cards now link to the profile and show stars once a landlord has reviews.
+6. Reviews are public, show first name and initial only, and are not edited. Staff with the `review.delete` permission can delete one in the database; there is no admin screen for it yet.
+Not in this step: landlord response time on the profile (needs chat timing), landlord ratings of tenants (P1), review notifications (Step 12), and stars on search cards.

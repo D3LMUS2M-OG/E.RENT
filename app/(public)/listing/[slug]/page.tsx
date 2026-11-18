@@ -16,6 +16,9 @@ import { Avatar } from "@/components/ui/avatar";
 import { amenityIcon } from "@/lib/amenity-icons";
 import { FavouriteButton } from "@/components/listings/favourite-button";
 import { formatKes } from "@/lib/utils";
+import { ReviewsSection } from "@/components/reviews/reviews-section";
+import { Stars } from "@/components/reviews/stars";
+import { PUBLIC_REVIEW_COLUMNS, type PublicReview, type Ratings } from "@/lib/reviews";
 import { mediaUrl, photoSrcSet, variant } from "@/lib/media-url";
 
 export const revalidate = 300; // ISR. Listing changes also call revalidatePath.
@@ -54,7 +57,14 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   const l = await load((await params).slug);
   if (!l) notFound();
 
-  const { data: landlord } = await createPublicClient().from("landlord_profiles").select("display_name, member_since, verified, avatar_url").eq("id", l.owner_id).maybeSingle();
+  const sb = createPublicClient();
+  const [{ data: landlord }, { data: revs }, { data: lr }] = await Promise.all([
+    sb.from("landlord_profiles").select("display_name, member_since, verified, avatar_url").eq("id", l.owner_id).maybeSingle(),
+    sb.from("public_reviews").select(PUBLIC_REVIEW_COLUMNS).eq("listing_id", l.id).order("created_at", { ascending: false }).limit(30),
+    sb.from("landlord_ratings").select("review_count, avg_overall").eq("landlord_id", l.owner_id).maybeSingle(),
+  ]);
+  const reviews = (revs ?? []) as PublicReview[];
+  const landlordRating = lr as Pick<Ratings, "review_count" | "avg_overall"> | null;
   const p = l.property as unknown as { sub_county: string | null; estate: string | null; lat: number; lng: number; county: { name: string; slug: string } };
   const media = [...(l.media as Media[])].sort((a, b) => a.position - b.position);
   const photos = media.filter((m) => m.kind === "photo");
@@ -130,8 +140,9 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
               <section aria-labelledby="landlord"><h2 id="landlord" className="text-2xl">{caretaker ? "Listed by a caretaker for" : "Your landlord"}</h2>
                 <div className="mt-4 flex items-center gap-4 rounded-[22px] border border-border bg-surface p-4">
                   <Avatar name={landlord.display_name || "Landlord"} path={landlord.avatar_url} className="size-16 text-xl" />
-                  <div className="min-w-0 space-y-1.5"><p className="flex flex-wrap items-center gap-2 text-lg font-semibold">{landlord.display_name || "Landlord"}{landlord.verified && <VerifiedBadge />}</p>
-                    <p className="text-sm text-muted">Member since {new Date(landlord.member_since).toLocaleDateString("en-KE", { month: "long", year: "numeric" })}</p></div>
+                  <div className="min-w-0 space-y-1.5"><p className="flex flex-wrap items-center gap-2 text-lg font-semibold"><Link href={`/landlord/${l.owner_id}`} className="underline-offset-4 hover:underline">{landlord.display_name || "Landlord"}</Link>{landlord.verified && <VerifiedBadge />}</p>
+                    {landlordRating && <p className="flex items-center gap-2 text-sm"><Stars value={Number(landlordRating.avg_overall)} /><b>{Number(landlordRating.avg_overall).toFixed(1)}</b><span className="text-muted">({landlordRating.review_count} {landlordRating.review_count === 1 ? "review" : "reviews"} across their houses)</span></p>}
+                    <p className="text-sm text-muted">Member since {new Date(landlord.member_since).toLocaleDateString("en-KE", { month: "long", year: "numeric" })} · <Link href={`/landlord/${l.owner_id}`} className="font-medium text-link underline underline-offset-4">View profile</Link></p></div>
                 </div></section></>)}
 
             {video && (<>
@@ -144,8 +155,8 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
             <section aria-labelledby="where"><h2 id="where" className="text-2xl">Exact location</h2><div className="mt-3"><PinMap lat={p.lat} lng={p.lng} /></div></section>
 
             {divider}
-            <section aria-labelledby="reviews"><h2 id="reviews" className="text-2xl">Reviews</h2>
-              <p className="mt-2 max-w-prose text-muted">No reviews yet. Tenants can review a landlord after a viewing or a confirmed rental.</p></section>
+            <section aria-labelledby="reviews" className="scroll-mt-28"><h2 id="reviews" className="text-2xl">Reviews</h2>
+              <ReviewsSection reviews={reviews} landlordName={landlord?.display_name || "Landlord"} empty="No reviews yet. Tenants can review a landlord after a viewing or a confirmed rental." /></section>
 
             <ReportListing listingId={l.id} />
             <p className="text-sm text-muted">Never pay before you view the house in person. E.Rent is not a party to any rental agreement.</p>
