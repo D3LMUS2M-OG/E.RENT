@@ -4,6 +4,7 @@ import { getAccess } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { STATUS_LABEL, type ListingStatus } from "@/lib/types";
+import { Analytics } from "@/components/dashboard/analytics";
 
 const tile = "motion-rise flex min-h-36 flex-col justify-between rounded-[24px] border border-border bg-surface p-5 transition-[transform,background-color] duration-300 ease-[var(--ease-out)] hover:-translate-y-0.5 hover:bg-surface-2";
 
@@ -40,7 +41,7 @@ export default async function DashboardHome() {
               <div key={st} className="rounded-[20px] border border-border bg-surface p-4"><dt className="text-sm text-muted">{STATUS_LABEL[st as ListingStatus]}</dt><dd className="mt-1 text-3xl font-semibold">{n}</dd></div>))}
           </dl></section>
       )}
-      <p className="text-sm text-muted">Views, chats, saves and requests per listing arrive with the analytics step.</p>
+      <Analytics />
     </div>
   );
 }

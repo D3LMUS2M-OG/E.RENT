@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { BadgeCheck, Building2, ClipboardList, HeartHandshake, Home, Inbox, LayoutDashboard, MessageCircle, PanelLeftClose, PanelLeftOpen, PlusCircle, ShieldAlert, Star, Bell, Flag, Wrench, Users, type LucideIcon } from "lucide-react";
+import { BadgeCheck, Building2, ClipboardList, HeartHandshake, Home, Inbox, LayoutDashboard, MessageCircle, PanelLeftClose, PanelLeftOpen, PlusCircle, ShieldAlert, Star, Bell, BarChart3, ScrollText, Settings, Database, UserCog, Flag, Wrench, Users, type LucideIcon } from "lucide-react";
 import { createSpring } from "@/lib/motion";
 import { useSession } from "./session-provider";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, LucideIcon> = {
   overview: LayoutDashboard, listings: Home, add: PlusCircle, requests: Inbox, chats: MessageCircle, verify: BadgeCheck, team: Users, org: Building2,
-  verifications: BadgeCheck, moderation: ShieldAlert, reports: Flag, sanctions: HeartHandshake, health: Wrench, tasks: ClipboardList, reviews: Star, notifications: Bell,
+  verifications: BadgeCheck, moderation: ShieldAlert, reports: Flag, sanctions: HeartHandshake, health: Wrench, tasks: ClipboardList, reviews: Star, notifications: Bell, analytics: BarChart3, audit: ScrollText, settings: Settings, data: Database, staff: UserCog,
 };
 export type AreaItem = { href: string; label: string; icon: keyof typeof ICONS; badge?: number; chatsBadge?: boolean; exact?: boolean };
 

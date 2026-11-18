@@ -29,7 +29,7 @@ export default async function AdminHome() {
           </div>
         ))}
       </dl>
-      <p className="max-w-xl text-sm text-muted">Verification, reports, reviews, users, data, flags, staff and the audit log screens arrive with their steps. Every action taken here is already written to the audit log table.</p>
+      <p className="max-w-xl text-sm text-muted">Every action taken here is already written to the audit log table.</p>
     </div>
   );
 }

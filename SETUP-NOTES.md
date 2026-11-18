@@ -61,3 +61,12 @@ Not in this step: landlord response time on the profile (needs chat timing), lan
 3. Events covered: request received and decided, rental to confirm and confirmed, review received and replied to, verification result, listing taken down, warnings and other account actions, unread chat messages (after 5 minutes, skipped if read), listings expiring (15 and 5 days left, queued daily at 01:30 by pg_cron).
 4. Each person chooses In the app, Email and WhatsApp under Account, Notifications. Failed sends retry after 2, 4, 8 and 16 minutes, then show as failed in Admin, Notifications, which also shows what is not set up.
 5. Not included yet: saved-search alerts (saved searches are not built), push notifications, SMS (Step 17).
+
+## Step 11 (rest): analytics and admin tools
+Run `supabase/migrations/20261120001500_analytics_and_staff.sql`.
+- Landlord dashboard overview now shows views, new chats, saved and requests for the last 30 days, a views-per-day chart and a per-listing table. Views are counted once per browser per listing per day, with no personal data.
+- Admin, Analytics: people, landlords, requests, rentals, chats, reviews, house views, listings by status and county, sign-ups per week.
+- Admin, Platform data: add, rename, hide and show house types and amenities (needs the `data.manage` permission).
+- Admin, Settings: feature flags as switches (super admin only, each change logged).
+- Admin, Staff (super admin only): add a team member by email with a role, remove roles. The last super admin cannot be removed.
+- Admin, Audit log: all staff actions, newest first, filterable.

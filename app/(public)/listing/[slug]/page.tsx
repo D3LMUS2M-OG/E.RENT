@@ -11,6 +11,7 @@ import { ReportListing } from "@/components/listings/report-listing";
 import { RequestPanel } from "@/components/requests/request-panel";
 import { ListingActionBar } from "@/components/listings/listing-action-bar";
 import { ListingTopBar } from "@/components/listings/listing-top-bar";
+import { ViewTracker } from "@/components/listings/view-tracker";
 import { ShareButton } from "@/components/listings/share-button";
 import { Avatar } from "@/components/ui/avatar";
 import { amenityIcon } from "@/lib/amenity-icons";
@@ -93,6 +94,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
   return (
     <article data-listing-page className="pb-32 lg:pb-0">
+      <ViewTracker listingId={l.id} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <ListingTopBar listingId={l.id} title={l.title} />
 
