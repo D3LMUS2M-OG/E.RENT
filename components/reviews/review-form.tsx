@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ImagePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StarInput } from "./stars";
-import { submitReview, type ReviewState } from "@/app/reviews/actions";
+import { refreshReviewPages, submitReview, type ReviewState } from "@/app/reviews/actions";
 import { createClient } from "@/lib/supabase/client";
 import { CATEGORIES } from "@/lib/reviews";
 
@@ -18,12 +18,13 @@ async function shrink(file: File): Promise<Blob> {
   return await new Promise<Blob>((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error("resize"))), "image/webp", 0.85));
 }
 
-export function ReviewForm({ requestId, kind, listingTitle, listingSlug }: { requestId: string; kind: "rental" | "tour"; listingTitle: string; listingSlug: string }) {
+export function ReviewForm({ requestId, kind, listingTitle, listingSlug, isUpdate }: { requestId: string; kind: "rental" | "tour"; listingTitle: string; listingSlug: string; isUpdate?: boolean }) {
   const router = useRouter();
   const [state, action, pending] = useActionState<ReviewState, FormData>(submitReview, {});
   const [files, setFiles] = useState<File[]>([]);
   const [photoError, setPhotoError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [failed, setFailed] = useState(0);
   const picker = useRef<HTMLInputElement>(null);
   const done = useRef(false);
 
@@ -40,22 +41,29 @@ export function ReviewForm({ requestId, kind, listingTitle, listingSlug }: { req
   useEffect(() => {
     if (!state.ok || !state.id || done.current) return; done.current = true;
     (async () => {
-      setUploading(true);
-      try {
-        if (files.length) {
+      setUploading(true); let bad = 0;
+      if (files.length) {
+        try {
           const supabase = createClient(); const { data: { user } } = await supabase.auth.getUser();
-          if (user) for (const f of files) {
-            const blob = await shrink(f); const path = `${user.id}/${state.id}/${crypto.randomUUID()}.webp`;
-            const { error } = await supabase.storage.from("review-photos").upload(path, blob, { contentType: "image/webp" });
-            if (!error) await supabase.from("review_photos").insert({ review_id: state.id, path });
+          for (const f of files) {
+            try {
+              const blob = await shrink(f); const path = `${user!.id}/${state.id}/${crypto.randomUUID()}.webp`;
+              const up = await supabase.storage.from("review-photos").upload(path, blob, { contentType: "image/webp" });
+              if (up.error) throw up.error;
+              const ins = await supabase.from("review_photos").insert({ review_id: state.id, path });
+              if (ins.error) throw ins.error;
+            } catch (e) { console.error("review photo", e); bad++; }
           }
-        }
-      } catch { /* the review is saved; a photo that fails is skipped */ }
+        } catch (e) { console.error("review photos", e); bad = files.length; }
+      }
+      await refreshReviewPages(listingSlug).catch(() => {});
+      setUploading(false);
+      if (bad > 0) { setFailed(bad); return; }   // stay here and say so, instead of hiding the problem
       router.push(`/listing/${listingSlug}#reviews`); router.refresh();
     })();
   }, [state, files, listingSlug, router]);
 
-  const busy = pending || uploading || Boolean(state.ok);
+  const busy = pending || uploading || (Boolean(state.ok) && failed === 0);
   return (
     <form action={action} className="space-y-7" noValidate>
       <input type="hidden" name="request_id" value={requestId} />
@@ -80,9 +88,10 @@ export function ReviewForm({ requestId, kind, listingTitle, listingSlug }: { req
         <input ref={picker} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={(e) => pick(e.target.files)} />
         {photoError && <p role="alert" className="text-sm font-medium">Error: {photoError}</p>}
       </div>
-      <p className="text-sm text-muted">Reviews on <b className="text-foreground">{listingTitle}</b> are public and show your first name and initial. They are not edited by us, so keep them honest and fair.</p>
+      <p className="text-sm text-muted">Reviews on <b className="text-foreground">{listingTitle}</b> are public and show your first name and initial. They are not edited by us, so keep them honest and fair.{isUpdate && " This will be shown as an update, and your newest scores replace the older ones in the averages."}</p>
       {state.error && <p role="alert" className="text-sm font-medium">Error: {state.error}</p>}
-      <Button type="submit" size="lg" className="w-full sm:w-auto" loading={busy}>{uploading ? "Adding photos…" : "Post review"}</Button>
+      {failed > 0 && <p role="alert" className="text-sm font-medium">Your review is posted, but {failed} {failed === 1 ? "photo" : "photos"} could not be added. <a className="text-link underline underline-offset-4" href={`/listing/${listingSlug}#reviews`}>See your review</a></p>}
+      <Button type="submit" size="lg" className="w-full sm:w-auto" loading={busy} disabled={failed > 0}>{uploading ? "Adding photos…" : isUpdate ? "Post update" : "Post review"}</Button>
     </form>
   );
 }

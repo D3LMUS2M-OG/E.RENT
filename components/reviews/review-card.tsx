@@ -14,7 +14,7 @@ export function ReviewCard({ r, landlordName, showListing, children }: { r: Publ
       <header className="flex items-center gap-3">
         <Avatar name={r.author_name} path={r.author_avatar} />
         <div className="min-w-0 flex-1"><p className="font-semibold">{r.author_name}</p><p className="text-sm text-muted">{date(r.created_at)}</p></div>
-        <Tag>{r.kind === "rental" ? "Rented here" : "Viewed the house"}</Tag>
+        <span className="flex flex-wrap justify-end gap-1.5">{r.follow_up && <Tag>Update</Tag>}<Tag>{r.kind === "rental" ? "Rented here" : "Viewed the house"}</Tag></span>
       </header>
       <div className="flex flex-wrap items-center gap-2"><Stars value={r.overall} size="size-5" />{showListing && <a href={`/listing/${r.listing_slug}`} className="text-sm text-muted underline-offset-4 hover:underline">{r.listing_title}</a>}</div>
       <p className="max-w-prose whitespace-pre-line text-[16px] leading-7">{r.body}</p>

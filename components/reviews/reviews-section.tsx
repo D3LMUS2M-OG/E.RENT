@@ -5,9 +5,10 @@ import { CATEGORIES, type PublicReview, type Ratings } from "@/lib/reviews";
 /** Summary (average, count, category averages) followed by the reviews. Used on listing pages and landlord profiles. */
 export function ReviewsSection({ reviews, ratings, landlordName, showListing, empty }: { reviews: PublicReview[]; ratings?: Ratings | null; landlordName?: string; showListing?: boolean; empty: string }) {
   if (reviews.length === 0) return <p className="mt-2 max-w-prose text-muted">{empty}</p>;
-  const n = ratings?.review_count ?? reviews.length;
-  const avg = ratings?.avg_overall ?? reviews.reduce((s, r) => s + r.overall, 0) / reviews.length;
-  const avgOf = (k: string) => { const v = reviews.map((r) => r[`r_${k}` as keyof PublicReview] as number | null).filter((x): x is number => typeof x === "number"); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+  const n = ratings?.review_count ?? reviews.filter((r) => r.is_latest).length;
+  const latest = reviews.filter((r) => r.is_latest);
+  const avg = ratings?.avg_overall ?? latest.reduce((s, r) => s + r.overall, 0) / Math.max(1, latest.length);
+  const avgOf = (k: string) => { const v = latest.map((r) => r[`r_${k}` as keyof PublicReview] as number | null).filter((x): x is number => typeof x === "number"); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
   const cats = CATEGORIES.map(([k, label]) => [label, (ratings?.[`avg_${k}` as keyof Ratings] as number | null | undefined) ?? avgOf(k)] as const).filter(([, v]) => v);
   return (
     <div className="mt-4 space-y-5">

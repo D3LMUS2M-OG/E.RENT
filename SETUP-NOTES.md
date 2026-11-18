@@ -47,3 +47,8 @@ Not in this step: landlord response time on the profile (needs chat timing), lan
 ## Review fixes
 - Run `supabase/migrations/20261118001200_fix_submit_review.sql` (fixes "column reference tour_id is ambiguous" when posting a review). If you never ran the first reviews migration, the fixed function is already in it.
 - Landlords now find their own tenant requests at Dashboard, My requests (/dashboard/my-requests). The dashboard's landlord inbox is renamed "Incoming requests". The listing page and account menu send landlords to the dashboard version.
+
+## Review photos and updates
+- Run `supabase/migrations/20261118001300_review_updates_and_photos.sql` after the earlier two.
+- Photos go to the public Storage bucket `review-photos` (folder = your user id / review id) and are listed in the `review_photos` table. They show under the review on the listing page and the landlord profile. The old insert rule counted every photo on the site, so inserts stopped after a few; fixed. If a photo still fails, the form now says so instead of hiding it.
+- Tenants can post an update on the same stay 7 days after their last review (change the interval in `submit_review` and `my_reviewable`). Updates are labelled "Update", all reviews stay visible, and the averages use each tenant's newest review of a stay.

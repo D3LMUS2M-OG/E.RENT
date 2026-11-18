@@ -33,3 +33,10 @@ export async function replyToReview(reviewId: string, _: ReviewState, formData: 
   revalidatePath("/dashboard/reviews"); revalidatePath("/listing", "layout"); revalidatePath("/landlord", "layout");
   return { ok: true };
 }
+
+/** Called by the form after the photos are uploaded, so the listing and landlord pages show the new review. */
+export async function refreshReviewPages(listingSlug: string) {
+  revalidatePath(`/listing/${listingSlug}`);
+  revalidatePath("/landlord/[id]", "page");
+  revalidatePath("/");
+}
