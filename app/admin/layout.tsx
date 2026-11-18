@@ -22,6 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: "/admin/moderation", label: "Moderation", icon: "moderation", badge: flags.count ?? 0 },
     { href: "/admin/reports", label: "Reports", icon: "reports", badge: reports.count ?? 0 },
     { href: "/admin/users", label: "Sanctions", icon: "sanctions" },
+    { href: "/admin/notifications", label: "Notifications", icon: "notifications" },
     { href: "/admin/health", label: "Setup check", icon: "health" },
   ];
   return <AreaShell items={items}>{children}</AreaShell>;

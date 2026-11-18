@@ -5,6 +5,7 @@ import { MessageCircle, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AccountMenu } from "./account-menu";
 import { ThemeMenu } from "./theme-menu";
+import { NotificationBell } from "./notification-bell";
 import { useSession } from "./session-provider";
 
 /** Where the landlord button goes depends on who is looking: visitors sign up as landlords, landlords add a house, tenants learn about becoming one. */
@@ -21,6 +22,7 @@ export function HeaderActions() {
     <div className="ml-auto flex items-center gap-1">
       <Button asChild variant="ghost" size="icon" className="lg:hidden"><Link href="/search" aria-label="Search"><Search className="size-5" aria-hidden /></Link></Button>
       <ThemeMenu />
+      {s.status === "in" && <NotificationBell />}
       <Button asChild className="hidden md:inline-flex"><Link href={landlordHref}>For Landlords</Link></Button>
       {s.status === "in" ? (
         <>

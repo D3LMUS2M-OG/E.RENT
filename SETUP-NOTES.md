@@ -52,3 +52,12 @@ Not in this step: landlord response time on the profile (needs chat timing), lan
 - Run `supabase/migrations/20261118001300_review_updates_and_photos.sql` after the earlier two.
 - Photos go to the public Storage bucket `review-photos` (folder = your user id / review id) and are listed in the `review_photos` table. They show under the review on the listing page and the landlord profile. The old insert rule counted every photo on the site, so inserts stopped after a few; fixed. If a photo still fails, the form now says so instead of hiding it.
 - Tenants can post an update on the same stay 7 days after their last review (change the interval in `submit_review` and `my_reviewable`). Updates are labelled "Update", all reviews stay visible, and the averages use each tenant's newest review of a stay.
+
+## Step 12: notifications
+1. Run `supabase/migrations/20261119001400_notifications.sql`.
+2. In-app notifications work straight away (bell in the top bar, /account/notifications). Email and WhatsApp need the worker:
+   - Vercel env: `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`, `RESEND_API_KEY`, `NOTIFY_FROM` (an address on a domain verified in Resend; until then Resend only lets you send to your own email), and for WhatsApp `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_TEMPLATE_NAME` (approved template with two body variables).
+   - Call `GET https://<your site>/api/cron/notifications` with header `Authorization: Bearer <CRON_SECRET>` every 5 minutes. On Vercel Pro add `{ "path": "/api/cron/notifications", "schedule": "*/5 * * * *" }` to `vercel.json`. On the free Hobby plan Vercel only allows daily crons and would reject the deploy, so use a free pinger such as cron-job.org with that header instead.
+3. Events covered: request received and decided, rental to confirm and confirmed, review received and replied to, verification result, listing taken down, warnings and other account actions, unread chat messages (after 5 minutes, skipped if read), listings expiring (15 and 5 days left, queued daily at 01:30 by pg_cron).
+4. Each person chooses In the app, Email and WhatsApp under Account, Notifications. Failed sends retry after 2, 4, 8 and 16 minutes, then show as failed in Admin, Notifications, which also shows what is not set up.
+5. Not included yet: saved-search alerts (saved searches are not built), push notifications, SMS (Step 17).

@@ -10,6 +10,7 @@ import { Notices } from "@/components/account/notices";
 import { ProfileForm } from "@/components/account/profile-form";
 import { AvatarUploader } from "@/components/account/avatar-uploader";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { NotificationPrefs } from "@/components/account/notification-prefs";
 import { signOut } from "@/app/(auth)/actions";
 import { addLandlordRole } from "@/app/dashboard/actions";
 import { respondToInvitation } from "@/app/dashboard/team/actions";
@@ -96,6 +97,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
         </section>
 
         <div className="space-y-6">
+          <section aria-labelledby="notif" className={`${card} space-y-3`}><h2 id="notif" className="text-2xl">Notifications</h2><NotificationPrefs /></section>
           <section aria-labelledby="look" className={`${card} space-y-3`}><h2 id="look" className="text-2xl">Appearance</h2><ThemeToggle /></section>
 
           <section aria-labelledby="sec" className={`${card} space-y-3`}>
