@@ -43,3 +43,7 @@
 5. Landing page landlord cards now link to the profile and show stars once a landlord has reviews.
 6. Reviews are public, show first name and initial only, and are not edited. Staff with the `review.delete` permission can delete one in the database; there is no admin screen for it yet.
 Not in this step: landlord response time on the profile (needs chat timing), landlord ratings of tenants (P1), review notifications (Step 12), and stars on search cards.
+
+## Review fixes
+- Run `supabase/migrations/20261118001200_fix_submit_review.sql` (fixes "column reference tour_id is ambiguous" when posting a review). If you never ran the first reviews migration, the fixed function is already in it.
+- Landlords now find their own tenant requests at Dashboard, My requests (/dashboard/my-requests). The dashboard's landlord inbox is renamed "Incoming requests". The listing page and account menu send landlords to the dashboard version.

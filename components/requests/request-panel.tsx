@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
+import { useMyRequestsHref } from "@/components/layout/session-provider";
 import { createRequest } from "@/app/requests/actions";
 import { startChat } from "@/app/chats/actions";
 import { ActionButton } from "@/components/ui/action-button";
@@ -15,6 +16,7 @@ const KIND = { view: "Viewing request", apply: "Application" } as const;
 const STATUS: Record<string, string> = { pending: "Waiting for a reply", accepted: "Accepted", declined: "Declined", cancelled: "Cancelled" };
 
 export function RequestPanel({ listingId, ownerId, createdBy }: { listingId: string; ownerId: string; createdBy: string }) {
+  const myRequests = useMyRequestsHref();
   const [uid, setUid] = useState<string | null | undefined>(undefined);
   const [mine, setMine] = useState<Mine[]>([]);
   const [state, action, pending] = useActionState(createRequest.bind(null, listingId), {} as ActionState);
@@ -44,7 +46,7 @@ export function RequestPanel({ listingId, ownerId, createdBy }: { listingId: str
       {mine.length > 0 && (
         <ul className="space-y-1 text-sm">
           {mine.slice(0, 3).map((m) => <li key={m.id}><span className="font-medium">{KIND[m.kind]}:</span> {STATUS[m.status]}</li>)}
-          <li><Link className="underline underline-offset-4" href="/account/requests">See all your requests</Link></li>
+          <li><Link className="underline underline-offset-4" href={myRequests}>See all your requests</Link></li>
         </ul>
       )}
       {open.size < 2 && (

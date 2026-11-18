@@ -19,7 +19,7 @@ export default async function NewReviewPage({ searchParams }: { searchParams: Pr
       {!item ? (
         <><h1 className="text-3xl">Write a review</h1>
           <p className="text-muted">You can review a house after the landlord has confirmed your rental, or after you have marked a viewing as done. Open My requests to see what you can review.</p>
-          <Button asChild><Link href="/account/requests">My requests</Link></Button></>
+          <Button asChild><Link href="/account/requests">Go to My requests</Link></Button></>
       ) : item.reviewed ? (
         <><h1 className="text-3xl">You have already reviewed this house</h1><p className="text-muted">Each rental or viewing can have one review.</p>
           <Button asChild><Link href={`/listing/${item.listing_slug}#reviews`}>See the reviews</Link></Button></>

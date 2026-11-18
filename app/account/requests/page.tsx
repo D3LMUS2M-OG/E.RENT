@@ -48,7 +48,7 @@ export default async function MyRequests() {
             )}
             {r.rental_status === "confirmed" && (
               <div className="space-y-2">
-                <p className="text-sm font-medium">Rental confirmed. You can review this landlord once reviews open.</p>
+                <p className="text-sm font-medium">Rental confirmed. You can now review your home.</p>
                 <CancelRentalForm rentalId={r.rental_id!} />
               </div>)}
             {r.rental_status === "cancelled" && (

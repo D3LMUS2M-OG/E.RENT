@@ -13,9 +13,9 @@ export function AccountMenu() {
   const s = useSession();
   const landlordLike = s.roles.some((r) => ["landlord", "agent", "organization"].includes(r));
   const links = [
-    ...(landlordLike ? [[LayoutDashboard, "Dashboard", "/dashboard"], [ClipboardList, "Requests", "/dashboard/requests"]] as const : []),
+    ...(landlordLike ? [[LayoutDashboard, "Dashboard", "/dashboard"], [ClipboardList, "Incoming requests", "/dashboard/requests"]] as const : []),
     ...(s.roles.includes("organization") || s.roles.includes("agent") ? [[Building2, "Organisation", "/org"]] as const : []),
-    [Heart, "Saved houses", "/saved"], [ClipboardList, "My requests", "/account/requests"], [MessageCircle, "Chats", "/chats"], [UserRound, "Account and settings", "/account"],
+    [Heart, "Saved houses", "/saved"], [ClipboardList, "My requests", landlordLike ? "/dashboard/my-requests" : "/account/requests"], [MessageCircle, "Chats", "/chats"], [UserRound, "Account and settings", "/account"],
     ...(s.staff.length ? [[ShieldCheck, "Admin", "/admin"]] as const : []),
   ] as const;
 

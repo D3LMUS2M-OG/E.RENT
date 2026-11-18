@@ -84,3 +84,9 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { resync.current(); window.dispatchEvent(new Event("erent:unread-changed")); }, [pathname]);
   return <Ctx.Provider value={s}>{children}</Ctx.Provider>;
 }
+
+/** Landlords find their own (tenant) requests inside the dashboard; everyone else uses the account page. */
+export function useMyRequestsHref() {
+  const s = useSession();
+  return s.status === "in" && s.roles.some((r) => ["landlord", "agent", "organization"].includes(r)) ? "/dashboard/my-requests" : "/account/requests";
+}
