@@ -13,6 +13,7 @@ const INFO: Record<string, string> = {
   enable_paid_features: "Featured listings and subscriptions (not built yet).",
   enable_whatsapp: "WhatsApp notifications and the WhatsApp share button.",
   enable_student_mode: "Student housing mode with distance to universities.",
+  require_staff_mfa: "Staff must use two-step sign-in (authenticator app) to open the admin area. Turn on once every team member has set it up at Account, Privacy and security.",
 };
 
 export default async function SettingsPage() {

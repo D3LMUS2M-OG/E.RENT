@@ -13,7 +13,7 @@ const cols: { title: string; links: [string, string][] }[] = [
   { title: "Explore", links: [["Search houses", "/search"], ["All 47 counties", "/counties"], ["Student housing", "/search?type=student-housing"]] },
   { title: "Landlords", links: [["For Landlords", "/for-landlords"], ["How it works", "/how-it-works"]] },
   { title: "Company", links: [["About E.Rent", "/about"], ["Contact", "/contact"], ["Safety tips", "/safety"]] },
-  { title: "Legal", links: [["Terms", "/legal/terms"], ["Privacy", "/legal/privacy"], ["Cookies", "/legal/cookies"], ["Community standards", "/legal/community-standards"]] },
+  { title: "Legal", links: [["Terms", "/legal/terms"], ["Privacy", "/legal/privacy"], ["Cookies", "/legal/cookies"], ["Community standards", "/legal/community-standards"], ["Review policy", "/legal/review-policy"], ["Acceptable use", "/legal/acceptable-use"], ["Disclaimer", "/legal/disclaimer"]] },
 ];
 
 export function SiteFooter() {

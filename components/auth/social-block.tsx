@@ -26,6 +26,7 @@ export function SocialBlock({ next, mode }: { next?: string; mode: "sign-in" | "
         {next && <input type="hidden" name="next" value={next} />}
         <button type="submit" className={`btn-google ${btn}`}><GoogleG />Continue with Google</button>
       </form>
+      <p className="text-center text-xs text-muted">By continuing you agree to our <Link href="/legal/terms" target="_blank" className="underline underline-offset-4">Terms</Link> and <Link href="/legal/privacy" target="_blank" className="underline underline-offset-4">Privacy Policy</Link>.</p>
       <Link href={`/phone?${q}`} className={`${btn} border border-border-strong bg-surface-2 shadow-[var(--shadow-btn)] hover:border-foreground/40`}><Smartphone className="size-5" aria-hidden />{mode === "sign-up" ? "Sign up with phone" : "Sign in with phone"}</Link>
     </div>
   );

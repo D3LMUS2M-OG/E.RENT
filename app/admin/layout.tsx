@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getFlags } from "@/lib/flags";
 import type { Metadata } from "next";
 import { getAccess } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -11,6 +12,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // Not staff: behave as if the page does not exist. Real enforcement is RLS and permission checks in the database.
   if (!a.isStaff) notFound();
   const supabase = await createClient();
+  if ((await getFlags()).require_staff_mfa) {
+    const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (aal?.currentLevel !== "aal2") redirect("/account/security?next=/admin");
+  }
   const [reports, verifications, flags] = await Promise.all([
     supabase.from("reports").select("id", { count: "exact", head: true }).eq("status", "open"),
     supabase.from("landlord_verifications").select("id", { count: "exact", head: true }).eq("status", "pending"),
@@ -22,6 +27,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: "/admin/moderation", label: "Moderation", icon: "moderation", badge: flags.count ?? 0 },
     { href: "/admin/reports", label: "Reports", icon: "reports", badge: reports.count ?? 0 },
     { href: "/admin/users", label: "Sanctions", icon: "sanctions" },
+    { href: "/admin/reviews", label: "Reviews", icon: "reviews" },
     { href: "/admin/analytics", label: "Analytics", icon: "analytics" },
     { href: "/admin/data", label: "Platform data", icon: "data" },
     { href: "/admin/settings", label: "Settings", icon: "settings" },

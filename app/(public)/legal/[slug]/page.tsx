@@ -1,25 +1,33 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Block, InfoPage } from "@/components/layout/info-page";
+import { LEGAL_DOCS, LEGAL_EFFECTIVE, LEGAL_VERSION, legalBySlug } from "@/lib/legal";
 
-const DOCS: Record<string, { title: string; points: string[] }> = {
-  terms: { title: "Terms of service", points: ["E.Rent is a listing and messaging platform. We are not a party to any rental agreement between landlords and tenants.", "Landlords, agents and caretakers must have the right to let the houses they list, and listings must be accurate.", "Photos must show the house only. No faces, phone numbers or personal information.", "We can remove listings, warn, suspend or ban accounts that break these terms."] },
-  privacy: { title: "Privacy policy", points: ["We follow the Kenya Data Protection Act, 2019.", "Identity documents are stored privately, shown only to our verification team and deleted on request or after a retention period.", "Chats are deleted after 30 days. Reported chats are copied for our team to review.", "Our services run on Supabase and Vercel, so data may be processed outside Kenya.", "You can ask to see, correct or delete your data at any time."] },
-  cookies: { title: "Cookie notice", points: ["We use small files to keep you signed in, remember your theme and make the site faster.", "We do not show advertising and we do not sell your data."] },
-  "community-standards": { title: "Community and listing standards", points: ["Be honest: real houses, real prices, real photos.", "No harassment, discrimination, threats or scams.", "One listing per unit type. Duplicate listings are flagged and removed."] },
-  "review-policy": { title: "Review policy", points: ["Only tenants with a confirmed rental or a completed viewing can review.", "Reviews are not edited before publishing. We remove a review only with proof of defamation or abuse.", "Landlords may reply publicly."] },
-  "acceptable-use": { title: "Acceptable use and chat conduct", points: ["Do not ask for money before a viewing.", "Do not send abusive, sexual or threatening messages.", "Do not use the platform to collect personal data or to spam."] },
-  disclaimer: { title: "Disclaimer", points: ["E.Rent is not a party to any rental agreement and does not collect rent or deposits.", "Always view a house in person before paying anything."] },
-};
-
-export function generateStaticParams() { return Object.keys(DOCS).map((slug) => ({ slug })); }
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { const d = DOCS[(await params).slug]; return { title: d?.title ?? "Legal" }; }
+export function generateStaticParams() { return LEGAL_DOCS.map((d) => ({ slug: d.slug })); }
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const d = legalBySlug((await params).slug); return d ? { title: d.title, description: d.summary, alternates: { canonical: `/legal/${d.slug}` } } : { title: "Legal" };
+}
 
 export default async function LegalPage({ params }: { params: Promise<{ slug: string }> }) {
-  const d = DOCS[(await params).slug]; if (!d) notFound();
+  const d = legalBySlug((await params).slug); if (!d) notFound();
+  const id = (i: number) => `s${i + 1}`;
   return (
-    <InfoPage title={d.title} intro="Draft summary. The full wording is being reviewed by our legal counsel and will replace this page.">
-      <Block title="The key points"><ul className="list-disc space-y-2 pl-5">{d.points.map((p) => <li key={p}>{p}</li>)}</ul></Block>
-    </InfoPage>
+    <div className="mx-auto max-w-3xl px-4 pb-8 pt-6">
+      <p className="text-sm text-muted"><Link href="/legal" className="underline-offset-4 hover:underline">Legal</Link> · Version {LEGAL_VERSION} · Effective {LEGAL_EFFECTIVE}</p>
+      <h1 className="mt-2 text-[clamp(2rem,5.5vw,3.4rem)] leading-[1.05]">{d.title}</h1>
+      <p className="mt-4 text-lg text-muted">{d.intro}</p>
+      <nav aria-label="Contents" className="mt-8 rounded-[24px] border border-border bg-surface p-5"><p className="font-semibold">Contents</p>
+        <ol className="mt-2 columns-1 gap-8 text-[15px] sm:columns-2">{d.sections.map((s, i) => <li key={s.heading} className="break-inside-avoid"><a href={`#${id(i)}`} className="inline-flex min-h-10 items-center text-link underline-offset-4 hover:underline">{i + 1}. {s.heading}</a></li>)}</ol></nav>
+      <div className="mt-10 space-y-9">
+        {d.sections.map((s, i) => (
+          <section key={s.heading} id={id(i)} aria-labelledby={`${id(i)}-h`} className="scroll-mt-28">
+            <h2 id={`${id(i)}-h`} className="text-2xl">{i + 1}. {s.heading}</h2>
+            <div className="mt-3 space-y-3 text-[16px] leading-7">{s.body.map((b, j) => Array.isArray(b)
+              ? <ul key={j} className="list-disc space-y-1.5 pl-6">{b.map((li) => <li key={li}>{li}</li>)}</ul>
+              : <p key={j}>{b}</p>)}</div>
+          </section>))}
+      </div>
+      <p className="mt-12 border-t border-border pt-5 text-sm text-muted">Questions about this document? <Link href="/contact" className="text-link underline underline-offset-4">Contact us</Link>. See also our other <Link href="/legal" className="text-link underline underline-offset-4">legal documents</Link>.</p>
+    </div>
   );
 }

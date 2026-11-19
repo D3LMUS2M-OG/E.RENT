@@ -21,6 +21,8 @@ import { ReviewsSection } from "@/components/reviews/reviews-section";
 import { Stars } from "@/components/reviews/stars";
 import { PriceInsight, type Insight } from "@/components/listings/price-insight";
 import { AreaReliability, type Reliability } from "@/components/listings/area-reliability";
+import { ResponseInfo } from "@/components/landlord/response-badge";
+import type { Availability } from "@/lib/availability";
 import { Neighbourhood, type Place } from "@/components/listings/neighbourhood";
 import { PUBLIC_REVIEW_COLUMNS, type PublicReview, type Ratings } from "@/lib/reviews";
 import { mediaUrl, photoSrcSet, variant } from "@/lib/media-url";
@@ -62,14 +64,18 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   if (!l) notFound();
 
   const sb = createPublicClient();
-  const [{ data: landlord }, { data: revs }, { data: lr }, { data: pi }, { data: ar }, { data: pl }] = await Promise.all([
+  const [{ data: landlord }, { data: revs }, { data: lr }, { data: pi }, { data: ar }, { data: pl }, { data: rt }, { data: av }] = await Promise.all([
     sb.from("landlord_profiles").select("display_name, member_since, verified, avatar_url").eq("id", l.owner_id).maybeSingle(),
     sb.from("public_reviews").select(PUBLIC_REVIEW_COLUMNS).eq("listing_id", l.id).order("created_at", { ascending: false }).limit(30),
     sb.from("landlord_ratings").select("review_count, avg_overall").eq("landlord_id", l.owner_id).maybeSingle(),
     sb.rpc("price_insight", { p_listing: l.id }),
     sb.rpc("area_reliability", { p_listing: l.id }),
     sb.from("neighbourhood_places").select("id, kind, name, walk_minutes").eq("property_id", l.property_id).order("created_at"),
+    sb.rpc("landlord_response", { p_landlord: l.owner_id }),
+    sb.from("landlord_availability").select("days, start_time, end_time, note").eq("user_id", l.owner_id).maybeSingle(),
   ]);
+  const responseMinutes = ((rt ?? []) as { median_minutes: number }[])[0]?.median_minutes ?? null;
+  const availability = (av as Availability | null) ?? null;
   const reliability = ((ar ?? []) as Reliability[])[0] ?? null;
   const places = (pl ?? []) as Place[];
   const insight = ((pi ?? []) as Insight[])[0] ?? null;
@@ -168,6 +174,7 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
                 <div className="mt-4 flex items-center gap-4 rounded-[22px] border border-border bg-surface p-4">
                   <Avatar name={landlord.display_name || "Landlord"} path={landlord.avatar_url} className="size-16 text-xl" />
                   <div className="min-w-0 space-y-1.5"><p className="flex flex-wrap items-center gap-2 text-lg font-semibold"><Link href={`/landlord/${l.owner_id}`} className="underline-offset-4 hover:underline">{landlord.display_name || "Landlord"}</Link>{landlord.verified && <VerifiedBadge />}</p>
+                    <ResponseInfo minutes={responseMinutes} availability={availability} />
                     {landlordRating && <p className="flex items-center gap-2 text-sm"><Stars value={Number(landlordRating.avg_overall)} /><b>{Number(landlordRating.avg_overall).toFixed(1)}</b><span className="text-muted">({landlordRating.review_count} {landlordRating.review_count === 1 ? "review" : "reviews"} across their houses)</span></p>}
                     <p className="text-sm text-muted">Member since {new Date(landlord.member_since).toLocaleDateString("en-KE", { month: "long", year: "numeric" })} · <Link href={`/landlord/${l.owner_id}`} className="font-medium text-link underline underline-offset-4">View profile</Link></p></div>
                 </div></section></>)}

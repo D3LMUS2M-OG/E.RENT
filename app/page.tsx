@@ -11,8 +11,7 @@ import { CountyMap } from "@/components/home/county-map";
 import { Stars } from "@/components/reviews/stars";
 import { Faq } from "@/components/home/faq";
 import { FeedLink } from "@/components/home/feed-link";
-import { HeroSlideshow } from "@/components/home/hero-slideshow";
-import { HeroHeadline } from "@/components/home/hero-headline";
+import { KenyaCollage } from "@/components/home/kenya-collage";
 import { LandlordCta } from "@/components/home/landlord-cta";
 import { COUNTIES } from "@/lib/counties";
 import { searchListings } from "@/lib/search";
@@ -55,15 +54,14 @@ export default async function HomePage() {
 
   return (
     <div className="overflow-x-clip">
-      {/* ───────── Hero: Kenyan homes cross-fading on the right, the words on the left ───────── */}
-      <section className="hero hero-bg -mt-[var(--header-space)] pt-[calc(var(--header-space)+1.5rem)]">
-        <div className="hero-scrim" aria-hidden />
-        <div className="hero-content mx-auto w-full max-w-6xl px-4 pb-10 pt-6 lg:pb-32 lg:pt-12">
-          <div className="max-w-xl">
+      {/* ───────── Hero: the one gradient on the site, orange fading into the page ───────── */}
+      <section className="hero-bg relative -mt-[var(--header-space)] pt-[calc(var(--header-space)+1.5rem)]">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-16 pt-6 lg:grid-cols-[1.05fr_1fr] lg:pb-24">
+          <div>
             <p className="motion-rise inline-flex items-center gap-2 rounded-full border border-border-strong bg-background/70 px-3.5 py-1.5 text-sm font-semibold backdrop-blur"><ShieldCheck className="size-4 text-link" aria-hidden />All 47 counties · Free for tenants</p>
-            <HeroHeadline lead="Find your next home in Kenya," accent="minus the guesswork." className="mt-5 text-[clamp(2.6rem,6vw,4.6rem)] leading-[1.02]" />
-            <p className="motion-rise mt-5 max-w-xl text-lg text-muted" style={{ animationDelay: "700ms" }}>Find a verified house to rent in any of Kenya&rsquo;s 47 counties. Chat with the landlord before you travel, and read what past tenants say about the water, the security and the landlord.</p>
-            <form action="/search" role="search" className="motion-rise glass glass-frost glass-pill mt-8 flex max-w-xl items-center gap-2 p-1.5 pl-5" style={{ animationDelay: "820ms" }}>
+            <h1 className="motion-rise mt-5 text-[clamp(2.6rem,7.2vw,5rem)] leading-[1.02]" style={{ animationDelay: "80ms" }}>Find your next home in Kenya, <span className="text-accent">minus the guesswork.</span></h1>
+            <p className="motion-rise mt-5 max-w-xl text-lg text-muted" style={{ animationDelay: "160ms" }}>Find a verified house to rent in any of Kenya&rsquo;s 47 counties. Chat with the landlord before you travel, and read what past tenants say about the water, the security and the landlord.</p>
+            <form action="/search" role="search" className="motion-rise glass glass-frost glass-pill mt-8 flex max-w-xl items-center gap-2 p-1.5 pl-5" style={{ animationDelay: "240ms" }}>
               <Search className="size-5 shrink-0 text-muted" aria-hidden />
               <label htmlFor="q" className="sr-only">Search by county, estate or words</label>
               <input id="q" name="q" placeholder="Search a county, estate or house type" className="min-h-11 min-w-0 flex-1 bg-transparent text-base placeholder:text-muted focus:outline-none" />
@@ -71,8 +69,12 @@ export default async function HomePage() {
             </form>
             <FeedLink />
           </div>
+
+          {/* Kenya filled with a collage of rounded photo tiles */}
+          <div className="motion-rise relative mx-auto w-full max-w-md" style={{ animationDelay: "200ms" }}>
+            <KenyaCollage />
+          </div>
         </div>
-        <HeroSlideshow />
       </section>
 
       <div className="mx-auto max-w-6xl space-y-24 px-4 pb-8 pt-4">

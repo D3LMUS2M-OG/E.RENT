@@ -7,6 +7,8 @@ import { Avatar } from "@/components/ui/avatar";
 import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { ReviewsSection } from "@/components/reviews/reviews-section";
 import { Stars } from "@/components/reviews/stars";
+import { ResponseInfo } from "@/components/landlord/response-badge";
+import type { Availability } from "@/lib/availability";
 import { PUBLIC_REVIEW_COLUMNS, type PublicReview, type Ratings } from "@/lib/reviews";
 import { formatKes } from "@/lib/utils";
 
@@ -18,12 +20,14 @@ async function load(id: string) {
   const sb = createPublicClient();
   const { data: l } = await sb.from("landlord_profiles").select("id, display_name, member_since, verified, avatar_url").eq("id", id).maybeSingle();
   if (!l) return null;
-  const [{ data: ratings }, { data: reviews }, { data: listings }] = await Promise.all([
+  const [{ data: ratings }, { data: reviews }, { data: listings }, { data: rt }, { data: av }] = await Promise.all([
     sb.from("landlord_ratings").select("*").eq("landlord_id", id).maybeSingle(),
     sb.from("public_reviews").select(PUBLIC_REVIEW_COLUMNS).eq("landlord_id", id).order("created_at", { ascending: false }).limit(50),
     sb.from("listings").select("slug, title, rent, bedrooms").eq("owner_id", id).eq("status", "active").gt("expires_at", new Date().toISOString()).order("published_at", { ascending: false }).limit(24),
+    sb.rpc("landlord_response", { p_landlord: id }),
+    sb.from("landlord_availability").select("days, start_time, end_time, note").eq("user_id", id).maybeSingle(),
   ]);
-  return { l, ratings: ratings as Ratings | null, reviews: (reviews ?? []) as PublicReview[], listings: listings ?? [] };
+  return { response: ((rt ?? []) as { median_minutes: number }[])[0]?.median_minutes ?? null, availability: (av as Availability | null) ?? null, l, ratings: ratings as Ratings | null, reviews: (reviews ?? []) as PublicReview[], listings: listings ?? [] };
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
@@ -33,7 +37,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function LandlordPage({ params }: Params) {
   const d = await load((await params).id); if (!d) notFound();
-  const { l, ratings, reviews, listings } = d; const name = l.display_name || "Landlord";
+  const { l, ratings, reviews, listings, response, availability } = d; const name = l.display_name || "Landlord";
   return (
     <div className="mx-auto max-w-4xl space-y-12 px-4 pb-8 pt-6">
       <header className="flex flex-wrap items-center gap-5 rounded-[28px] border border-border bg-surface p-6">
@@ -41,6 +45,7 @@ export default async function LandlordPage({ params }: Params) {
         <div className="space-y-2">
           <h1 className="flex flex-wrap items-center gap-3 text-3xl">{name}{l.verified && <VerifiedBadge />}</h1>
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted"><span className="inline-flex items-center gap-1.5"><Calendar className="size-4" aria-hidden />Member since {new Date(l.member_since).toLocaleDateString("en-KE", { month: "long", year: "numeric" })}</span><span>{listings.length} {listings.length === 1 ? "house" : "houses"} listed now</span></p>
+          <ResponseInfo minutes={response} availability={availability} />
           {ratings ? <p className="flex items-center gap-2"><Stars value={Number(ratings.avg_overall)} size="size-5" /><b>{Number(ratings.avg_overall).toFixed(1)}</b><span className="text-sm text-muted">({ratings.review_count} {ratings.review_count === 1 ? "review" : "reviews"})</span></p> : <p className="text-sm text-muted">No reviews yet</p>}
         </div>
       </header>

@@ -15,7 +15,7 @@ export function AccountMenu() {
   const links = [
     ...(landlordLike ? [[LayoutDashboard, "Dashboard", "/dashboard"], [ClipboardList, "Incoming requests", "/dashboard/requests"]] as const : []),
     ...(s.roles.includes("organization") || s.roles.includes("agent") ? [[Building2, "Organisation", "/org"]] as const : []),
-    [Heart, "Saved houses", "/saved"], [Sparkles, "My feed", "/account/feed"], [ListChecks, "Move-in checklist", "/account/checklist"], [BellPlus, "Saved searches", "/account/saved-searches"], [ClipboardList, "My requests", landlordLike ? "/dashboard/my-requests" : "/account/requests"], [MessageCircle, "Chats", "/chats"], [UserRound, "Account and settings", "/account"],
+    [Heart, "Saved houses", "/saved"], [Sparkles, "My feed", "/account/feed"], [ListChecks, "Move-in checklist", "/account/checklist"], [ShieldCheck, "Privacy and security", "/account/privacy"], [BellPlus, "Saved searches", "/account/saved-searches"], [ClipboardList, "My requests", landlordLike ? "/dashboard/my-requests" : "/account/requests"], [MessageCircle, "Chats", "/chats"], [UserRound, "Account and settings", "/account"],
     ...(s.staff.length ? [[ShieldCheck, "Admin", "/admin"]] as const : []),
   ] as const;
 
