@@ -35,7 +35,7 @@ select is((select count(*)::int from public.user_sanctions), 0, 'visitor cannot 
 -- reviews: public to read, impossible to write directly, and the function refuses people without a rental or viewing
 select lives_ok($$select * from public.public_reviews$$, 'visitor can read public reviews');
 select throws_ok($$insert into public.reviews (listing_id, landlord_id, author_id, kind, overall, body) values (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), 'tour', 5, 'Great place, very clean')$$, '42501', null, 'visitor cannot insert a review directly');
-select throws_ok($$select public.submit_review(gen_random_uuid(), 5, null, null, null, null, null, null, 'Great place, very clean')$$, '42501', null, 'visitor cannot call submit_review');
+select throws_ok($$select public.submit_review(gen_random_uuid(), 5, null, null, null, null, null, null, null, null, 'Great place, very clean')$$, '42501', null, 'visitor cannot call submit_review');
 
 select is((select count(*)::int from public.notifications), 0, 'visitor cannot read notifications');
 select is((select count(*)::int from public.notification_preferences), 0, 'visitor cannot read notification preferences');

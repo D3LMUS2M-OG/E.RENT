@@ -90,3 +90,11 @@ Run `supabase/migrations/20261123001800_checklist.sql`.
 - Landlords: Dashboard, Agreements. Pick one of your houses to fill the details, or type them, and the tenancy agreement updates as you type (rent, deposit, due day, start, length, notice, utilities, pets, extra terms, signature and witness blocks). Print or save as PDF. Nothing typed there is stored, so no ID numbers or personal data leave the browser.
 - The agreement is a plain template and says it is not legal advice and that E.Rent is not a party. Please have your advocate review the wording before launch (this is in Step 14).
 - Still to do in Step 13: neighbourhood info and estate reliability ratings, student housing mode.
+
+## Step 13 (part 4, finishes Step 13): neighbourhood, reliability and student mode
+Run `supabase/migrations/20261124001900_neighbourhood_reliability.sql`. It replaces `submit_review` with a version that also takes power and road ratings, and turns student mode on (switch it off in Admin, Settings).
+- Landlords: Edit listing now has "What is nearby" (schools, clinics, matatu stages, shops, places of worship, with minutes on foot, up to 15). Tenants see it as "Nearby" on the listing page.
+- Reviews now also rate power supply and road access. The listing page shows "How reliable is the area?" (water, power, roads, security) from tenants' newest reviews in the same estate, widening to the sub-county or county, once at least 3 reviews exist.
+- Student housing (/student-housing): 18 universities, each with 1, 3 and 5 km links that open the search near the campus, nearest first. Campus coordinates are approximate. If the flag is off the page redirects to the student housing search.
+- The old reviews migration columns still work; reviews written before this simply have no power or road score.
+- Step 13 is now complete. Remaining from the plan: small gaps (landlord response time and availability hours, landlords rating tenants, county sub-pages and estate pages, delete my account, admin review removal, staff two-factor), then Steps 14 to 17.

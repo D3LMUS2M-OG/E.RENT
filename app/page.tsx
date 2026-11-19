@@ -139,7 +139,7 @@ export default async function HomePage() {
             <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-accent"><GraduationCap className="size-6" aria-hidden /></span>
             <h2 className="text-4xl">Student housing, sorted.</h2>
             <p className="max-w-md text-muted">Hostels, bedsitters and shared rooms close to campus. Check the landlord is verified, chat about the rules and the water, then go and see it.</p>
-            <Button asChild size="lg"><Link href="/search?type=student-housing">Browse student housing<ArrowRight className="size-5" aria-hidden /></Link></Button>
+            <Button asChild size="lg"><Link href="/student-housing">Find housing near your campus<ArrowRight className="size-5" aria-hidden /></Link></Button>
           </div>
           <div className="relative min-h-56"><Image src="/landing/family-3.webp" alt="" fill sizes="(min-width:768px) 40vw, 100vw" className="object-cover object-[20%_50%]" /></div>
         </div></Reveal>

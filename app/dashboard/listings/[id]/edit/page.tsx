@@ -4,6 +4,8 @@ import { getAccess } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { ListingForm } from "@/components/listings/listing-form";
 import { MediaManager, type MediaItem } from "@/components/listings/media-manager";
+import { NearbyEditor } from "@/components/listings/nearby-editor";
+import type { Place } from "@/components/listings/neighbourhood";
 import { StatusActions } from "@/components/listings/status-actions";
 import { STATUS_LABEL, type ListingStatus } from "@/lib/types";
 import { updateListing } from "../../../actions";
@@ -27,6 +29,7 @@ export default async function EditListing({ params, searchParams }: { params: Pr
     supabase.from("amenities").select("id,name,category").eq("is_active", true).order("id"),
     supabase.from("listing_flags").select("id", { count: "exact", head: true }).eq("listing_id", id).eq("status", "open"),
   ]);
+  const { data: placeRows } = await supabase.from("neighbourhood_places").select("id, kind, name, walk_minutes").eq("property_id", l.property_id).order("created_at");
   const media = ([...(l.media as (MediaItem & { position: number })[])]).sort((a, b) => a.position - b.position);
   const status = l.status as ListingStatus;
   const isOwner = l.owner_id === access.userId;
@@ -46,6 +49,8 @@ export default async function EditListing({ params, searchParams }: { params: Pr
       </header>
 
       <MediaManager listingId={id} media={media} />
+
+      <NearbyEditor propertyId={l.property_id} places={(placeRows ?? []) as Place[]} />
 
       <ListingForm
         action={updateListing.bind(null, id)}

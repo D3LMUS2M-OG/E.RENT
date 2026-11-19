@@ -20,6 +20,8 @@ import { formatKes } from "@/lib/utils";
 import { ReviewsSection } from "@/components/reviews/reviews-section";
 import { Stars } from "@/components/reviews/stars";
 import { PriceInsight, type Insight } from "@/components/listings/price-insight";
+import { AreaReliability, type Reliability } from "@/components/listings/area-reliability";
+import { Neighbourhood, type Place } from "@/components/listings/neighbourhood";
 import { PUBLIC_REVIEW_COLUMNS, type PublicReview, type Ratings } from "@/lib/reviews";
 import { mediaUrl, photoSrcSet, variant } from "@/lib/media-url";
 
@@ -30,7 +32,7 @@ export function generateStaticParams() { return []; }
 async function load(slug: string) {
   const supabase = createPublicClient();
   const { data } = await supabase.from("listings")
-    .select(`id, slug, title, description, rent, deposit, bedrooms, bathrooms, size_sqm, floor, available_from, units_available,
+    .select(`id, slug, title, description, property_id, rent, deposit, bedrooms, bathrooms, size_sqm, floor, available_from, units_available,
       published_at, expires_at, owner_id, created_by,
       property:properties(county_id, sub_county, estate, lat, lng, county:counties(name, slug)),
       type:property_types(name),
@@ -60,12 +62,16 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   if (!l) notFound();
 
   const sb = createPublicClient();
-  const [{ data: landlord }, { data: revs }, { data: lr }, { data: pi }] = await Promise.all([
+  const [{ data: landlord }, { data: revs }, { data: lr }, { data: pi }, { data: ar }, { data: pl }] = await Promise.all([
     sb.from("landlord_profiles").select("display_name, member_since, verified, avatar_url").eq("id", l.owner_id).maybeSingle(),
     sb.from("public_reviews").select(PUBLIC_REVIEW_COLUMNS).eq("listing_id", l.id).order("created_at", { ascending: false }).limit(30),
     sb.from("landlord_ratings").select("review_count, avg_overall").eq("landlord_id", l.owner_id).maybeSingle(),
     sb.rpc("price_insight", { p_listing: l.id }),
+    sb.rpc("area_reliability", { p_listing: l.id }),
+    sb.from("neighbourhood_places").select("id, kind, name, walk_minutes").eq("property_id", l.property_id).order("created_at"),
   ]);
+  const reliability = ((ar ?? []) as Reliability[])[0] ?? null;
+  const places = (pl ?? []) as Place[];
   const insight = ((pi ?? []) as Insight[])[0] ?? null;
   const reviews = (revs ?? []) as PublicReview[];
   const landlordRating = lr as Pick<Ratings, "review_count" | "avg_overall"> | null;
@@ -128,6 +134,16 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
 
             {divider}
             <section aria-labelledby="about"><h2 id="about" className="text-2xl">About this house</h2><p className="mt-3 max-w-prose whitespace-pre-line text-[16px] leading-7 text-foreground/90">{l.description}</p></section>
+
+            {places.length > 0 && (<>
+              <Neighbourhood places={places} />
+              {divider}
+            </>)}
+
+            {reliability && (<>
+              <AreaReliability r={reliability} />
+              {divider}
+            </>)}
 
             {insight && (<>
               <PriceInsight insight={insight} houseType={(l.type as unknown as { name: string } | null)?.name} />
