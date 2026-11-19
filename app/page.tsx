@@ -139,7 +139,7 @@ export default async function HomePage() {
             <p className="max-w-md text-muted">Hostels, bedsitters and shared rooms close to campus. Check the landlord is verified, chat about the rules and the water, then go and see it.</p>
             <Button asChild size="lg"><Link href="/student-housing">Find housing near your campus<ArrowRight className="size-5" aria-hidden /></Link></Button>
           </div>
-          <div className="relative min-h-56"><Image src="/landing/family-3.webp" alt="" fill sizes="(min-width:768px) 40vw, 100vw" className="object-cover object-[20%_50%]" /></div>
+          <div className="relative min-h-64"><Image src="/landing/student-1.webp" alt="A modern student residence with a green courtyard and picnic tables" fill sizes="(min-width:768px) 40vw, 100vw" className="object-cover object-center" /></div>
         </div></Reveal>
 
         {/* ───────── Verified landlords ───────── */}

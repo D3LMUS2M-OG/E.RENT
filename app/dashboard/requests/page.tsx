@@ -5,8 +5,6 @@ import { ActionButton } from "@/components/ui/action-button";
 import { CancelRentalForm } from "@/components/requests/cancel-rental-form";
 import { ContactPanel, type ContactState } from "@/components/requests/contact-panel";
 import { RespondForm } from "@/components/requests/respond-form";
-import { TenantRating } from "@/components/requests/tenant-rating";
-import { Stars } from "@/components/reviews/stars";
 import { proposeRental, respondRental } from "@/app/requests/actions";
 
 export const metadata = { title: "Requests" };
@@ -17,12 +15,9 @@ type Row = { id: string; listing_title: string; listing_slug: string; tenant_nam
 export default async function IncomingRequests() {
   await getAccess("/dashboard/requests");
   const supabase = await createClient();
-  const [{ data }, { data: cs }, { data: mine }] = await Promise.all([supabase.rpc("incoming_requests"), supabase.rpc("contact_states"), supabase.rpc("my_tenant_ratings")]);
-  const myRatings = new Map(((mine ?? []) as { rental_id: string; rating: number; note: string }[]).map((r) => [r.rental_id, r]));
+  const [{ data }, { data: cs }] = await Promise.all([supabase.rpc("incoming_requests"), supabase.rpc("contact_states")]);
   const contacts = new Map(((cs ?? []) as ContactState[]).map((c) => [c.request_id, c]));
   const rows = (data ?? []) as Row[];
-  const rep = new Map<string, { rating_count: number; avg_rating: number; notes: string[] }>();
-  await Promise.all(rows.filter((r) => r.status === "pending" || r.status === "accepted").slice(0, 40).map(async (r) => { const { data: x } = await supabase.rpc("tenant_reputation", { p_request: r.id }); const v = (x as { rating_count: number; avg_rating: number; notes: string[] }[] | null)?.[0]; if (v) rep.set(r.id, v); }));
   const open = rows.filter((r) => r.status === "pending");
   const rest = rows.filter((r) => r.status !== "pending");
 
@@ -37,7 +32,6 @@ export default async function IncomingRequests() {
       </div>
       <p className="text-sm">{r.occupants} {r.occupants === 1 ? "person" : "people"}{r.preferred_date && ` · prefers ${new Date(r.preferred_date).toLocaleDateString("en-KE", { day: "numeric", month: "long" })}`}</p>
       {r.message && <p className="whitespace-pre-line rounded-md bg-surface p-3 text-sm">{r.message}</p>}
-      {rep.get(r.id) && <p className="flex flex-wrap items-center gap-x-2 text-sm"><Stars value={Number(rep.get(r.id)!.avg_rating)} /><b>{Number(rep.get(r.id)!.avg_rating).toFixed(1)}</b><span className="text-muted">from {rep.get(r.id)!.rating_count} {rep.get(r.id)!.rating_count === 1 ? "landlord" : "landlords"}{rep.get(r.id)!.notes.length > 0 ? `: ${rep.get(r.id)!.notes.map((n) => `"${n}"`).join(", ")}` : ""}</span></p>}
       {r.status === "pending" && <RespondForm id={r.id} />}
       {r.status === "accepted" && (
         <div className="flex flex-wrap items-center gap-3">
@@ -54,7 +48,6 @@ export default async function IncomingRequests() {
           {r.rental_status === "cancelled" && <span className="text-sm">{r.cancelled_by_me ? "You cancelled" : "The tenant cancelled"} the rental{r.cancel_reason ? `: ${r.cancel_reason}` : "."}</span>}
         </div>
       )}
-      {r.rental_status === "confirmed" && r.is_owner && r.rental_id && <TenantRating rentalId={r.rental_id} current={myRatings.get(r.rental_id)} />}
       {r.status === "accepted" && contacts.get(r.id) && <ContactPanel c={contacts.get(r.id)!} id={r.id} source="request" />}
       {r.decision_note && r.status !== "pending" && <p className="text-sm text-muted">Your note: {r.decision_note}</p>}
     </li>

@@ -8,8 +8,7 @@ export type FlagKey =
   | "enable_sms_notifications"
   | "enable_paid_features"
   | "enable_whatsapp"
-  | "enable_student_mode"
-  | "require_staff_mfa";
+  | "enable_student_mode";
 
 const DEFAULTS: Record<FlagKey, boolean> = {
   require_phone_verification: false,
@@ -19,7 +18,6 @@ const DEFAULTS: Record<FlagKey, boolean> = {
   enable_paid_features: false,
   enable_whatsapp: false,
   enable_student_mode: false,
-  require_staff_mfa: false,
 };
 
 /** Reads app_settings once per request. Super admin edits it, no deployment needed. */

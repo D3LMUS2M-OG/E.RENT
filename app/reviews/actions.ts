@@ -40,13 +40,3 @@ export async function refreshReviewPages(listingSlug: string) {
   revalidatePath("/landlord/[id]", "page");
   revalidatePath("/");
 }
-
-/** A landlord rates a tenant after a confirmed rental. Only other landlords can ever see it. */
-export async function rateTenant(rentalId: string, _: ReviewState, formData: FormData): Promise<ReviewState> {
-  const rating = Number(formData.get("rating")); const note = String(formData.get("note") ?? "").trim().slice(0, 200);
-  if (!Number.isInteger(rating) || rating < 1 || rating > 5) return { error: "Choose 1 to 5 stars" };
-  const supabase = await createClient();
-  const { error } = await supabase.rpc("rate_tenant", { p_rental: rentalId, p_rating: rating, p_note: note });
-  if (error) return { error: error.message.length < 140 ? error.message : "We could not save the rating." };
-  revalidatePath("/dashboard/requests"); return { ok: true };
-}
