@@ -1,0 +1,51 @@
+[1mdiff --git a/app/page.tsx b/app/page.tsx[m
+[1mindex f060a69..698840e 100644[m
+[1m--- a/app/page.tsx[m
+[1m+++ b/app/page.tsx[m
+[36m@@ -11,8 +11,7 @@[m [mimport { CountyMap } from "@/components/home/county-map";[m
+ import { Stars } from "@/components/reviews/stars";[m
+ import { Faq } from "@/components/home/faq";[m
+ import { FeedLink } from "@/components/home/feed-link";[m
+[31m-import { HeroSlideshow } from "@/components/home/hero-slideshow";[m
+[31m-import { HeroHeadline } from "@/components/home/hero-headline";[m
+[32m+[m[32mimport { KenyaCollage } from "@/components/home/kenya-collage";[m
+ import { LandlordCta } from "@/components/home/landlord-cta";[m
+ import { COUNTIES } from "@/lib/counties";[m
+ import { searchListings } from "@/lib/search";[m
+[36m@@ -55,15 +54,14 @@[m [mexport default async function HomePage() {[m
+ [m
+   return ([m
+     <div className="overflow-x-clip">[m
+[31m-      {/* ───────── Hero: Kenyan homes cross-fading on the right, the words on the left ───────── */}[m
+[31m-      <section className="hero hero-bg -mt-[var(--header-space)] pt-[calc(var(--header-space)+1.5rem)]">[m
+[31m-        <div className="hero-scrim" aria-hidden />[m
+[31m-        <div className="hero-content mx-auto w-full max-w-6xl px-4 pb-10 pt-6 lg:pb-32 lg:pt-12">[m
+[31m-          <div className="max-w-xl">[m
+[32m+[m[32m      {/* ───────── Hero: the one gradient on the site, orange fading into the page ───────── */}[m
+[32m+[m[32m      <section className="hero-bg relative -mt-[var(--header-space)] pt-[calc(var(--header-space)+1.5rem)]">[m
+[32m+[m[32m        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-16 pt-6 lg:grid-cols-[1.05fr_1fr] lg:pb-24">[m
+[32m+[m[32m          <div>[m
+             <p className="motion-rise inline-flex items-center gap-2 rounded-full border border-border-strong bg-background/70 px-3.5 py-1.5 text-sm font-semibold backdrop-blur"><ShieldCheck className="size-4 text-link" aria-hidden />All 47 counties · Free for tenants</p>[m
+[31m-            <HeroHeadline lead="Find your next home in Kenya," accent="minus the guesswork." className="mt-5 text-[clamp(2.6rem,6vw,4.6rem)] leading-[1.02]" />[m
+[31m-            <p className="motion-rise mt-5 max-w-xl text-lg text-muted" style={{ animationDelay: "700ms" }}>Find a verified house to rent in any of Kenya&rsquo;s 47 counties. Chat with the landlord before you travel, and read what past tenants say about the water, the security and the landlord.</p>[m
+[31m-            <form action="/search" role="search" className="motion-rise glass glass-frost glass-pill mt-8 flex max-w-xl items-center gap-2 p-1.5 pl-5" style={{ animationDelay: "820ms" }}>[m
+[32m+[m[32m            <h1 className="motion-rise mt-5 text-[clamp(2.6rem,7.2vw,5rem)] leading-[1.02]" style={{ animationDelay: "80ms" }}>Find your next home in Kenya, <span className="text-accent">minus the guesswork.</span></h1>[m
+[32m+[m[32m            <p className="motion-rise mt-5 max-w-xl text-lg text-muted" style={{ animationDelay: "160ms" }}>Find a verified house to rent in any of Kenya&rsquo;s 47 counties. Chat with the landlord before you travel, and read what past tenants say about the water, the security and the landlord.</p>[m
+[32m+[m[32m            <form action="/search" role="search" className="motion-rise glass glass-frost glass-pill mt-8 flex max-w-xl items-center gap-2 p-1.5 pl-5" style={{ animationDelay: "240ms" }}>[m
+               <Search className="size-5 shrink-0 text-muted" aria-hidden />[m
+               <label htmlFor="q" className="sr-only">Search by county, estate or words</label>[m
+               <input id="q" name="q" placeholder="Search a county, estate or house type" className="min-h-11 min-w-0 flex-1 bg-transparent text-base placeholder:text-muted focus:outline-none" />[m
+[36m@@ -71,8 +69,12 @@[m [mexport default async function HomePage() {[m
+             </form>[m
+             <FeedLink />[m
+           </div>[m
+[32m+[m
+[32m+[m[32m          {/* Kenya filled with a collage of rounded photo tiles */}[m
+[32m+[m[32m          <div className="motion-rise relative mx-auto w-full max-w-md" style={{ animationDelay: "200ms" }}>[m
+[32m+[m[32m            <KenyaCollage />[m
+[32m+[m[32m          </div>[m
+         </div>[m
+[31m-        <HeroSlideshow />[m
+       </section>[m
+ [m
+       <div className="mx-auto max-w-6xl space-y-24 px-4 pb-8 pt-4">[m
