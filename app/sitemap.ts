@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: base, changeFrequency: "daily" },
     { url: `${base}/counties` },
     { url: `${base}/search` },
-    ...["about", "how-it-works", "safety", "contact", "for-landlords", "student-housing"].map((p) => ({ url: `${base}/${p}` })),
+    ...["about", "how-it-works", "safety", "contact", "for-landlords", "student-housing", "legal", "legal/terms", "legal/privacy", "legal/cookies", "legal/community-standards", "legal/review-policy", "legal/acceptable-use", "legal/disclaimer"].map((p) => ({ url: `${base}/${p}` })),
     ...COUNTIES.map((c) => ({ url: `${base}/houses-for-rent/${c.slug}`, changeFrequency: "daily" as const })),
     ...geoUrls,
     ...(data ?? []).map((l) => ({ url: `${base}/listing/${l.slug}`, lastModified: l.updated_at })),

@@ -98,3 +98,26 @@ Run `supabase/migrations/20261124001900_neighbourhood_reliability.sql`. It repla
 - Student housing (/student-housing): 18 universities, each with 1, 3 and 5 km links that open the search near the campus, nearest first. Campus coordinates are approximate. If the flag is off the page redirects to the student housing search.
 - The old reviews migration columns still work; reviews written before this simply have no power or road score.
 - Step 13 is now complete. Remaining from the plan: small gaps (landlord response time and availability hours, landlords rating tenants, county sub-pages and estate pages, delete my account, admin review removal, staff two-factor), then Steps 14 to 17.
+
+## Final build: gaps, legal, quality and launch
+Run, in order, after the earlier ones: `supabase/migrations/20261125002000_final_gaps.sql`. Then `npm install` (adds @sentry/nextjs and @playwright/test).
+
+**Trust and product gaps**
+- Landlords: Dashboard, Profile and hours. Set the days and hours you answer tenants. A reply-speed badge ("Replies within 1 hour") is worked out from your chats once you have had 3, and appears on your profile and listings.
+- Landlords rate tenants after a confirmed rental (Dashboard, Incoming requests). Other landlords see the average and a short note on new requests; tenants never see it.
+- County, sub-county and ward pages for search engines already existed from Step 7.
+
+**Privacy and security (Step 14)**
+- Seven full legal documents (Terms, Privacy, Cookies, Community and Listing Standards, Review Policy, Acceptable Use and Chat Conduct, Disclaimer) at /legal, written from what the product really does, with contents lists and version/effective date. Wording lives in `lib/legal.ts`. Sign-up (email and phone) now needs the "I am 18 or older and agree" box; Google sign-in shows the same notice.
+- Account, Privacy and security: download all your data as a JSON file, delete your account for good (files first, then the account), and set up two-step sign-in.
+- Staff two-step sign-in: each person sets it up at Account, Privacy and security. When everyone has, turn on `require_staff_mfa` in Admin, Settings. Do not turn it on before you have set up your own, or you will be asked for a code you do not have.
+- Admin, Reviews: remove a review only with written proof; it goes into the audit log.
+- `docs/legal/`: DPIA, ODPC registration checklist, retention schedule, data subject request procedure, incident response plan, security measures. Your advocate has reviewed the plan to build these; fill the DPIA sign-off, the operator details and the ODPC number when you have them.
+
+**Quality and launch (Steps 15 and 16)**
+- Unit tests (`npm test`) for search, saved searches, agreement, checklist, availability, phone, counties, universities, map data and legal content. Playwright smoke tests (`npm run e2e:install` once, then `BASE_URL=<your site> npm run e2e`) check home, search, sign-in, sign-up consent, all legal pages, information pages, a county page, 404, sitemap, route protection and the theme switch on desktop and phone. CI runs them when you add a repository variable `PREVIEW_URL`.
+- Error pages (404, error and last-resort) and Sentry monitoring: add `SENTRY_DSN` and `NEXT_PUBLIC_SENTRY_DSN` to turn it on.
+- `docs/GO-LIVE-CHECKLIST.md`, `docs/RESTORE-TEST.md`, `docs/ACCESSIBILITY-CHECKLIST.md`.
+
+**Not built, by design (Step 17, after launch)**
+Featured and boosted listings, subscriptions, M-Pesa fees, SMS notifications, store apps and Kiswahili. The flags `enable_paid_features` and `enable_sms_notifications` are ready; the legal documents already say fees would be introduced with notice.
