@@ -15,7 +15,6 @@ const credentials = z.object({
   password: z.string().min(8, "Use at least 8 characters"),
 });
 const signUpSchema = credentials.extend({
-  terms: z.literal("on", { error: "Tick the box to accept the Terms and Privacy Policy" }),
   full_name: z.string().trim().min(2, "Enter your full name").max(80),
   role: z.enum(["tenant", "landlord"]),
 });
@@ -101,7 +100,7 @@ export async function sendPhoneOtp(_: PhoneState, formData: FormData): Promise<P
   const supabase = await createClient();
 
   if (mode === "sign-up") {
-    const parsed = z.object({ terms: z.literal("on", { error: "Tick the box to accept the Terms and Privacy Policy" }), full_name: z.string().trim().min(2, "Enter your full name").max(80), role: z.enum(["tenant", "landlord"]) }).safeParse(Object.fromEntries(formData));
+    const parsed = z.object({ full_name: z.string().trim().min(2, "Enter your full name").max(80), role: z.enum(["tenant", "landlord"]) }).safeParse(Object.fromEntries(formData));
     if (!parsed.success) return { step: "phone", phone, fieldErrors: fieldErrors(parsed.error) };
     const { error } = await supabase.auth.signInWithOtp({ phone, options: { shouldCreateUser: true, channel: "sms", data: { full_name: parsed.data.full_name, initial_role: parsed.data.role, onboarded: true } } });
     if (error) return { step: "phone", phone, error: "We could not send the code. Check the number and try again." };

@@ -52,8 +52,6 @@ export function AuthForm({ action, mode, next, defaultRole = "tenant", children 
         {!up && <div style={stagger(3)} className="-mt-1 flex justify-end"><Link href="/forgot-password" className="inline-flex min-h-11 items-center text-sm font-medium text-link underline-offset-4 hover:underline">Forgot password?</Link></div>}
 
         <div style={stagger(4)} className="space-y-3">
-          {up && <label className="flex items-start gap-3 text-sm"><input type="checkbox" name="terms" required className="mt-0.5 size-5 shrink-0 accent-[var(--primary)]" /><span>I am 18 or older and I agree to the <Link href="/legal/terms" target="_blank" className="font-semibold text-link underline underline-offset-4">Terms of Service</Link> and the <Link href="/legal/privacy" target="_blank" className="font-semibold text-link underline underline-offset-4">Privacy Policy</Link>.</span></label>}
-          {up && state.fieldErrors?.terms && <p role="alert" className="text-sm font-medium">Error: {state.fieldErrors.terms}</p>}
           {state.error && <p role="alert" className="text-sm font-medium">Error: {state.error}</p>}
           {state.message && <p role="status" className="msg-ok text-sm font-medium">{state.message}</p>}
           <Button type="submit" size="lg" className="w-full" loading={pending}>{up ? "Create account" : "Sign in"}{!pending && <ArrowRight className="size-5" aria-hidden />}</Button>

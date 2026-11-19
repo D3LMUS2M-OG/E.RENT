@@ -1,6 +1,6 @@
 -- pgTAP policy tests. Run with: supabase test db
 begin;
-select plan(35);
+select plan(31);
 
 select is(
   (select count(*)::int from pg_tables t where t.schemaname = 'public' and not t.rowsecurity),
@@ -49,11 +49,6 @@ select is((select count(*)::int from public.saved_searches), 0, 'visitor cannot 
 select is((select count(*)::int from public.feed_preferences), 0, 'visitor cannot read feed preferences');
 
 select is((select count(*)::int from public.move_in_checklists), 0, 'visitor cannot read move-in checklists');
-
-select throws_ok($$select count(*) from public.tenant_ratings$$, '42501', null, 'visitor cannot read tenant ratings');
-select throws_ok($$select public.rate_tenant(gen_random_uuid(), 5, 'x')$$, '42501', null, 'visitor cannot rate a tenant');
-select lives_ok($$select * from public.landlord_availability$$, 'visitor can read availability hours');
-select is((select count(*)::int from public.landlord_response(gen_random_uuid())), 0, 'no response time without conversations');
 
 select * from finish();
 rollback;

@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import Link from "next/link";
 import { ArrowRight, Phone, ShieldCheck, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sendPhoneOtp, verifyPhoneOtp, type PhoneState } from "@/app/(auth)/actions";
@@ -69,7 +68,6 @@ export function PhoneForm({ mode, next }: { mode: "sign-in" | "sign-up"; next?: 
               <input type="radio" name="role" value={v} defaultChecked={i === 0} className="size-4 accent-[var(--primary)]" />{l}
             </label>))}
         </fieldset>)}
-      {up && <div className="space-y-1"><label className="flex items-start gap-3 text-sm"><input type="checkbox" name="terms" required className="mt-0.5 size-5 shrink-0 accent-[var(--primary)]" /><span>I am 18 or older and I agree to the <Link href="/legal/terms" target="_blank" className="font-semibold text-link underline underline-offset-4">Terms of Service</Link> and the <Link href="/legal/privacy" target="_blank" className="font-semibold text-link underline underline-offset-4">Privacy Policy</Link>.</span></label>{fe.terms && <p role="alert" className="text-sm font-medium">Error: {fe.terms}</p>}</div>}
       {sent.error && <p role="alert" className="text-sm font-medium">Error: {sent.error}</p>}
       <div style={stagger(3)}><Button type="submit" size="lg" className="w-full" loading={sending}>Send code{!sending && <ArrowRight className="size-5" aria-hidden />}</Button></div>
     </form>
