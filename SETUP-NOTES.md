@@ -83,3 +83,10 @@ Run `supabase/migrations/20261122001700_price_insight.sql`.
 - Listing page: "How the rent compares" shows the typical range (25th to 75th percentile), the middle, and a marker for this house, with a plain-words verdict. It compares live houses of the same type, widening from the estate to the sub-county to the county, and only shows when there are at least 5 to compare. It is calculated live by a function rather than a daily materialised view, so it is never a day out of date; at tens of thousands of listings we can switch to a view.
 - Compare: tap Compare under 2 to 4 house cards; a floating button opens /compare with the houses side by side (rent, deposit, type, area, rooms, size, floor, availability, landlord verified, rating, price verdict and every amenity as Yes or No). The list is kept in the browser.
 - Still to do in Step 13: neighbourhood and reliability info, student housing mode, rental agreement generator, move-in checklist.
+
+## Step 13 (part 3): move-in checklist and rental agreement
+Run `supabase/migrations/20261123001800_checklist.sql`.
+- Tenants: Account menu, Move-in checklist (/account/checklist). 28 checks in 6 groups (water, power, security, condition, money and paperwork, handover) with tips, a progress bar, notes, autosave, and print or save as PDF. A confirmed rental in My requests links to its own copy (/account/checklist?request=...).
+- Landlords: Dashboard, Agreements. Pick one of your houses to fill the details, or type them, and the tenancy agreement updates as you type (rent, deposit, due day, start, length, notice, utilities, pets, extra terms, signature and witness blocks). Print or save as PDF. Nothing typed there is stored, so no ID numbers or personal data leave the browser.
+- The agreement is a plain template and says it is not legal advice and that E.Rent is not a party. Please have your advocate review the wording before launch (this is in Step 14).
+- Still to do in Step 13: neighbourhood info and estate reliability ratings, student housing mode.

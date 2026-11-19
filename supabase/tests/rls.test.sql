@@ -1,6 +1,6 @@
 -- pgTAP policy tests. Run with: supabase test db
 begin;
-select plan(30);
+select plan(31);
 
 select is(
   (select count(*)::int from pg_tables t where t.schemaname = 'public' and not t.rowsecurity),
@@ -47,6 +47,8 @@ select throws_ok($$select public.staff_add('someone@example.com', 'moderator')$$
 
 select is((select count(*)::int from public.saved_searches), 0, 'visitor cannot read saved searches');
 select is((select count(*)::int from public.feed_preferences), 0, 'visitor cannot read feed preferences');
+
+select is((select count(*)::int from public.move_in_checklists), 0, 'visitor cannot read move-in checklists');
 
 select * from finish();
 rollback;

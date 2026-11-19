@@ -203,6 +203,16 @@ body:has([data-chat-root]) main { padding-top: var(--header-space); }
   box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 16%, transparent), 0 28px 70px -16px rgba(0,0,0,.65); color: var(--foreground); border: 1px solid var(--border-strong); }
 @keyframes dot-in { from { opacity: 0; transform: scale(.2); } to { opacity: 1; transform: none; } }
 
+/* Printing: the checklist and the rental agreement print on their own, without menus */
+@media print {
+  .site-header, nav[aria-label="Main"], .site-footer, .no-print { display: none !important; }
+  body { background: #fff !important; color: #000 !important; padding-bottom: 0 !important; }
+  main { padding-top: 0 !important; }
+  body:has(#agreement-print) * { visibility: hidden; }
+  body:has(#agreement-print) #agreement-print, body:has(#agreement-print) #agreement-print * { visibility: visible; }
+  #agreement-print { position: absolute; left: 0; top: 0; width: 100%; border: 0 !important; border-radius: 0 !important; padding: 0 !important; }
+}
+
 @layer base {
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]) {

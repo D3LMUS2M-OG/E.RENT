@@ -48,7 +48,7 @@ export default async function MyRequests() {
             )}
             {r.rental_status === "confirmed" && (
               <div className="space-y-2">
-                <p className="text-sm font-medium">Rental confirmed. You can now review your home.</p>
+                <p className="text-sm font-medium">Rental confirmed. You can now review your home, and use the <Link className="font-medium text-link underline underline-offset-4" href={`/account/checklist?request=${r.id}`}>move-in checklist</Link>.</p>
                 <CancelRentalForm rentalId={r.rental_id!} />
               </div>)}
             {r.rental_status === "cancelled" && (
