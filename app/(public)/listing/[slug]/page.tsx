@@ -19,6 +19,7 @@ import { FavouriteButton } from "@/components/listings/favourite-button";
 import { formatKes } from "@/lib/utils";
 import { ReviewsSection } from "@/components/reviews/reviews-section";
 import { Stars } from "@/components/reviews/stars";
+import { PriceInsight, type Insight } from "@/components/listings/price-insight";
 import { PUBLIC_REVIEW_COLUMNS, type PublicReview, type Ratings } from "@/lib/reviews";
 import { mediaUrl, photoSrcSet, variant } from "@/lib/media-url";
 
@@ -59,11 +60,13 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
   if (!l) notFound();
 
   const sb = createPublicClient();
-  const [{ data: landlord }, { data: revs }, { data: lr }] = await Promise.all([
+  const [{ data: landlord }, { data: revs }, { data: lr }, { data: pi }] = await Promise.all([
     sb.from("landlord_profiles").select("display_name, member_since, verified, avatar_url").eq("id", l.owner_id).maybeSingle(),
     sb.from("public_reviews").select(PUBLIC_REVIEW_COLUMNS).eq("listing_id", l.id).order("created_at", { ascending: false }).limit(30),
     sb.from("landlord_ratings").select("review_count, avg_overall").eq("landlord_id", l.owner_id).maybeSingle(),
+    sb.rpc("price_insight", { p_listing: l.id }),
   ]);
+  const insight = ((pi ?? []) as Insight[])[0] ?? null;
   const reviews = (revs ?? []) as PublicReview[];
   const landlordRating = lr as Pick<Ratings, "review_count" | "avg_overall"> | null;
   const p = l.property as unknown as { sub_county: string | null; estate: string | null; lat: number; lng: number; county: { name: string; slug: string } };
@@ -126,8 +129,14 @@ export default async function ListingPage({ params }: { params: Promise<{ slug: 
             {divider}
             <section aria-labelledby="about"><h2 id="about" className="text-2xl">About this house</h2><p className="mt-3 max-w-prose whitespace-pre-line text-[16px] leading-7 text-foreground/90">{l.description}</p></section>
 
+            {insight && (<>
+              <PriceInsight insight={insight} houseType={(l.type as unknown as { name: string } | null)?.name} />
+              {divider}
+            </>)}
+
             {amenities.length > 0 && (<>
               {divider}
+              {insight && <PriceInsight insight={insight} houseType={(l.type as unknown as { name: string } | null)?.name} />}
               <section aria-labelledby="amen"><h2 id="amen" className="text-2xl">Amenities</h2>
                 <ul className="mt-4 grid grid-cols-3 gap-x-3 gap-y-5 sm:grid-cols-4 md:grid-cols-6">
                   {amenities.map((a) => { const Icon = amenityIcon(a.slug); return (

@@ -4,6 +4,7 @@ import { VerifiedBadge } from "@/components/ui/verified-badge";
 import { Rating } from "@/components/ui/rating";
 import { formatKes } from "@/lib/utils";
 import { mediaUrl, photoSrcSet, variant } from "@/lib/media-url";
+import { CompareToggle } from "@/components/compare/compare-toggle";
 
 export type ListingCardData = {
   slug: string; title: string; rent: number; area: string; county: string; bedrooms: number;
@@ -52,6 +53,7 @@ export function ListingCard({ listing }: { listing: ListingCardData }) {
           </div>
         </div>
       </Link>
+      <div className="px-1 pb-0.5"><CompareToggle slug={listing.slug} title={listing.title} /></div>
     </article>
   );
 }

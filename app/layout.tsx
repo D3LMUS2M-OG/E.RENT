@@ -8,6 +8,7 @@ import { SessionProvider } from "@/components/layout/session-provider";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { ThemeSync } from "@/components/layout/theme-sync";
 import { ConfirmProvider } from "@/components/ui/glass-confirm";
+import { CompareBar } from "@/components/compare/compare-bar";
 import { InstallBanner } from "@/components/pwa/install-banner";
 
 // Two families and one accent face: a warm serif for headlines, a clean sans for everything else, an italic serif for large quotes.
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SiteFooter />
           <MobileNav />
           <InstallBanner />
+          <CompareBar />
          </ConfirmProvider>
         </SessionProvider>
         <RegisterServiceWorker />

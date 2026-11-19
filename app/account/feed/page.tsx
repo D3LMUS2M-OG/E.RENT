@@ -17,7 +17,7 @@ export default async function FeedPage() {
   const base: Record<string, unknown> = { limit: 12, sort: "newest" };
   if (p.types.length) base.types = p.types; if (p.max_rent) base.max_rent = p.max_rent; if (p.min_bedrooms) base.min_bedrooms = p.min_bedrooms;
   // The search function takes one county at a time, so look in each chosen county and merge the newest first
-  const lists = configured ? await Promise.all((p.counties.length ? p.counties : [undefined]).map((c: string | undefined) => searchListings(c ? { ...base, county: c } : base))) : [];
+  const lists = configured ? await Promise.all((p.counties.length ? p.counties : [undefined]).map((c) => searchListings(c ? { ...base, county: c } : base))) : [];
   const seen = new Set<string>();
   const rows = lists.flat().filter((r) => !seen.has(r.id) && seen.add(r.id)).sort((x, y) => +new Date(y.published_at) - +new Date(x.published_at)).slice(0, 24);
   return (

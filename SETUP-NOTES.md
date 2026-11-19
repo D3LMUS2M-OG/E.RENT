@@ -77,3 +77,9 @@ Run `supabase/migrations/20261121001600_saved_searches_feed.sql`.
 - Account menu, Saved searches: open, turn alerts on or off, delete. A database job checks every hour (pg_cron) and sends a notification when new houses match since the last check. It uses the notification channels from Step 12, so email and WhatsApp work once the worker is scheduled.
 - Account menu, My feed (/account/feed): choose up to 5 counties, house types, a budget and bedrooms; the page lists the newest matches. Signed-in people also see "Houses picked for you" under the home page search.
 - Left for the rest of Step 13: price insights, compare, neighbourhood and reliability info, student mode, rental agreement generator, move-in checklist.
+
+## Step 13 (part 2): price insights and compare
+Run `supabase/migrations/20261122001700_price_insight.sql`.
+- Listing page: "How the rent compares" shows the typical range (25th to 75th percentile), the middle, and a marker for this house, with a plain-words verdict. It compares live houses of the same type, widening from the estate to the sub-county to the county, and only shows when there are at least 5 to compare. It is calculated live by a function rather than a daily materialised view, so it is never a day out of date; at tens of thousands of listings we can switch to a view.
+- Compare: tap Compare under 2 to 4 house cards; a floating button opens /compare with the houses side by side (rent, deposit, type, area, rooms, size, floor, availability, landlord verified, rating, price verdict and every amenity as Yes or No). The list is kept in the browser.
+- Still to do in Step 13: neighbourhood and reliability info, student housing mode, rental agreement generator, move-in checklist.
